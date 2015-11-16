@@ -214,7 +214,7 @@ public class OpenXmlAdapter {
     }
 
     public static P getEmptyPara() {
-        return getEmptyPara("Normal");
+        return getEmptyPara(null);
     }
 
     public static P getEmptyParaNoSpacing() {
@@ -224,8 +224,9 @@ public class OpenXmlAdapter {
     public static P getEmptyPara(String styleName) {
         String id = nextId();
         PPr ppr = null;
-        if (!isBlank(styleName)) {
-            PStyle style = getPPrBasePStyleBuilder().withVal(styleName).getObject();
+        styleName = isBlank(styleName) ? "Normal" : styleName;
+        PStyle style = getPPrBasePStyleBuilder().withVal(styleName).getObject();
+        if (style != null) {
             ppr = new PPrBuilder().withPStyle(style).getObject();
         }
         return getPBuilder().withPPr(ppr).withRsidP(id).withRsidR(id).withRsidRDefault(id).getObject();
