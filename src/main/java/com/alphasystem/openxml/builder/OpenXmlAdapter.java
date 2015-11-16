@@ -3,6 +3,7 @@
  */
 package com.alphasystem.openxml.builder;
 
+import com.alphasystem.openxml.builder.wml.PPrBuilder;
 import org.docx4j.Docx4J;
 import org.docx4j.XmlUtils;
 import org.docx4j.convert.out.FOSettings;
@@ -30,8 +31,11 @@ import java.util.Enumeration;
 
 import static com.alphasystem.openxml.builder.OpenXmlBuilder.OBJECT_FACTORY;
 import static com.alphasystem.openxml.builder.OpenXmlBuilderFactory.*;
+import static com.alphasystem.util.IdGenerator.nextId;
 import static java.lang.String.format;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.docx4j.openpackaging.parts.relationships.Namespaces.NS_WORD12;
+import static org.docx4j.wml.STBrType.PAGE;
 
 /**
  * @author sali
@@ -42,15 +46,16 @@ public class OpenXmlAdapter {
 
     /**
      * @param wordDoc
+     * @param styleFilePrefix
      */
-    public static void addCustomStyle(WordprocessingMLPackage wordDoc) {
+    private static void addCustomStyle(WordprocessingMLPackage wordDoc, String styleFilePrefix) {
         StyleDefinitionsPart sdp = wordDoc.getMainDocumentPart()
                 .getStyleDefinitionsPart();
         ClassLoader contextClassLoader = Thread.currentThread()
                 .getContextClassLoader();
         try {
             Enumeration<URL> resources = contextClassLoader
-                    .getResources("META-INF/styles.xml");
+                    .getResources(String.format("META-INF/%s.xml", styleFilePrefix));
             if (resources != null) {
                 while (resources.hasMoreElements()) {
                     URL url = resources.nextElement();
@@ -86,9 +91,14 @@ public class OpenXmlAdapter {
      */
     public static WordprocessingMLPackage createNewDoc()
             throws InvalidFormatException {
+        return createNewDoc("styles");
+    }
+
+    public static WordprocessingMLPackage createNewDoc(String styleFilePrefix)
+            throws InvalidFormatException {
         WordprocessingMLPackage wordprocessingMLPackage = WordprocessingMLPackage
                 .createPackage();
-        addCustomStyle(wordprocessingMLPackage);
+        addCustomStyle(wordprocessingMLPackage, styleFilePrefix);
         return wordprocessingMLPackage;
     }
 
@@ -97,7 +107,7 @@ public class OpenXmlAdapter {
      * @return
      * @throws InvalidFormatException
      */
-    public static WordprocessingMLPackage createNewDocument(Styles customStyles)
+    public static WordprocessingMLPackage createNewDoc(Styles customStyles)
             throws InvalidFormatException {
         WordprocessingMLPackage wordDoc = WordprocessingMLPackage
                 .createPackage();
@@ -201,6 +211,31 @@ public class OpenXmlAdapter {
     public static JAXBElement getWrappedFldChar(FldChar fldchar) {
         return new JAXBElement(new QName(NS_WORD12, "fldChar"), FldChar.class,
                 fldchar);
+    }
+
+    public static P getEmptyPara() {
+        return getEmptyPara("Normal");
+    }
+
+    public static P getEmptyParaNoSpacing() {
+        return getEmptyPara("NoSpacing");
+    }
+
+    public static P getEmptyPara(String styleName) {
+        String id = nextId();
+        PPr ppr = null;
+        if (!isBlank(styleName)) {
+            PStyle style = getPPrBasePStyleBuilder().withVal(styleName).getObject();
+            ppr = new PPrBuilder().withPStyle(style).getObject();
+        }
+        return getPBuilder().withPPr(ppr).withRsidP(id).withRsidR(id).withRsidRDefault(id).getObject();
+    }
+
+    public static P getPageBreak() {
+        String id = nextId();
+        Br br = getBrBuilder().withType(PAGE).getObject();
+        R r = getRBuilder().addContent(br).getObject();
+        return getPBuilder().withRsidP(id).withRsidR(id).withRsidRDefault(id).addContent(r).getObject();
     }
 
     public static void save(File file, WordprocessingMLPackage wordMLPackage)
