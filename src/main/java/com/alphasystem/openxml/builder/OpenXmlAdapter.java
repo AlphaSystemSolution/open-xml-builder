@@ -182,6 +182,14 @@ public class OpenXmlAdapter {
     }
 
     /**
+     * @param styleName
+     * @return
+     */
+    public static RStyle getRStyle(String styleName) {
+        return getRStyleBuilder().withVal(styleName).getObject();
+    }
+
+    /**
      * @param value
      * @return
      */
@@ -205,6 +213,11 @@ public class OpenXmlAdapter {
      */
     public static Text getText(String value, String space) {
         return getTextBuilder().withValue(value).withSpace(space).getObject();
+    }
+
+    public static Text getText(String value) {
+        String space = !value.equals(value.trim()) ? "preserve" : null;
+        return getText(value, space);
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
