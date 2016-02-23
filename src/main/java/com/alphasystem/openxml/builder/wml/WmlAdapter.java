@@ -52,8 +52,8 @@ public class WmlAdapter {
     private static void addCustomStyle(WordprocessingMLPackage wordDoc, String styleFilePrefix) {
         StyleDefinitionsPart sdp = wordDoc.getMainDocumentPart()
                 .getStyleDefinitionsPart();
-        ClassLoader contextClassLoader = currentThread()
-                .getContextClassLoader();
+        Styles styles = null;
+        ClassLoader contextClassLoader = currentThread().getContextClassLoader();
         try {
             Enumeration<URL> resources = contextClassLoader
                     .getResources(String.format("META-INF/%s.xml", styleFilePrefix));
@@ -63,8 +63,12 @@ public class WmlAdapter {
                     InputStream ins = url.openStream();
                     if (ins != null) {
                         try {
-                            Styles styles = (Styles) XmlUtils.unmarshal(ins);
-                            sdp.setJaxbElement(styles);
+                            if(styles == null) {
+                                styles = (Styles) XmlUtils.unmarshal(ins);
+                            } else {
+                                final Styles otherStyles = (Styles) XmlUtils.unmarshal(ins);
+                                styles.getStyle().addAll(otherStyles.getStyle());
+                            }
                         } catch (JAXBException e) {
                             e.printStackTrace();
                         }
@@ -73,6 +77,9 @@ public class WmlAdapter {
             }
         } catch (IOException e) {
             e.printStackTrace();
+        }
+        if(styles != null) {
+            sdp.setJaxbElement(styles);
         }
     }
 
