@@ -89,11 +89,7 @@ public class NumberingHelper {
                 getLvl(1L, "04090019", TRUE, 1L, UPPER_ROMAN, "%2.", JC_LEFT, getPPr(1440, 360)),
                 getLvl(2L, "0409001B", TRUE, 1L, UPPER_LETTER, "%3.", JC_RIGHT, getPPr(2160, 180)),
                 getLvl(3L, "0409000F", TRUE, 1L, LOWER_ROMAN, "%4.", JC_LEFT, getPPr(2880, 360)),
-                getLvl(4L, "04090019", TRUE, 1L, LOWER_LETTER, "%5.", JC_LEFT, getPPr(3600, 360)),
-                getLvl(5L, "0409001B", TRUE, 1L, LOWER_ROMAN, "%6.", JC_RIGHT, getPPr(4320, 180)),
-                getLvl(6L, "0409000F", TRUE, 1L, DECIMAL, "%7.", JC_LEFT, getPPr(5040, 360)),
-                getLvl(7L, "04090019", TRUE, 1L, LOWER_LETTER, "%8.", JC_LEFT, getPPr(5760, 360)),
-                getLvl(8L, "0409001B", TRUE, 1L, LOWER_ROMAN, "%9.", JC_RIGHT, getPPr(6480, 180))};
+                getLvl(4L, "04090019", TRUE, 1L, LOWER_LETTER, "%5.", JC_LEFT, getPPr(3600, 360))};
     }
 
     private static Lvl[] getLvl1() {
@@ -102,11 +98,7 @@ public class NumberingHelper {
                 getLvl(1L, "04090019", TRUE, 1L, UPPER_LETTER, "%2.", JC_LEFT, getPPr(1440, 360)),
                 getLvl(2L, "0409001B", TRUE, 1L, LOWER_ROMAN, "%3.", JC_RIGHT, getPPr(2160, 180)),
                 getLvl(3L, "0409000F", TRUE, 1L, LOWER_LETTER, "%4.", JC_LEFT, getPPr(2880, 360)),
-                getLvl(4L, "04090019", TRUE, 1L, DECIMAL, "%5.", JC_LEFT, getPPr(3600, 360)),
-                getLvl(5L, "0409001B", TRUE, 1L, LOWER_ROMAN, "%6.", JC_RIGHT, getPPr(4320, 180)),
-                getLvl(6L, "0409000F", TRUE, 1L, DECIMAL, "%7.", JC_LEFT, getPPr(5040, 360)),
-                getLvl(7L, "04090019", TRUE, 1L, LOWER_LETTER, "%8.", JC_LEFT, getPPr(5760, 360)),
-                getLvl(8L, "0409001B", TRUE, 1L, LOWER_ROMAN, "%9.", JC_RIGHT, getPPr(6480, 180))};
+                getLvl(4L, "04090019", TRUE, 1L, DECIMAL, "%5.", JC_LEFT, getPPr(3600, 360))};
     }
 
     private static Lvl[] getLvl2() {
@@ -115,11 +107,7 @@ public class NumberingHelper {
                 getLvl(1L, "04090019", TRUE, 1L, LOWER_ROMAN, "%2.", JC_LEFT, getPPr(1440, 360)),
                 getLvl(2L, "0409001B", TRUE, 1L, LOWER_LETTER, "%3.", JC_RIGHT, getPPr(2160, 180)),
                 getLvl(3L, "0409000F", TRUE, 1L, DECIMAL, "%4.", JC_LEFT, getPPr(2880, 360)),
-                getLvl(4L, "04090019", TRUE, 1L, UPPER_ROMAN, "%5.", JC_LEFT, getPPr(3600, 360)),
-                getLvl(5L, "0409001B", TRUE, 1L, LOWER_ROMAN, "%6.", JC_RIGHT, getPPr(4320, 180)),
-                getLvl(6L, "0409000F", TRUE, 1L, DECIMAL, "%7.", JC_LEFT, getPPr(5040, 360)),
-                getLvl(7L, "04090019", TRUE, 1L, LOWER_LETTER, "%8.", JC_LEFT, getPPr(5760, 360)),
-                getLvl(8L, "0409001B", TRUE, 1L, LOWER_ROMAN, "%9.", JC_RIGHT, getPPr(6480, 180))};
+                getLvl(4L, "04090019", TRUE, 1L, UPPER_ROMAN, "%5.", JC_LEFT, getPPr(3600, 360))};
     }
 
     private static Lvl[] getLvl3() {
@@ -128,11 +116,7 @@ public class NumberingHelper {
                 getLvl(1L, "04090019", TRUE, 1L, LOWER_LETTER, "%2.", JC_LEFT, getPPr(1440, 360)),
                 getLvl(2L, "0409001B", TRUE, 1L, DECIMAL, "%3.", JC_RIGHT, getPPr(2160, 180)),
                 getLvl(3L, "0409000F", TRUE, 1L, UPPER_ROMAN, "%4.", JC_LEFT, getPPr(2880, 360)),
-                getLvl(4L, "04090019", TRUE, 1L, UPPER_LETTER, "%5.", JC_LEFT, getPPr(3600, 360)),
-                getLvl(5L, "0409001B", TRUE, 1L, LOWER_ROMAN, "%6.", JC_RIGHT, getPPr(4320, 180)),
-                getLvl(6L, "0409000F", TRUE, 1L, DECIMAL, "%7.", JC_LEFT, getPPr(5040, 360)),
-                getLvl(7L, "04090019", TRUE, 1L, LOWER_LETTER, "%8.", JC_LEFT, getPPr(5760, 360)),
-                getLvl(8L, "0409001B", TRUE, 1L, LOWER_ROMAN, "%9.", JC_RIGHT, getPPr(6480, 180))};
+                getLvl(4L, "04090019", TRUE, 1L, UPPER_LETTER, "%5.", JC_LEFT, getPPr(3600, 360))};
     }
 
     private static Lvl[] getLvl4() {
@@ -141,11 +125,7 @@ public class NumberingHelper {
                 getLvl(1L, "04090019", TRUE, 1L, DECIMAL, "%2.", JC_LEFT, getPPr(1440, 360)),
                 getLvl(2L, "0409001B", TRUE, 1L, UPPER_ROMAN, "%3.", JC_RIGHT, getPPr(2160, 180)),
                 getLvl(3L, "0409000F", TRUE, 1L, UPPER_LETTER, "%4.", JC_LEFT, getPPr(2880, 360)),
-                getLvl(4L, "04090019", TRUE, 1L, LOWER_ROMAN, "%5.", JC_LEFT, getPPr(3600, 360)),
-                getLvl(5L, "0409001B", TRUE, 1L, LOWER_ROMAN, "%6.", JC_RIGHT, getPPr(4320, 180)),
-                getLvl(6L, "0409000F", TRUE, 1L, DECIMAL, "%7.", JC_LEFT, getPPr(5040, 360)),
-                getLvl(7L, "04090019", TRUE, 1L, LOWER_LETTER, "%8.", JC_LEFT, getPPr(5760, 360)),
-                getLvl(8L, "0409001B", TRUE, 1L, LOWER_ROMAN, "%9.", JC_RIGHT, getPPr(6480, 180))};
+                getLvl(4L, "04090019", TRUE, 1L, LOWER_ROMAN, "%5.", JC_LEFT, getPPr(3600, 360))};
     }
 
     private static Lvl[] getLvl5() {
@@ -154,12 +134,7 @@ public class NumberingHelper {
                 getLvl(1L, "04090003", TRUE, 1L, BULLET, "\u00A7", JC_LEFT, getPPr(1440, 360), getRPr(R_FONTS_WINDINGS)),
                 getLvl(2L, "04090005", TRUE, 1L, BULLET, "o", JC_LEFT, getPPr(2160, 360), getRPr(R_FONTS_COURIER_NEW)),
                 getLvl(3L, "04090001", TRUE, 1L, BULLET, "\uF0D8", JC_LEFT, getPPr(2880, 360), getRPr(R_FONTS_WINDINGS)),
-                getLvl(4L, "04090003", TRUE, 1L, BULLET, "\uF0FC", JC_LEFT, getPPr(3600, 360), getRPr(R_FONTS_WINDINGS)),
-                getLvl(5L, "04090005", TRUE, 1L, BULLET, "\uF0A7", JC_LEFT, getPPr(4320, 360), getRPr(R_FONTS_WINDINGS)),
-                getLvl(6L, "04090001", TRUE, 1L, BULLET, "\uF0B7", JC_LEFT, getPPr(5040, 360), getRPr(R_FONTS_SYMBOL)),
-                getLvl(7L, "04090003", TRUE, 1L, BULLET, "o", JC_LEFT, getPPr(5760, 360), getRPr(R_FONTS_COURIER_NEW)),
-                getLvl(8L, "04090005", TRUE, 1L, BULLET, "\uF0A7", JC_LEFT, getPPr(6480, 360), getRPr(R_FONTS_WINDINGS))
-        };
+                getLvl(4L, "04090003", TRUE, 1L, BULLET, "\uF0FC", JC_LEFT, getPPr(3600, 360), getRPr(R_FONTS_WINDINGS))};
     }
 
     private static Lvl[] getLvl6() {
@@ -168,12 +143,7 @@ public class NumberingHelper {
                 getLvl(1L, "04090003", TRUE, 1L, BULLET, "o", JC_LEFT, getPPr(1440, 360), getRPr(R_FONTS_COURIER_NEW)),
                 getLvl(2L, "04090005", TRUE, 1L, BULLET, "\uF0D8", JC_LEFT, getPPr(2160, 360), getRPr(R_FONTS_WINDINGS)),
                 getLvl(3L, "04090001", TRUE, 1L, BULLET, "\uF0FC", JC_LEFT, getPPr(2880, 360), getRPr(R_FONTS_WINDINGS)),
-                getLvl(4L, "04090003", TRUE, 1L, BULLET, "\uF0B7", JC_LEFT, getPPr(3600, 360), getRPr(R_FONTS_SYMBOL)),
-                getLvl(5L, "04090005", TRUE, 1L, BULLET, "\uF0A7", JC_LEFT, getPPr(4320, 360), getRPr(R_FONTS_WINDINGS)),
-                getLvl(6L, "04090001", TRUE, 1L, BULLET, "\uF0B7", JC_LEFT, getPPr(5040, 360), getRPr(R_FONTS_SYMBOL)),
-                getLvl(7L, "04090003", TRUE, 1L, BULLET, "o", JC_LEFT, getPPr(5760, 360), getRPr(R_FONTS_COURIER_NEW)),
-                getLvl(8L, "04090005", TRUE, 1L, BULLET, "\uF0A7", JC_LEFT, getPPr(6480, 360), getRPr(R_FONTS_WINDINGS))
-        };
+                getLvl(4L, "04090003", TRUE, 1L, BULLET, "\uF0B7", JC_LEFT, getPPr(3600, 360), getRPr(R_FONTS_SYMBOL))};
     }
 
     private static Lvl[] getLvl7() {
@@ -182,12 +152,7 @@ public class NumberingHelper {
                 getLvl(1L, "04090003", TRUE, 1L, BULLET, "\uF0D8", JC_LEFT, getPPr(1440, 360), getRPr(R_FONTS_WINDINGS)),
                 getLvl(2L, "04090005", TRUE, 1L, BULLET, "\uF0FC", JC_LEFT, getPPr(2160, 360), getRPr(R_FONTS_WINDINGS)),
                 getLvl(3L, "04090001", TRUE, 1L, BULLET, "\uF0B7", JC_LEFT, getPPr(2880, 360), getRPr(R_FONTS_SYMBOL)),
-                getLvl(4L, "04090003", TRUE, 1L, BULLET, "\u00A7", JC_LEFT, getPPr(3600, 360), getRPr(R_FONTS_WINDINGS)),
-                getLvl(5L, "04090005", TRUE, 1L, BULLET, "\uF0A7", JC_LEFT, getPPr(4320, 360), getRPr(R_FONTS_WINDINGS)),
-                getLvl(6L, "04090001", TRUE, 1L, BULLET, "\uF0B7", JC_LEFT, getPPr(5040, 360), getRPr(R_FONTS_SYMBOL)),
-                getLvl(7L, "04090003", TRUE, 1L, BULLET, "o", JC_LEFT, getPPr(5760, 360), getRPr(R_FONTS_COURIER_NEW)),
-                getLvl(8L, "04090005", TRUE, 1L, BULLET, "\uF0A7", JC_LEFT, getPPr(6480, 360), getRPr(R_FONTS_WINDINGS))
-        };
+                getLvl(4L, "04090003", TRUE, 1L, BULLET, "\u00A7", JC_LEFT, getPPr(3600, 360), getRPr(R_FONTS_WINDINGS))};
     }
 
     private static Lvl[] getLvl8() {
@@ -196,12 +161,7 @@ public class NumberingHelper {
                 getLvl(1L, "04090003", TRUE, 1L, BULLET, "\uF0FC", JC_LEFT, getPPr(1440, 360), getRPr(R_FONTS_WINDINGS)),
                 getLvl(2L, "04090005", TRUE, 1L, BULLET, "\uF0B7", JC_LEFT, getPPr(2160, 360), getRPr(R_FONTS_SYMBOL)),
                 getLvl(3L, "04090001", TRUE, 1L, BULLET, "\u00A7", JC_LEFT, getPPr(2880, 360), getRPr(R_FONTS_WINDINGS)),
-                getLvl(4L, "04090003", TRUE, 1L, BULLET, "o", JC_LEFT, getPPr(3600, 360), getRPr(R_FONTS_COURIER_NEW)),
-                getLvl(5L, "04090005", TRUE, 1L, BULLET, "\uF0A7", JC_LEFT, getPPr(4320, 360), getRPr(R_FONTS_WINDINGS)),
-                getLvl(6L, "04090001", TRUE, 1L, BULLET, "\uF0B7", JC_LEFT, getPPr(5040, 360), getRPr(R_FONTS_SYMBOL)),
-                getLvl(7L, "04090003", TRUE, 1L, BULLET, "o", JC_LEFT, getPPr(5760, 360), getRPr(R_FONTS_COURIER_NEW)),
-                getLvl(8L, "04090005", TRUE, 1L, BULLET, "\uF0A7", JC_LEFT, getPPr(6480, 360), getRPr(R_FONTS_WINDINGS))
-        };
+                getLvl(4L, "04090003", TRUE, 1L, BULLET, "o", JC_LEFT, getPPr(3600, 360), getRPr(R_FONTS_COURIER_NEW))};
     }
 
     private static Lvl[] getLvl9() {
@@ -210,12 +170,7 @@ public class NumberingHelper {
                 getLvl(1L, "04090003", TRUE, 1L, BULLET, "\uF0B7", JC_LEFT, getPPr(1440, 360), getRPr(R_FONTS_SYMBOL)),
                 getLvl(2L, "0409000D", TRUE, 1L, BULLET, "\u00A7", JC_LEFT, getPPr(2160, 360), getRPr(R_FONTS_WINDINGS)),
                 getLvl(3L, "04090001", TRUE, 1L, BULLET, "o", JC_LEFT, getPPr(2880, 360), getRPr(R_FONTS_COURIER_NEW)),
-                getLvl(4L, "04090003", TRUE, 1L, BULLET, "\uF0D8", JC_LEFT, getPPr(3600, 360), getRPr(R_FONTS_WINDINGS)),
-                getLvl(5L, "04090005", TRUE, 1L, BULLET, "\uF0A7", JC_LEFT, getPPr(4320, 360), getRPr(R_FONTS_WINDINGS)),
-                getLvl(6L, "04090001", TRUE, 1L, BULLET, "\uF0B7", JC_LEFT, getPPr(5040, 360), getRPr(R_FONTS_SYMBOL)),
-                getLvl(7L, "04090003", TRUE, 1L, BULLET, "o", JC_LEFT, getPPr(5760, 360), getRPr(R_FONTS_COURIER_NEW)),
-                getLvl(8L, "04090005", TRUE, 1L, BULLET, "\uF0A7", JC_LEFT, getPPr(6480, 360), getRPr(R_FONTS_WINDINGS))
-        };
+                getLvl(4L, "04090003", TRUE, 1L, BULLET, "\uF0D8", JC_LEFT, getPPr(3600, 360), getRPr(R_FONTS_WINDINGS))};
     }
 
     private static Lvl getLvl(long ilvl, String tplc, Boolean tentative, long startValue, NumberFormat numFmtValue,
