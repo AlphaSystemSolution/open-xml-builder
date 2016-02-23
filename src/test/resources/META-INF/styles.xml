@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<w:styles xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+          xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"
+          mc:Ignorable="w14 w15">
+    <w:style w:type="paragraph" w:customStyle="1" w:styleId="SideBarTitle">
+        <w:name w:val="SideBar Title"/>
+        <w:basedOn w:val="Normal"/>
+        <w:link w:val="SideBarTitleChar"/>
+        <w:qFormat/>
+        <w:rsid w:val="00F31842"/>
+        <w:pPr>
+            <w:spacing w:before="120" w:after="280"/>
+            <w:jc w:val="center"/>
+        </w:pPr>
+        <w:rPr>
+            <w:rFonts w:ascii="Century" w:hAnsi="Century"/>
+            <w:b/>
+            <w:bCs/>
+            <w:color w:val="7A2518"/>
+            <w:sz w:val="32"/>
+            <w:szCs w:val="32"/>
+        </w:rPr>
+    </w:style>
+    <w:style w:type="character" w:customStyle="1" w:styleId="SideBarTitleChar">
+        <w:name w:val="SideBar Title Char"/>
+        <w:basedOn w:val="DefaultParagraphFont"/>
+        <w:link w:val="SideBarTitle0"/>
+        <w:rsid w:val="00F31842"/>
+        <w:rPr>
+            <w:rFonts w:ascii="Century" w:hAnsi="Century"/>
+            <w:b/>
+            <w:bCs/>
+            <w:color w:val="7A2518"/>
+            <w:sz w:val="32"/>
+            <w:szCs w:val="32"/>
+        </w:rPr>
+    </w:style>
+    <w:style w:type="paragraph" w:customStyle="1" w:styleId="ExampleTitle">
+        <w:name w:val="ExampleTitle"/>
+        <w:basedOn w:val="Normal"/>
+        <w:link w:val="ExampleTitleChar"/>
+        <w:qFormat/>
+        <w:rsid w:val="00BC0CAB"/>
+        <w:rPr>
+            <w:i/>
+            <w:iCs/>
+            <w:color w:val="7A2518"/>
+            <w:sz w:val="24"/>
+            <w:szCs w:val="24"/>
+        </w:rPr>
+    </w:style>
+    <w:style w:type="character" w:customStyle="1" w:styleId="ExampleTitleChar">
+        <w:name w:val="ExampleTitle Char"/>
+        <w:basedOn w:val="DefaultParagraphFont"/>
+        <w:link w:val="ExampleTitle"/>
+        <w:rsid w:val="00BC0CAB"/>
+        <w:rPr>
+            <w:i/>
+            <w:iCs/>
+            <w:color w:val="7A2518"/>
+            <w:sz w:val="24"/>
+            <w:szCs w:val="24"/>
+        </w:rPr>
+    </w:style>
+</w:styles>

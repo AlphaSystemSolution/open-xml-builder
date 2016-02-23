@@ -22,12 +22,11 @@ import org.docx4j.wml.TcPrInner.GridSpan;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.namespace.QName;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 
 import static com.alphasystem.openxml.builder.OpenXmlBuilder.OBJECT_FACTORY;
 import static com.alphasystem.openxml.builder.wml.WmlBuilderFactory.*;
@@ -52,33 +51,29 @@ public class WmlAdapter {
     private static void addCustomStyle(WordprocessingMLPackage wordDoc, String styleFilePrefix) {
         StyleDefinitionsPart sdp = wordDoc.getMainDocumentPart()
                 .getStyleDefinitionsPart();
-        Styles styles = null;
+        Styles styles = getStylesBuilder().getObject();
         ClassLoader contextClassLoader = currentThread().getContextClassLoader();
         try {
-            Enumeration<URL> resources = contextClassLoader
-                    .getResources(String.format("META-INF/%s.xml", styleFilePrefix));
+            Enumeration<URL> resources = contextClassLoader.getResources(format("META-INF/%s.xml", styleFilePrefix));
             if (resources != null) {
+                List<URL> urls = new ArrayList<>();
                 while (resources.hasMoreElements()) {
-                    URL url = resources.nextElement();
-                    InputStream ins = url.openStream();
-                    if (ins != null) {
-                        try {
-                            if(styles == null) {
-                                styles = (Styles) XmlUtils.unmarshal(ins);
-                            } else {
-                                final Styles otherStyles = (Styles) XmlUtils.unmarshal(ins);
-                                styles.getStyle().addAll(otherStyles.getStyle());
-                            }
-                        } catch (JAXBException e) {
-                            e.printStackTrace();
-                        }
+                    urls.add(resources.nextElement());
+                }
+                for (int i = urls.size() - 1; i >= 0; i--) {
+                    final URL url = urls.get(i);
+                    try (InputStream ins = url.openStream()) {
+                        final Styles otherStyles = (Styles) XmlUtils.unmarshal(ins);
+                        styles.getStyle().addAll(otherStyles.getStyle());
+                    } catch (JAXBException e) {
+                        e.printStackTrace();
                     }
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new UncheckedIOException(e.getMessage(), e);
         }
-        if(styles != null) {
+        if (styles != null) {
             sdp.setJaxbElement(styles);
         }
     }
