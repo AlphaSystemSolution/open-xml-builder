@@ -1,9 +1,8 @@
 /**
  *
  */
-package com.alphasystem.openxml.builder;
+package com.alphasystem.openxml.builder.wml;
 
-import com.alphasystem.openxml.builder.wml.PPrBuilder;
 import org.docx4j.Docx4J;
 import org.docx4j.XmlUtils;
 import org.docx4j.convert.out.FOSettings;
@@ -14,6 +13,7 @@ import org.docx4j.fonts.PhysicalFonts;
 import org.docx4j.openpackaging.exceptions.Docx4JException;
 import org.docx4j.openpackaging.exceptions.InvalidFormatException;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
+import org.docx4j.openpackaging.parts.WordprocessingML.NumberingDefinitionsPart;
 import org.docx4j.openpackaging.parts.WordprocessingML.StyleDefinitionsPart;
 import org.docx4j.wml.*;
 import org.docx4j.wml.PPrBase.PStyle;
@@ -30,9 +30,10 @@ import java.net.URL;
 import java.util.Enumeration;
 
 import static com.alphasystem.openxml.builder.OpenXmlBuilder.OBJECT_FACTORY;
-import static com.alphasystem.openxml.builder.OpenXmlBuilderFactory.*;
+import static com.alphasystem.openxml.builder.wml.WmlBuilderFactory.*;
 import static com.alphasystem.util.IdGenerator.nextId;
 import static java.lang.String.format;
+import static java.lang.Thread.currentThread;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.docx4j.openpackaging.parts.relationships.Namespaces.NS_WORD12;
 import static org.docx4j.wml.STBrType.PAGE;
@@ -40,7 +41,7 @@ import static org.docx4j.wml.STBrType.PAGE;
 /**
  * @author sali
  */
-public class OpenXmlAdapter {
+public class WmlAdapter {
 
     public static final Text SINGLE_SPACE = getText(" ", "preserve");
 
@@ -51,7 +52,7 @@ public class OpenXmlAdapter {
     private static void addCustomStyle(WordprocessingMLPackage wordDoc, String styleFilePrefix) {
         StyleDefinitionsPart sdp = wordDoc.getMainDocumentPart()
                 .getStyleDefinitionsPart();
-        ClassLoader contextClassLoader = Thread.currentThread()
+        ClassLoader contextClassLoader = currentThread()
                 .getContextClassLoader();
         try {
             Enumeration<URL> resources = contextClassLoader
@@ -99,6 +100,9 @@ public class OpenXmlAdapter {
         WordprocessingMLPackage wordprocessingMLPackage = WordprocessingMLPackage
                 .createPackage();
         addCustomStyle(wordprocessingMLPackage, styleFilePrefix);
+        NumberingDefinitionsPart ndp = new NumberingDefinitionsPart();
+        ndp.setJaxbElement(NumberingHelper.createNumbering());
+        wordprocessingMLPackage.getMainDocumentPart().addTargetPart(ndp);
         return wordprocessingMLPackage;
     }
 
@@ -117,6 +121,10 @@ public class OpenXmlAdapter {
             sdp.setJaxbElement(customStyles);
         }
         return wordDoc;
+    }
+
+    public static CTLongHexNumber getCtLongHexNumber(String value) {
+        return getCTLongHexNumberBuilder().withVal(value).getObject();
     }
 
     /**

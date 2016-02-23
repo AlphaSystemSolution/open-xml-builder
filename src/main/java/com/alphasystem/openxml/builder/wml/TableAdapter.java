@@ -1,12 +1,8 @@
 /**
  *
  */
-package com.alphasystem.openxml.builder;
+package com.alphasystem.openxml.builder.wml;
 
-import com.alphasystem.openxml.builder.wml.TblBuilder;
-import com.alphasystem.openxml.builder.wml.TblGridBuilder;
-import com.alphasystem.openxml.builder.wml.TcPrBuilder;
-import com.alphasystem.openxml.builder.wml.TrBuilder;
 import org.docx4j.wml.*;
 import org.docx4j.wml.CTTblPrBase.TblStyle;
 import org.docx4j.wml.TcPrInner.GridSpan;
@@ -15,8 +11,8 @@ import org.docx4j.wml.TcPrInner.TcBorders;
 import java.math.BigDecimal;
 import java.math.MathContext;
 
-import static com.alphasystem.openxml.builder.OpenXmlAdapter.getGridSpan;
-import static com.alphasystem.openxml.builder.OpenXmlBuilderFactory.*;
+import static com.alphasystem.openxml.builder.wml.WmlAdapter.getGridSpan;
+import static com.alphasystem.openxml.builder.wml.WmlBuilderFactory.*;
 import static com.alphasystem.util.IdGenerator.nextId;
 import static java.lang.String.format;
 import static java.math.RoundingMode.CEILING;
@@ -99,8 +95,7 @@ public class TableAdapter {
      * @return
      * @throws ArrayIndexOutOfBoundsException
      */
-    public TableAdapter addColumn(Integer columnIndex, Integer gridSpanValue,
-                                  TcBorders borders, P... paras)
+    public TableAdapter addColumn(Integer columnIndex, Integer gridSpanValue, TcBorders borders, P... paras)
             throws ArrayIndexOutOfBoundsException {
         checkColumnIndex(columnIndex);
         Integer cw = columnsWidths[columnIndex];
@@ -123,6 +118,33 @@ public class TableAdapter {
         }
         Tc tc = getTcBuilder().withTcPr(tcPrBuilder.getObject())
                 .addContent((Object[]) paras).getObject();
+        trBuilder.addContent(tc);
+        return this;
+    }
+
+    public TableAdapter addColumn(Integer columnIndex, Integer gridSpanValue, TcPr tcPr, Object... content) {
+        checkColumnIndex(columnIndex);
+        Integer cw = columnsWidths[columnIndex];
+        GridSpan gridSpan = getGridSpan(1);
+        if (gridSpanValue != null && gridSpanValue > 1) {
+            // sanity check, make sure we are not going out of bound
+            checkColumnIndex(columnIndex + gridSpanValue - 1);
+            // iterate through width and get the total width for the gridspan
+            for (int i = columnIndex + 1; i < gridSpanValue; i++) {
+                cw += columnsWidths[i];
+            }
+            gridSpan = getGridSpan(gridSpanValue);
+        }
+        TblWidth tblWidth = getTblWidthBuilder().withType(TYPE_PCT).withW(cw.toString()).getObject();
+        TcPrBuilder tcPrBuilder = getTcPrBuilder().withGridSpan(gridSpan).withTcW(tblWidth);
+        if (tcPr != null) {
+            tcPrBuilder.withCellDel(tcPr.getCellDel()).withCellIns(tcPr.getCellIns()).withCellMerge(tcPr.getCellMerge())
+                    .withCnfStyle(tcPr.getCnfStyle()).withHideMark(tcPr.getHideMark()).withHMerge(tcPr.getHMerge())
+                    .withNoWrap(tcPr.getNoWrap()).withShd(tcPr.getShd()).withTcBorders(tcPr.getTcBorders())
+                    .withTcFitText(tcPr.getTcFitText()).withTcMar(tcPr.getTcMar()).withTcPrChange(tcPr.getTcPrChange())
+                    .withTextDirection(tcPr.getTextDirection()).withVAlign(tcPr.getVAlign()).withVMerge(tcPr.getVMerge());
+        }
+        Tc tc = getTcBuilder().withTcPr(tcPrBuilder.getObject()).addContent(content).getObject();
         trBuilder.addContent(tc);
         return this;
     }
