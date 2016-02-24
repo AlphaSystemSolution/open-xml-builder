@@ -8,6 +8,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static com.alphasystem.openxml.builder.wml.WmlBuilderFactory.getRPrBuilder;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.docx4j.wml.NumberFormat.BULLET;
 
 /**
@@ -59,7 +60,8 @@ public enum UnorderedListItem implements ListItem<UnorderedListItem> {
     }
 
     public static UnorderedListItem getByStyleName(String styleName) {
-        return valuesMap.get(styleName);
+        final UnorderedListItem item = isBlank(styleName) ? null : valuesMap.get(styleName);
+        return (item == null) ? DOT : item;
     }
 
     private final int numberId;

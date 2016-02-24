@@ -7,6 +7,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static java.lang.String.format;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /**
  * @author sali
@@ -57,7 +58,8 @@ public enum OrderedListItem implements ListItem<OrderedListItem> {
     }
 
     public static OrderedListItem getByStyleName(String styleName) {
-        return valuesMap.get(styleName);
+        final OrderedListItem item = isBlank(styleName) ? null : valuesMap.get(styleName);
+        return (item == null) ? ARABIC : item;
     }
 
     private final int numberId;
