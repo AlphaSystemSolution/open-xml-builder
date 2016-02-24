@@ -130,8 +130,8 @@ public class WmlAdapter {
         return wordDoc;
     }
 
-    public static PPr getListParagraphProperties(long listId, long number) {
-        final PPrBaseNumPrIlvlBuilder ilvlBuilder = getPPrBaseNumPrIlvlBuilder().withVal(valueOf(number));
+    public static PPr getListParagraphProperties(long listId, long level) {
+        final PPrBaseNumPrIlvlBuilder ilvlBuilder = getPPrBaseNumPrIlvlBuilder().withVal(valueOf(level));
         final PPrBaseNumPrNumIdBuilder numIdBuilder = getPPrBaseNumPrNumIdBuilder().withVal(valueOf(listId));
         final PPrBaseNumPrBuilder numPrBuilder = getPPrBaseNumPrBuilder().withIlvl(ilvlBuilder.getObject())
                 .withNumId(numIdBuilder.getObject());
