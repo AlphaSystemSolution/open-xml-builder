@@ -32,6 +32,7 @@ import static com.alphasystem.openxml.builder.OpenXmlBuilder.OBJECT_FACTORY;
 import static com.alphasystem.openxml.builder.wml.WmlBuilderFactory.*;
 import static com.alphasystem.util.IdGenerator.nextId;
 import static java.lang.String.format;
+import static java.lang.String.valueOf;
 import static java.lang.Thread.currentThread;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.docx4j.openpackaging.parts.relationships.Namespaces.NS_WORD12;
@@ -127,6 +128,14 @@ public class WmlAdapter {
             sdp.setJaxbElement(customStyles);
         }
         return wordDoc;
+    }
+
+    public static PPr getListParagraphProperties(long listId, long number) {
+        final PPrBaseNumPrIlvlBuilder ilvlBuilder = getPPrBaseNumPrIlvlBuilder().withVal(valueOf(number));
+        final PPrBaseNumPrNumIdBuilder numIdBuilder = getPPrBaseNumPrNumIdBuilder().withVal(valueOf(listId));
+        final PPrBaseNumPrBuilder numPrBuilder = getPPrBaseNumPrBuilder().withIlvl(ilvlBuilder.getObject())
+                .withNumId(numIdBuilder.getObject());
+        return getPPrBuilder().withNumPr(numPrBuilder.getObject()).withPStyle(getPStyle("ListParagraph")).getObject();
     }
 
     public static CTLongHexNumber getCtLongHexNumber(String value) {

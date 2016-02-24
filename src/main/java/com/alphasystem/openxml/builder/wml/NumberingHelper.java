@@ -1,29 +1,47 @@
 package com.alphasystem.openxml.builder.wml;
 
+import com.alphasystem.util.IdGenerator;
 import org.docx4j.wml.*;
 import org.docx4j.wml.Numbering.AbstractNum;
 import org.docx4j.wml.Numbering.AbstractNum.MultiLevelType;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static com.alphasystem.openxml.builder.wml.WmlAdapter.getCtLongHexNumber;
 import static com.alphasystem.openxml.builder.wml.WmlBuilderFactory.*;
 import static java.lang.Boolean.TRUE;
-import static org.docx4j.wml.NumberFormat.*;
-import static org.docx4j.wml.STHint.DEFAULT;
+import static org.apache.commons.lang3.ArrayUtils.add;
 
 /**
  * @author sali
  */
 public class NumberingHelper {
 
-    private static final RFonts R_FONTS_WINDINGS = getRFonts("Wingdings", "Wingdings");
-    public static final RFonts R_FONTS_COURIER_NEW = getRFonts("Courier New", "Courier New", "Courier New");
-    public static final RFonts R_FONTS_SYMBOL = getRFonts("Symbol", "Symbol");
+    private static final int LEFT_INDENT_VALUE = 720;
+    private static final int HANGING_VALUE = 360;
 
     public static Numbering createNumbering() {
-        return getNumberingBuilder().addAbstractNum(getAbstractNum0(), getAbstractNum1(), getAbstractNum2(),
-                getAbstractNum3(), getAbstractNum4(), getAbstractNum5(), getAbstractNum6(), getAbstractNum7(),
-                getAbstractNum8(), getAbstractNum9()).addNum(getNum(1), getNum(2), getNum(3), getNum(4), getNum(5),
-                getNum(6), getNum(7), getNum(8), getNum(9), getNum(10)).getObject();
+        final NumberingBuilder numberingBuilder = getNumberingBuilder();
+        populate(numberingBuilder);
+        return numberingBuilder.getObject();
+    }
+
+    @SuppressWarnings({"unchecked"})
+    private static <T extends Enum<T> & ListItem<T>> List<T> getListItems(T firstItem) {
+        List<T> list = new ArrayList<>();
+        list.add(firstItem);
+        T currentItem = firstItem;
+        while (true) {
+            final T item = currentItem.getNext();
+            if (item.equals(firstItem)) {
+                break;
+            }
+            currentItem = item;
+            list.add(item);
+        }
+
+        return list;
     }
 
     private static AbstractNum getAbstractNum(long id, String nsId, String tmpl, Lvl[] lvls) {
@@ -42,168 +60,71 @@ public class NumberingHelper {
         return getNum(numId, numId - 1);
     }
 
-    private static AbstractNum getAbstractNum0() {
-        return getAbstractNum(0L, "4BAB24DE", "2FD0B640", getLvl0());
+    private static void populate(NumberingBuilder numberingBuilder) {
+        for (OrderedListItem orderedListItem : OrderedListItem.values()) {
+            populateOrderedListItem(numberingBuilder, orderedListItem);
+        }
+        for (UnorderedListItem unorderedListItem : UnorderedListItem.values()) {
+            populateUnorderedListItem(numberingBuilder, unorderedListItem);
+        }
     }
 
-    private static AbstractNum getAbstractNum1() {
-        return getAbstractNum(1L, "269A1BDF", "C80AC14C", getLvl1());
+    private static void populateOrderedListItem(NumberingBuilder numberingBuilder, OrderedListItem initialItem) {
+        final List<OrderedListItem> orderedListItems = getListItems(initialItem);
+        long abstractNumId = initialItem.getNumberId() - 1;
+        numberingBuilder.addAbstractNum(getAbstractNum(abstractNumId, IdGenerator.nextId(), IdGenerator.nextId(),
+                getOrderedListLevels(orderedListItems))).addNum(getNum(initialItem.getNumberId()));
     }
 
-    private static AbstractNum getAbstractNum2() {
-        return getAbstractNum(2L, "6AA214B3", "84B0FCEA", getLvl2());
+    private static void populateUnorderedListItem(NumberingBuilder numberingBuilder, UnorderedListItem initialItem) {
+        final List<UnorderedListItem> unorderedListItems = getListItems(initialItem);
+        long abstractNumId = initialItem.getNumberId() - 1;
+        numberingBuilder.addAbstractNum(getAbstractNum(abstractNumId, IdGenerator.nextId(), IdGenerator.nextId(),
+                getUnorderedListLevels(unorderedListItems))).addNum(getNum(initialItem.getNumberId()));
     }
 
-    private static AbstractNum getAbstractNum3() {
-        return getAbstractNum(3L, "014C68C2", "2A206E70", getLvl3());
+    private static Lvl[] getOrderedListLevels(List<OrderedListItem> orderedListItems) {
+        int level = 0;
+        Lvl[] lvls = new Lvl[0];
+        for (OrderedListItem orderedListItem : orderedListItems) {
+            lvls = add(lvls, getLevel(orderedListItem, level));
+            level++;
+        }
+        return lvls;
     }
 
-    private static AbstractNum getAbstractNum4() {
-        return getAbstractNum(4L, "3DD8374A", "B868EB5A", getLvl4());
+    private static Lvl[] getUnorderedListLevels(List<UnorderedListItem> unorderedListItems) {
+        int level = 0;
+        Lvl[] lvls = new Lvl[0];
+        for (UnorderedListItem unorderedListItem : unorderedListItems) {
+            lvls = add(lvls, getLevel(unorderedListItem, level));
+            level++;
+        }
+        return lvls;
     }
 
-    private static AbstractNum getAbstractNum5() {
-        return getAbstractNum(5L, "211A17A4", "2C6481B8", getLvl5());
-    }
-
-    private static AbstractNum getAbstractNum6() {
-        return getAbstractNum(6L, "22FF4E64", "37D2C838", getLvl6());
-    }
-
-    private static AbstractNum getAbstractNum7() {
-        return getAbstractNum(7L, "34611B3C", "21A2C23C", getLvl7());
-    }
-
-    private static AbstractNum getAbstractNum8() {
-        return getAbstractNum(8L, "0E807AB3", "FD4E2FB8", getLvl8());
-    }
-
-    private static AbstractNum getAbstractNum9() {
-        return getAbstractNum(9L, "03224B5A", "0AAE169E", getLvl9());
-    }
-
-
-    private static Lvl[] getLvl0() {
-        return new Lvl[]{
-                getLvl(0L, "DAEC4FFA", null, DECIMAL, "%1.", getPPr(720, 360)),
-                getLvl(1L, "04090019", TRUE, UPPER_ROMAN, "%2.", getPPr(1440, 360)),
-                getLvl(2L, "0409001B", TRUE, UPPER_LETTER, "%3.", getPPr(2160, 360)),
-                getLvl(3L, "0409000F", TRUE, LOWER_ROMAN, "%4.", getPPr(2880, 360)),
-                getLvl(4L, "04090019", TRUE, LOWER_LETTER, "%5.", getPPr(3600, 360))};
-    }
-
-    private static Lvl[] getLvl1() {
-        return new Lvl[]{
-                getLvl(0L, "04090013", null, UPPER_ROMAN, "%1.", getPPr(720, 360)),
-                getLvl(1L, "04090019", TRUE, UPPER_LETTER, "%2.", getPPr(1440, 360)),
-                getLvl(2L, "0409001B", TRUE, LOWER_ROMAN, "%3.", getPPr(2160, 360)),
-                getLvl(3L, "0409000F", TRUE, LOWER_LETTER, "%4.", getPPr(2880, 360)),
-                getLvl(4L, "04090019", TRUE, DECIMAL, "%5.", getPPr(3600, 360))};
-    }
-
-    private static Lvl[] getLvl2() {
-        return new Lvl[]{
-                getLvl(0L, "04090017", null, UPPER_LETTER, "%1.", getPPr(720, 360)),
-                getLvl(1L, "04090019", TRUE, LOWER_ROMAN, "%2.", getPPr(1440, 360)),
-                getLvl(2L, "0409001B", TRUE, LOWER_LETTER, "%3.", getPPr(2160, 360)),
-                getLvl(3L, "0409000F", TRUE, DECIMAL, "%4.", getPPr(2880, 360)),
-                getLvl(4L, "04090019", TRUE, UPPER_ROMAN, "%5.", getPPr(3600, 360))};
-    }
-
-    private static Lvl[] getLvl3() {
-        return new Lvl[]{
-                getLvl(0L, "0409001B", null, LOWER_ROMAN, "%1.", getPPr(720, 360)),
-                getLvl(1L, "04090019", TRUE, LOWER_LETTER, "%2.", getPPr(1440, 360)),
-                getLvl(2L, "0409001B", TRUE, DECIMAL, "%3.", getPPr(2160, 360)),
-                getLvl(3L, "0409000F", TRUE, UPPER_ROMAN, "%4.", getPPr(2880, 360)),
-                getLvl(4L, "04090019", TRUE, UPPER_LETTER, "%5.", getPPr(3600, 360))};
-    }
-
-    private static Lvl[] getLvl4() {
-        return new Lvl[]{
-                getLvl(0L, "04090019", null, LOWER_LETTER, "%1.", getPPr(720, 360)),
-                getLvl(1L, "04090019", TRUE, DECIMAL, "%2.", getPPr(1440, 360)),
-                getLvl(2L, "0409001B", TRUE, UPPER_ROMAN, "%3.", getPPr(2160, 360)),
-                getLvl(3L, "0409000F", TRUE, UPPER_LETTER, "%4.", getPPr(2880, 360)),
-                getLvl(4L, "04090019", TRUE, LOWER_ROMAN, "%5.", getPPr(3600, 360))};
-    }
-
-    private static Lvl[] getLvl5() {
-        return new Lvl[]{
-                getLvl(0L, "04090001", null,  BULLET, "\uF0B7",  getPPr(720, 360), getRPr(R_FONTS_SYMBOL)),
-                getLvl(1L, "04090003", TRUE,  BULLET, "\u00A7",  getPPr(1440, 360), getRPr(R_FONTS_WINDINGS)),
-                getLvl(2L, "04090005", TRUE,  BULLET, "o",  getPPr(2160, 360), getRPr(R_FONTS_COURIER_NEW)),
-                getLvl(3L, "04090001", TRUE,  BULLET, "\uF0D8",  getPPr(2880, 360), getRPr(R_FONTS_WINDINGS)),
-                getLvl(4L, "04090003", TRUE,  BULLET, "\uF0FC",  getPPr(3600, 360), getRPr(R_FONTS_WINDINGS))};
-    }
-
-    private static Lvl[] getLvl6() {
-        return new Lvl[]{
-                getLvl(0L, "04090005", null,  BULLET, "\u00A7",  getPPr(720, 360), getRPr(R_FONTS_WINDINGS)),
-                getLvl(1L, "04090003", TRUE,  BULLET, "o",  getPPr(1440, 360), getRPr(R_FONTS_COURIER_NEW)),
-                getLvl(2L, "04090005", TRUE,  BULLET, "\uF0D8",  getPPr(2160, 360), getRPr(R_FONTS_WINDINGS)),
-                getLvl(3L, "04090001", TRUE,  BULLET, "\uF0FC",  getPPr(2880, 360), getRPr(R_FONTS_WINDINGS)),
-                getLvl(4L, "04090003", TRUE,  BULLET, "\uF0B7",  getPPr(3600, 360), getRPr(R_FONTS_SYMBOL))};
-    }
-
-    private static Lvl[] getLvl7() {
-        return new Lvl[]{
-                getLvl(0L, "04090003", null,  BULLET, "o",  getPPr(720, 360), getRPr(R_FONTS_COURIER_NEW)),
-                getLvl(1L, "04090003", TRUE, BULLET, "\uF0D8",  getPPr(1440, 360), getRPr(R_FONTS_WINDINGS)),
-                getLvl(2L, "04090005", TRUE,  BULLET, "\uF0FC",  getPPr(2160, 360), getRPr(R_FONTS_WINDINGS)),
-                getLvl(3L, "04090001", TRUE,  BULLET, "\uF0B7",  getPPr(2880, 360), getRPr(R_FONTS_SYMBOL)),
-                getLvl(4L, "04090003", TRUE,  BULLET, "\u00A7",  getPPr(3600, 360), getRPr(R_FONTS_WINDINGS))};
-    }
-
-    private static Lvl[] getLvl8() {
-        return new Lvl[]{
-                getLvl(0L, "0409000B", null,  BULLET, "\uF0D8",  getPPr(720, 360), getRPr(R_FONTS_WINDINGS)),
-                getLvl(1L, "04090003", TRUE,  BULLET, "\uF0FC",  getPPr(1440, 360), getRPr(R_FONTS_WINDINGS)),
-                getLvl(2L, "04090005", TRUE,  BULLET, "\uF0B7",  getPPr(2160, 360), getRPr(R_FONTS_SYMBOL)),
-                getLvl(3L, "04090001", TRUE,  BULLET, "\u00A7",  getPPr(2880, 360), getRPr(R_FONTS_WINDINGS)),
-                getLvl(4L, "04090003", TRUE,  BULLET, "o",  getPPr(3600, 360), getRPr(R_FONTS_COURIER_NEW))};
-    }
-
-    private static Lvl[] getLvl9() {
-        return new Lvl[]{
-                getLvl(0L, "0409000D", null,  BULLET, "\uF0FC",  getPPr(720, 360), getRPr(R_FONTS_WINDINGS)),
-                getLvl(1L, "04090003", TRUE,  BULLET, "\uF0B7",  getPPr(1440, 360), getRPr(R_FONTS_SYMBOL)),
-                getLvl(2L, "0409000D", TRUE,  BULLET, "\u00A7",  getPPr(2160, 360), getRPr(R_FONTS_WINDINGS)),
-                getLvl(3L, "04090001", TRUE,  BULLET, "o",  getPPr(2880, 360), getRPr(R_FONTS_COURIER_NEW)),
-                getLvl(4L, "04090003", TRUE,  BULLET, "\uF0D8",  getPPr(3600, 360), getRPr(R_FONTS_WINDINGS))};
-    }
-
-    private static Lvl getLvl(long ilvl, String tplc, Boolean tentative, NumberFormat numFmtValue, String lvlTextValue,
-                              PPr pPr) {
-        return getLvl(ilvl, tplc, tentative, 1L, numFmtValue, lvlTextValue, JC_LEFT, pPr, null);
+    private static <T extends Enum<T> & ListItem<T>> Lvl getLevel(T item, int levelId) {
+        final boolean initialLevel = levelId <= 0L;
+        Boolean tentative = initialLevel ? null : TRUE;
+        final int number = levelId + 1;
+        String levelTextValue = item.getValue(number);
+        long leftIndentValue = initialLevel ? LEFT_INDENT_VALUE : (LEFT_INDENT_VALUE * number);
+        return getLvl(levelId, item.getId(), tentative, item.getNumberFormat(), levelTextValue,
+                getPPr(leftIndentValue, HANGING_VALUE), item.getRPr());
     }
 
     private static Lvl getLvl(long ilvl, String tplc, Boolean tentative, NumberFormat numFmtValue, String lvlTextValue,
                               PPr pPr, RPr rPr) {
-        return getLvl(ilvl, tplc, tentative, 1L, numFmtValue, lvlTextValue, null, JC_LEFT, pPr, rPr);
-    }
-
-    private static Lvl getLvl(long ilvl, String tplc, Boolean tentative, long startValue, NumberFormat numFmtValue,
-                              String lvlTextValue, Jc jc, PPr pPr) {
-        return getLvl(ilvl, tplc, tentative, startValue, numFmtValue, lvlTextValue, jc, pPr, null);
+        return getLvl(ilvl, tplc, tentative, 1L, numFmtValue, lvlTextValue, JC_LEFT, pPr, rPr);
     }
 
     private static Lvl getLvl(long ilvl, String tplc, Boolean tentative, long startValue, NumberFormat numFmtValue,
                               String lvlTextValue, Jc jc, PPr pPr, RPr rPr) {
-        return getLvl(ilvl, tplc, tentative, startValue, numFmtValue, lvlTextValue, null, jc, pPr, rPr);
-    }
-
-    private static Lvl getLvl(long ilvl, String tplc, Boolean tentative, long startValue, NumberFormat numFmtValue,
-                              String lvlTextValue, Long picBulletIdValue, Jc jc, PPr pPr, RPr rPr) {
         Lvl.Start start = getLvlStartBuilder().withVal(startValue).getObject();
         NumFmt numFmt = getNumFmtBuilder().withVal(numFmtValue).getObject();
         Lvl.LvlText lvlText = getLvlLvlTextBuilder().withVal(lvlTextValue).getObject();
-        Lvl.LvlPicBulletId picBulletId = null;
-        if (picBulletIdValue != null) {
-            picBulletId = getLvlLvlPicBulletIdBuilder().withVal(picBulletIdValue).getObject();
-        }
         return getLvlBuilder().withIlvl(ilvl).withTplc(tplc).withTentative(tentative).withStart(start).withNumFmt(numFmt)
-                .withLvlText(lvlText).withLvlJc(jc).withPPr(pPr).withRPr(rPr).withLvlPicBulletId(picBulletId).getObject();
+                .withLvlText(lvlText).withLvlJc(jc).withPPr(pPr).withRPr(rPr).getObject();
     }
 
     private static PPr getPPr(long leftValue, long hangingValue) {
@@ -211,15 +132,4 @@ public class NumberingHelper {
         return getPPrBuilder().withInd(ind).getObject();
     }
 
-    private static RPr getRPr(RFonts rFonts) {
-        return getRPrBuilder().withRFonts(rFonts).getObject();
-    }
-
-    private static RFonts getRFonts(String ascii, String hAnsi) {
-        return getRFonts(ascii, hAnsi, null);
-    }
-
-    private static RFonts getRFonts(String ascii, String hAnsi, String cs) {
-        return getRFontsBuilder().withAscii(ascii).withHAnsi(hAnsi).withCs(cs).withHint(DEFAULT).getObject();
-    }
 }
