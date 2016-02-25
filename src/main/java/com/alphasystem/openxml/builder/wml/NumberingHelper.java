@@ -5,26 +5,64 @@ import org.docx4j.wml.*;
 import org.docx4j.wml.Numbering.AbstractNum;
 import org.docx4j.wml.Numbering.AbstractNum.MultiLevelType;
 
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.alphasystem.openxml.builder.wml.WmlAdapter.getCtLongHexNumber;
 import static com.alphasystem.openxml.builder.wml.WmlBuilderFactory.*;
-import static java.lang.Boolean.TRUE;
+import static com.alphasystem.util.nio.NIOFileUtils.USER_DIR;
+import static java.nio.file.Files.write;
+import static java.nio.file.Paths.get;
 import static org.apache.commons.lang3.ArrayUtils.add;
+import static org.docx4j.XmlUtils.marshaltoString;
 
 /**
  * @author sali
  */
 public class NumberingHelper {
 
-    private static final int LEFT_INDENT_VALUE = 720;
-    private static final int HANGING_VALUE = 360;
+    private static final String META_INF = "META-INF";
+    private static final String NUMBERING_FILE_NAME = "numbering.xml";
 
-    public static Numbering createNumbering() {
-        final NumberingBuilder numberingBuilder = getNumberingBuilder();
-        populate(numberingBuilder);
-        return numberingBuilder.getObject();
+    public static void main(String[] args) {
+        try {
+            buildDefaultNumbering();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void buildDefaultNumbering() throws IOException {
+        NumberingBuilder numberingBuilder = getNumberingBuilder();
+        populate(numberingBuilder, OrderedListItem.values());
+        populate(numberingBuilder, UnorderedListItem.values());
+        Path path = save(get(USER_DIR, "src/main/resources", META_INF), numberingBuilder.getObject());
+        System.out.println(String.format("File created {%s}", path));
+
+        numberingBuilder = getNumberingBuilder();
+        populate(numberingBuilder, HeadingListItem.HEADING1);
+        path = save(get(USER_DIR, "src/main/resources", META_INF, "multi-level-heading"), numberingBuilder.getObject());
+        System.out.println(String.format("File created {%s}", path));
+    }
+
+    @SafeVarargs
+    public static <T extends Enum<T> & ListItem<T>> void populate(final NumberingBuilder numberingBuilder, T... items) {
+        for (T item : items) {
+            populate(numberingBuilder, item);
+        }
+    }
+
+    public static Path save(Path targetDir, Numbering numbering) throws IOException {
+        return write(get(targetDir.toString(), NUMBERING_FILE_NAME), marshaltoString(numbering).getBytes());
+    }
+
+    private static <T extends Enum<T> & ListItem<T>> void populate(NumberingBuilder numberingBuilder, T firstItem) {
+        final List<T> items = getListItems(firstItem);
+        long abstractNumId = firstItem.getNumberId() - 1;
+        numberingBuilder.addAbstractNum(getAbstractNum(abstractNumId, IdGenerator.nextId(), IdGenerator.nextId(),
+                firstItem.getMultiLevelType(), getLevels(items))).addNum(getNum(firstItem.getNumberId()));
     }
 
     @SuppressWarnings({"unchecked"})
@@ -34,7 +72,7 @@ public class NumberingHelper {
         T currentItem = firstItem;
         while (true) {
             final T item = currentItem.getNext();
-            if (item.equals(firstItem)) {
+            if (item == null || item.equals(firstItem)) {
                 break;
             }
             currentItem = item;
@@ -44,11 +82,15 @@ public class NumberingHelper {
         return list;
     }
 
-    private static AbstractNum getAbstractNum(long id, String nsId, String tmpl, Lvl[] lvls) {
-        final MultiLevelType multiLevelType = getNumberingAbstractNumMultiLevelTypeBuilder()
-                .withVal("hybridMultilevel").getObject();
+    private static AbstractNum getAbstractNum(long id, String nsId, String tmpl, String multiLevel, Lvl[] lvls) {
+        final MultiLevelType multiLevelType = (multiLevel == null) ? null :
+                getNumberingAbstractNumMultiLevelTypeBuilder().withVal(multiLevel).getObject();
         return getNumberingAbstractNumBuilder().withAbstractNumId(id).withNsid(getCtLongHexNumber(nsId))
                 .withTmpl(getCtLongHexNumber(tmpl)).withMultiLevelType(multiLevelType).addLvl(lvls).getObject();
+    }
+
+    private static Numbering.Num getNum(long numId) {
+        return getNum(numId, numId - 1);
     }
 
     private static Numbering.Num getNum(long numId, long abstractNumIdValue) {
@@ -56,75 +98,40 @@ public class NumberingHelper {
         return getNumberingNumBuilder().withNumId(numId).withAbstractNumId(abstractNumId).getObject();
     }
 
-    private static Numbering.Num getNum(long numId) {
-        return getNum(numId, numId - 1);
-    }
-
-    private static void populate(NumberingBuilder numberingBuilder) {
-        for (OrderedListItem orderedListItem : OrderedListItem.values()) {
-            populateOrderedListItem(numberingBuilder, orderedListItem);
-        }
-        for (UnorderedListItem unorderedListItem : UnorderedListItem.values()) {
-            populateUnorderedListItem(numberingBuilder, unorderedListItem);
-        }
-    }
-
-    private static void populateOrderedListItem(NumberingBuilder numberingBuilder, OrderedListItem initialItem) {
-        final List<OrderedListItem> orderedListItems = getListItems(initialItem);
-        long abstractNumId = initialItem.getNumberId() - 1;
-        numberingBuilder.addAbstractNum(getAbstractNum(abstractNumId, IdGenerator.nextId(), IdGenerator.nextId(),
-                getOrderedListLevels(orderedListItems))).addNum(getNum(initialItem.getNumberId()));
-    }
-
-    private static void populateUnorderedListItem(NumberingBuilder numberingBuilder, UnorderedListItem initialItem) {
-        final List<UnorderedListItem> unorderedListItems = getListItems(initialItem);
-        long abstractNumId = initialItem.getNumberId() - 1;
-        numberingBuilder.addAbstractNum(getAbstractNum(abstractNumId, IdGenerator.nextId(), IdGenerator.nextId(),
-                getUnorderedListLevels(unorderedListItems))).addNum(getNum(initialItem.getNumberId()));
-    }
-
-    private static Lvl[] getOrderedListLevels(List<OrderedListItem> orderedListItems) {
+    private static <T extends Enum<T> & ListItem<T>> Lvl[] getLevels(List<T> listItems) {
         int level = 0;
-        Lvl[] lvls = new Lvl[0];
-        for (OrderedListItem orderedListItem : orderedListItems) {
-            lvls = add(lvls, getLevel(orderedListItem, level));
+        Lvl[] levels = new Lvl[0];
+        for (T listItem : listItems) {
+            levels = add(levels, getLevel(listItem, level));
             level++;
         }
-        return lvls;
-    }
-
-    private static Lvl[] getUnorderedListLevels(List<UnorderedListItem> unorderedListItems) {
-        int level = 0;
-        Lvl[] lvls = new Lvl[0];
-        for (UnorderedListItem unorderedListItem : unorderedListItems) {
-            lvls = add(lvls, getLevel(unorderedListItem, level));
-            level++;
-        }
-        return lvls;
+        return levels;
     }
 
     private static <T extends Enum<T> & ListItem<T>> Lvl getLevel(T item, int levelId) {
-        final boolean initialLevel = levelId <= 0L;
-        Boolean tentative = initialLevel ? null : TRUE;
         final int number = levelId + 1;
         String levelTextValue = item.getValue(number);
-        long leftIndentValue = initialLevel ? LEFT_INDENT_VALUE : (LEFT_INDENT_VALUE * number);
-        return getLvl(levelId, item.getId(), tentative, item.getNumberFormat(), levelTextValue,
-                getPPr(leftIndentValue, HANGING_VALUE), item.getRPr());
+        String styleName = item.linkStyle() ? item.getStyleName() : null;
+        return getLvl(levelId, item.getId(), item.isTentative(levelId), item.getNumberFormat(), levelTextValue, styleName,
+                getPPr(item.getLeftIndent(levelId), item.getHangingValue(levelId)), item.getRPr());
     }
 
     private static Lvl getLvl(long ilvl, String tplc, Boolean tentative, NumberFormat numFmtValue, String lvlTextValue,
-                              PPr pPr, RPr rPr) {
-        return getLvl(ilvl, tplc, tentative, 1L, numFmtValue, lvlTextValue, JC_LEFT, pPr, rPr);
+                              String styleName, PPr pPr, RPr rPr) {
+        return getLvl(ilvl, tplc, tentative, 1L, numFmtValue, lvlTextValue, styleName, JC_LEFT, pPr, rPr);
     }
 
     private static Lvl getLvl(long ilvl, String tplc, Boolean tentative, long startValue, NumberFormat numFmtValue,
-                              String lvlTextValue, Jc jc, PPr pPr, RPr rPr) {
+                              String lvlTextValue, String styleName, Jc jc, PPr pPr, RPr rPr) {
         Lvl.Start start = getLvlStartBuilder().withVal(startValue).getObject();
         NumFmt numFmt = getNumFmtBuilder().withVal(numFmtValue).getObject();
         Lvl.LvlText lvlText = getLvlLvlTextBuilder().withVal(lvlTextValue).getObject();
+        Lvl.PStyle pStyle = null;
+        if (styleName != null) {
+            pStyle = getLvlPStyleBuilder().withVal(styleName).getObject();
+        }
         return getLvlBuilder().withIlvl(ilvl).withTplc(tplc).withTentative(tentative).withStart(start).withNumFmt(numFmt)
-                .withLvlText(lvlText).withLvlJc(jc).withPPr(pPr).withRPr(rPr).getObject();
+                .withLvlText(lvlText).withPStyle(pStyle).withLvlJc(jc).withPPr(pPr).withRPr(rPr).getObject();
     }
 
     private static PPr getPPr(long leftValue, long hangingValue) {
