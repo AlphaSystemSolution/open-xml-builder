@@ -50,7 +50,7 @@ public class NumberingHelper {
     @SafeVarargs
     public static <T extends Enum<T> & ListItem<T>> void populate(final NumberingBuilder numberingBuilder, T... items) {
         for (T item : items) {
-            populate(numberingBuilder, item);
+            populateOne(numberingBuilder, item);
         }
     }
 
@@ -58,7 +58,7 @@ public class NumberingHelper {
         return write(get(targetDir.toString(), NUMBERING_FILE_NAME), marshaltoString(numbering).getBytes());
     }
 
-    private static <T extends Enum<T> & ListItem<T>> void populate(NumberingBuilder numberingBuilder, T firstItem) {
+    private static <T extends Enum<T> & ListItem<T>> void populateOne(NumberingBuilder numberingBuilder, T firstItem) {
         final List<T> items = getListItems(firstItem);
         long abstractNumId = firstItem.getNumberId() - 1;
         numberingBuilder.addAbstractNum(getAbstractNum(abstractNumId, IdGenerator.nextId(), IdGenerator.nextId(),
