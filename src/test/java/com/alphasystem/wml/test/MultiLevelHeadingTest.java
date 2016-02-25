@@ -20,7 +20,7 @@ import static org.testng.Assert.fail;
  */
 public class MultiLevelHeadingTest {
 
-    private static final String PARENT_PATH = "C:\\Users\\sali\\git-hub\\AlphaSystemSolution\\open-xml-builder\\build";
+    private static final String PARENT_PATH = "C:\\Users\\sali\\git-hub\\AlphaSystemSolution\\open-xml-builder\\target";
 
     private WordprocessingMLPackage wmlPackage;
 
@@ -28,8 +28,6 @@ public class MultiLevelHeadingTest {
     public void setup() {
         try {
             wmlPackage = new WmlPackageBuilder().multiLevelHeading().getPackage();
-//            wmlPackage = WmlAdapter.createNewDoc(true, new String[]{"example-caption/styles.xml"},
-//                    new String[]{"example-caption/numbering.xml"});
         } catch (InvalidFormatException e) {
             fail(e.getMessage(), e);
         }
@@ -46,7 +44,18 @@ public class MultiLevelHeadingTest {
 
 
     @Test
-    public void createMultiLevelHeading() {
+    public void createMultiLevelHeading1() {
+        final MainDocumentPart mainDocumentPart = wmlPackage.getMainDocumentPart();
+        mainDocumentPart.addObject(getEmptyPara());
+
+        for (int i = 1; i <= 5; i++) {
+            String style = format("Heading%s", i);
+            mainDocumentPart.addStyledParagraphOfText(style, style);
+        }
+    }
+
+    @Test
+    public void createMultiLevelHeading2() {
         final MainDocumentPart mainDocumentPart = wmlPackage.getMainDocumentPart();
         mainDocumentPart.addObject(getEmptyPara());
 

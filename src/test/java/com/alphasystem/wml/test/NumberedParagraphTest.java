@@ -24,7 +24,7 @@ import static org.testng.Assert.fail;
  */
 public class NumberedParagraphTest {
 
-    private static final String PARENT_PATH = "C:\\Users\\sali\\git-hub\\AlphaSystemSolution\\open-xml-builder\\build";
+    private static final String PARENT_PATH = "C:\\Users\\sali\\git-hub\\AlphaSystemSolution\\open-xml-builder\\target";
 
     /**
      * Create something like:

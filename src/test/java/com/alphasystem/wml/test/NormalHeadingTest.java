@@ -20,7 +20,7 @@ import static org.testng.Assert.fail;
  */
 public class NormalHeadingTest {
 
-    private static final String PARENT_PATH = "C:\\Users\\sali\\git-hub\\AlphaSystemSolution\\open-xml-builder\\build";
+    private static final String PARENT_PATH = "C:\\Users\\sali\\git-hub\\AlphaSystemSolution\\open-xml-builder\\target";
 
     private WordprocessingMLPackage wmlPackage;
 
