@@ -1,9 +1,6 @@
 package com.alphasystem.wml.test;
 
-import com.alphasystem.openxml.builder.wml.OrderedListItem;
-import com.alphasystem.openxml.builder.wml.RBuilder;
-import com.alphasystem.openxml.builder.wml.UnorderedListItem;
-import com.alphasystem.openxml.builder.wml.WmlAdapter;
+import com.alphasystem.openxml.builder.wml.*;
 import org.docx4j.openpackaging.exceptions.Docx4JException;
 import org.docx4j.openpackaging.exceptions.InvalidFormatException;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
@@ -58,7 +55,7 @@ public class NumberedParagraphTest {
     @BeforeClass
     public void setup() {
         try {
-            wmlPackage = WmlAdapter.createNewDoc(true);
+            wmlPackage = new WmlPackageBuilder().getPackage();
         } catch (InvalidFormatException e) {
             fail(e.getMessage(), e);
         }
@@ -119,17 +116,6 @@ public class NumberedParagraphTest {
         mainDocumentPart.addObject(getEmptyPara());
         UnorderedListItem unorderedListItem = UnorderedListItem.getByStyleName(styleName);
         addList(mainDocumentPart, unorderedListItem.getNumberId(), 0L);
-    }
-
-    @Test(dependsOnMethods = "createListByStyleName")
-    public void createMultiLevelHeading() {
-        final MainDocumentPart mainDocumentPart = wmlPackage.getMainDocumentPart();
-        mainDocumentPart.addObject(getEmptyPara());
-
-        for (int i = 1; i <= 5; i++) {
-            String style = format("Heading%s", i);
-            mainDocumentPart.addStyledParagraphOfText(style, style);
-        }
     }
 
     private void addList(final MainDocumentPart mainDocumentPart, long numId, long ilvl) {

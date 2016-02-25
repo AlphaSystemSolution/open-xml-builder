@@ -10,10 +10,7 @@ import org.docx4j.fonts.Mapper;
 import org.docx4j.fonts.PhysicalFont;
 import org.docx4j.fonts.PhysicalFonts;
 import org.docx4j.openpackaging.exceptions.Docx4JException;
-import org.docx4j.openpackaging.exceptions.InvalidFormatException;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
-import org.docx4j.openpackaging.parts.WordprocessingML.NumberingDefinitionsPart;
-import org.docx4j.openpackaging.parts.WordprocessingML.StyleDefinitionsPart;
 import org.docx4j.wml.*;
 import org.docx4j.wml.PPrBase.PStyle;
 import org.docx4j.wml.TcPrInner.GridSpan;
@@ -34,7 +31,6 @@ import static com.alphasystem.util.IdGenerator.nextId;
 import static java.lang.String.format;
 import static java.lang.String.valueOf;
 import static java.lang.Thread.currentThread;
-import static org.apache.commons.lang3.ArrayUtils.add;
 import static org.apache.commons.lang3.ArrayUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.docx4j.XmlUtils.unmarshal;
@@ -50,7 +46,7 @@ public class WmlAdapter {
 
     private static final ClassLoader CLASS_LOADER = currentThread().getContextClassLoader();
 
-    private static Styles loadStyles(Styles styles, String... paths) {
+    static Styles loadStyles(Styles styles, String... paths) {
         if (isEmpty(paths)) {
             return null;
         }
@@ -58,6 +54,7 @@ public class WmlAdapter {
             try {
                 final List<URL> urls = readResources(p);
                 for (URL url : urls) {
+                    System.out.println(format("Reading style {%s}", url));
                     try (InputStream ins = url.openStream()) {
                         final Styles otherStyles = (Styles) unmarshal(ins);
                         if (styles == null) {
@@ -76,7 +73,7 @@ public class WmlAdapter {
         return styles;
     }
 
-    private static Numbering loadNumbering(Numbering numbering, String... paths) {
+    static Numbering loadNumbering(Numbering numbering, String... paths) {
         if (isEmpty(paths)) {
             return null;
         }
@@ -84,6 +81,7 @@ public class WmlAdapter {
             try {
                 final List<URL> urls = readResources(p);
                 for (URL url : urls) {
+                    System.out.println(format("Reading numbering {%s}", url));
                     try (InputStream ins = url.openStream()) {
                         final Numbering o = (Numbering) unmarshal(ins);
                         if (numbering == null) {
@@ -123,57 +121,6 @@ public class WmlAdapter {
     public static JAXBElement<CTMarkupRange> createCTMarkupRange(
             CTMarkupRange value) {
         return OBJECT_FACTORY.createBodyBookmarkEnd(value);
-    }
-
-    /**
-     * @return
-     * @throws InvalidFormatException
-     */
-    public static WordprocessingMLPackage createNewDoc() throws InvalidFormatException {
-        return createNewDoc(false);
-    }
-
-    public static WordprocessingMLPackage createNewDoc(boolean multiLevelHeading) throws InvalidFormatException {
-        WordprocessingMLPackage wordprocessingMLPackage = WordprocessingMLPackage.createPackage();
-
-        String[] stylePaths = new String[1];
-        String[] numberingPaths = new String[1];
-        stylePaths[0] = "styles.xml";
-        numberingPaths[0] = "numbering.xml";
-        if (multiLevelHeading) {
-            stylePaths = add(stylePaths, "multi-level-heading/styles.xml");
-            numberingPaths = add(numberingPaths, "multi-level-heading/numbering.xml");
-        }
-
-        Styles styles = null;
-        styles = loadStyles(styles, stylePaths);
-        StyleDefinitionsPart sdp = wordprocessingMLPackage.getMainDocumentPart().getStyleDefinitionsPart();
-        sdp.setJaxbElement(styles);
-
-        NumberingDefinitionsPart ndp = new NumberingDefinitionsPart();
-        Numbering numbering = null;
-        numbering = loadNumbering(numbering, numberingPaths);
-        ndp.setJaxbElement(numbering);
-
-        wordprocessingMLPackage.getMainDocumentPart().addTargetPart(ndp);
-        return wordprocessingMLPackage;
-    }
-
-    /**
-     * @param customStyles
-     * @return
-     * @throws InvalidFormatException
-     */
-    public static WordprocessingMLPackage createNewDoc(Styles customStyles)
-            throws InvalidFormatException {
-        WordprocessingMLPackage wordDoc = WordprocessingMLPackage
-                .createPackage();
-        if (customStyles != null) {
-            StyleDefinitionsPart sdp = wordDoc.getMainDocumentPart()
-                    .getStyleDefinitionsPart();
-            sdp.setJaxbElement(customStyles);
-        }
-        return wordDoc;
     }
 
     public static PPr getListParagraphProperties(long listId, long level) {

@@ -4,6 +4,8 @@
     <test name="Test" preserve-order="true">
         <classes>
             <class name="com.alphasystem.wml.test.NumberedParagraphTest"/>
+            <class name="com.alphasystem.wml.test.MultiLevelHeadingTest"/>
+            <class name="com.alphasystem.wml.test.NormalHeadingTest"/>
         </classes>
     </test>
     <!-- Test -->
