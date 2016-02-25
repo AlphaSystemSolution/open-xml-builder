@@ -14,40 +14,43 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
  */
 public enum OrderedListItem implements ListItem<OrderedListItem> {
 
-    ARABIC(1, "arabic", NumberFormat.DECIMAL, "04090019") {
+    ARABIC(1, "arabic", NumberFormat.DECIMAL, "04090001") {
         @Override
         public OrderedListItem getNext() {
             return LOWER_ALPHA;
         }
     },
 
-    LOWER_ALPHA(2, "loweralpha", NumberFormat.LOWER_LETTER, "04090013") {
+    LOWER_ALPHA(2, "loweralpha", NumberFormat.LOWER_LETTER, "04090003") {
         @Override
         public OrderedListItem getNext() {
             return LOWER_ROMAN;
         }
     },
 
-    LOWER_ROMAN(3, "lowerroman", NumberFormat.LOWER_ROMAN, "0409001B") {
+    LOWER_ROMAN(3, "lowerroman", NumberFormat.LOWER_ROMAN, "04090005") {
         @Override
         public OrderedListItem getNext() {
             return UPPER_ALPHA;
         }
     },
 
-    UPPER_ALPHA(4, "upperalpha", NumberFormat.UPPER_LETTER, "04090017") {
+    UPPER_ALPHA(4, "upperalpha", NumberFormat.UPPER_LETTER, "04090007") {
         @Override
         public OrderedListItem getNext() {
             return UPPER_ROMAN;
         }
     },
 
-    UPPER_ROMAN(5, "upperroman", NumberFormat.UPPER_ROMAN, "0409000F") {
+    UPPER_ROMAN(5, "upperroman", NumberFormat.UPPER_ROMAN, "04090009") {
         @Override
         public OrderedListItem getNext() {
             return ARABIC;
         }
     };
+
+    private static final int LEFT_INDENT_VALUE = 720;
+    private static final int HANGING_VALUE = 360;
 
     private static Map<String, OrderedListItem> valuesMap = new LinkedHashMap<>();
 
@@ -85,6 +88,11 @@ public enum OrderedListItem implements ListItem<OrderedListItem> {
     }
 
     @Override
+    public boolean linkStyle() {
+        return false;
+    }
+
+    @Override
     public NumberFormat getNumberFormat() {
         return numberFormat;
     }
@@ -97,6 +105,26 @@ public enum OrderedListItem implements ListItem<OrderedListItem> {
     @Override
     public String getValue(int number) {
         return format("%%%s.", number);
+    }
+
+    @Override
+    public long getLeftIndent(int level) {
+        return LEFT_INDENT_VALUE + (LEFT_INDENT_VALUE * level);
+    }
+
+    @Override
+    public long getHangingValue(int level) {
+        return HANGING_VALUE;
+    }
+
+    @Override
+    public Boolean isTentative(int level) {
+        return level <= 0 ? null : Boolean.TRUE;
+    }
+
+    @Override
+    public String getMultiLevelType() {
+        return "hybridMultilevel";
     }
 
     @Override

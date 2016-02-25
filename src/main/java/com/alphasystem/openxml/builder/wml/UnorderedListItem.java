@@ -16,40 +16,43 @@ import static org.docx4j.wml.NumberFormat.BULLET;
  */
 public enum UnorderedListItem implements ListItem<UnorderedListItem> {
 
-    DOT(6, "dot", "\u00B7", "04090001", R_FONTS_SYMBOL) {
+    DOT(6, "dot", "\u00B7", "04090011", R_FONTS_SYMBOL) {
         @Override
         public UnorderedListItem getNext() {
             return DIAMOND;
         }
     },
 
-    DIAMOND(7, "diamond", "\u0076", "04090003", R_FONTS_WINDINGS) {
+    DIAMOND(7, "diamond", "\u0076", "04090013", R_FONTS_WINDINGS) {
         @Override
         public UnorderedListItem getNext() {
             return SQUARE;
         }
     },
 
-    SQUARE(8, "square", "\u00A7", "04090005", R_FONTS_WINDINGS) {
+    SQUARE(8, "square", "\u00A7", "04090015", R_FONTS_WINDINGS) {
         @Override
         public UnorderedListItem getNext() {
             return CIRCLE;
         }
     },
 
-    CIRCLE(9, "circle", "o", "04090007", R_FONTS_COURIER_NEW) {
+    CIRCLE(9, "circle", "o", "04090017", R_FONTS_COURIER_NEW) {
         @Override
         public UnorderedListItem getNext() {
             return ARROW;
         }
     },
 
-    ARROW(10, "arrow", "\u00D8", "04090009", R_FONTS_WINDINGS) {
+    ARROW(10, "arrow", "\u00D8", "04090019", R_FONTS_WINDINGS) {
         @Override
         public UnorderedListItem getNext() {
             return DOT;
         }
     };
+
+    private static final int LEFT_INDENT_VALUE = 720;
+    private static final int HANGING_VALUE = 360;
 
     private static Map<String, UnorderedListItem> valuesMap = new LinkedHashMap<>();
 
@@ -90,6 +93,11 @@ public enum UnorderedListItem implements ListItem<UnorderedListItem> {
         return styleName;
     }
 
+    @Override
+    public boolean linkStyle() {
+        return false;
+    }
+
     public String getValue() {
         return value;
     }
@@ -97,6 +105,26 @@ public enum UnorderedListItem implements ListItem<UnorderedListItem> {
     @Override
     public String getValue(int number) {
         return value;
+    }
+
+    @Override
+    public long getLeftIndent(int level) {
+        return LEFT_INDENT_VALUE + (LEFT_INDENT_VALUE * level);
+    }
+
+    @Override
+    public long getHangingValue(int level) {
+        return HANGING_VALUE;
+    }
+
+    @Override
+    public Boolean isTentative(int level) {
+        return level <= 0 ? null : Boolean.TRUE;
+    }
+
+    @Override
+    public String getMultiLevelType() {
+        return "hybridMultilevel";
     }
 
     @Override

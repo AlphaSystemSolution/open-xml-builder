@@ -18,6 +18,14 @@ public interface ListItem<T> {
     RFonts R_FONTS_SYMBOL = getRFonts("Symbol", "Symbol");
     RFonts R_FONTS_WINDINGS = getRFonts("Wingdings", "Wingdings");
 
+    static RFonts getRFonts(String ascii, String hAnsi) {
+        return getRFonts(ascii, hAnsi, null);
+    }
+
+    static RFonts getRFonts(String ascii, String hAnsi, String cs) {
+        return getRFontsBuilder().withAscii(ascii).withHAnsi(hAnsi).withCs(cs).withHint(DEFAULT).getObject();
+    }
+
     /**
      * ID of the list.
      *
@@ -31,6 +39,13 @@ public interface ListItem<T> {
      * @return style name
      */
     String getStyleName();
+
+    /**
+     * Whether or not link style with numbering system
+     *
+     * @return true if style name to be linked, false otherwise
+     */
+    boolean linkStyle();
 
     /**
      * Corresponding WML {@link NumberFormat}.
@@ -55,6 +70,37 @@ public interface ListItem<T> {
     String getValue(int number);
 
     /**
+     * Calculates and returns left indent value for given level;
+     *
+     * @param level current level
+     * @return left indent value
+     */
+    long getLeftIndent(int level);
+
+    /**
+     * Calculates and returns hanging value for given level;
+     *
+     * @param level current level
+     * @return hanging value
+     */
+    long getHangingValue(int level);
+
+    /**
+     * Returns tentative flag for current level.
+     *
+     * @param level current level
+     * @return flag for tentative element or null
+     */
+    Boolean isTentative(int level);
+
+    /**
+     * Value of multi level type.
+     *
+     * @return multi level type
+     */
+    String getMultiLevelType();
+
+    /**
      * Run properties if any.
      *
      * @return run properties
@@ -67,12 +113,4 @@ public interface ListItem<T> {
      * @return next item value
      */
     T getNext();
-
-    static RFonts getRFonts(String ascii, String hAnsi) {
-        return getRFonts(ascii, hAnsi, null);
-    }
-
-    static RFonts getRFonts(String ascii, String hAnsi, String cs) {
-        return getRFontsBuilder().withAscii(ascii).withHAnsi(hAnsi).withCs(cs).withHint(DEFAULT).getObject();
-    }
 }
