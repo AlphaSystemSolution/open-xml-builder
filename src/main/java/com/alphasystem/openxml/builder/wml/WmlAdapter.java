@@ -4,7 +4,6 @@
 package com.alphasystem.openxml.builder.wml;
 
 import org.docx4j.Docx4J;
-import org.docx4j.XmlUtils;
 import org.docx4j.convert.out.FOSettings;
 import org.docx4j.fonts.IdentityPlusMapper;
 import org.docx4j.fonts.Mapper;
@@ -25,6 +24,7 @@ import javax.xml.namespace.QName;
 import java.io.*;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 
@@ -34,7 +34,10 @@ import static com.alphasystem.util.IdGenerator.nextId;
 import static java.lang.String.format;
 import static java.lang.String.valueOf;
 import static java.lang.Thread.currentThread;
+import static org.apache.commons.lang3.ArrayUtils.add;
+import static org.apache.commons.lang3.ArrayUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.docx4j.XmlUtils.unmarshal;
 import static org.docx4j.openpackaging.parts.relationships.Namespaces.NS_WORD12;
 import static org.docx4j.wml.STBrType.PAGE;
 
@@ -45,26 +48,18 @@ public class WmlAdapter {
 
     public static final Text SINGLE_SPACE = getText(" ", "preserve");
 
-    /**
-     * @param wordDoc
-     * @param styleFilePrefix
-     */
-    private static void addCustomStyle(WordprocessingMLPackage wordDoc, String styleFilePrefix) {
-        StyleDefinitionsPart sdp = wordDoc.getMainDocumentPart()
-                .getStyleDefinitionsPart();
-        Styles styles = null;
-        ClassLoader contextClassLoader = currentThread().getContextClassLoader();
-        try {
-            Enumeration<URL> resources = contextClassLoader.getResources(format("META-INF/%s.xml", styleFilePrefix));
-            if (resources != null) {
-                List<URL> urls = new ArrayList<>();
-                while (resources.hasMoreElements()) {
-                    urls.add(resources.nextElement());
-                }
-                for (int i = urls.size() - 1; i >= 0; i--) {
-                    final URL url = urls.get(i);
+    private static final ClassLoader CLASS_LOADER = currentThread().getContextClassLoader();
+
+    private static Styles loadStyles(Styles styles, String... paths) {
+        if (isEmpty(paths)) {
+            return null;
+        }
+        for (String p : paths) {
+            try {
+                final List<URL> urls = readResources(p);
+                for (URL url : urls) {
                     try (InputStream ins = url.openStream()) {
-                        final Styles otherStyles = (Styles) XmlUtils.unmarshal(ins);
+                        final Styles otherStyles = (Styles) unmarshal(ins);
                         if (styles == null) {
                             styles = otherStyles;
                         } else {
@@ -74,13 +69,50 @@ public class WmlAdapter {
                         e.printStackTrace();
                     }
                 }
+            } catch (IOException e) {
+                throw new UncheckedIOException(e.getMessage(), e);
             }
-        } catch (IOException e) {
-            throw new UncheckedIOException(e.getMessage(), e);
+        } // end of for
+        return styles;
+    }
+
+    private static Numbering loadNumbering(Numbering numbering, String... paths) {
+        if (isEmpty(paths)) {
+            return null;
         }
-        if (styles != null) {
-            sdp.setJaxbElement(styles);
+        for (String p : paths) {
+            try {
+                final List<URL> urls = readResources(p);
+                for (URL url : urls) {
+                    try (InputStream ins = url.openStream()) {
+                        final Numbering o = (Numbering) unmarshal(ins);
+                        if (numbering == null) {
+                            numbering = o;
+                        } else {
+                            numbering.getAbstractNum().addAll(o.getAbstractNum());
+                            numbering.getNum().addAll(o.getNum());
+                        }
+                    } catch (JAXBException e) {
+                        e.printStackTrace();
+                    }
+                }
+            } catch (IOException e) {
+                throw new UncheckedIOException(e.getMessage(), e);
+            }
         }
+        return numbering;
+    }
+
+    private static List<URL> readResources(String path) throws IOException {
+        List<URL> urls = new ArrayList<>();
+        Enumeration<URL> resources = CLASS_LOADER.getResources(format("META-INF/%s", path));
+        if (resources != null) {
+            while (resources.hasMoreElements()) {
+                urls.add(resources.nextElement());
+            }
+        }
+        Collections.reverse(urls);
+        return urls;
     }
 
     public static JAXBElement<CTBookmark> createBodyBookmarkStart(
@@ -97,18 +129,32 @@ public class WmlAdapter {
      * @return
      * @throws InvalidFormatException
      */
-    public static WordprocessingMLPackage createNewDoc()
-            throws InvalidFormatException {
-        return createNewDoc("styles");
+    public static WordprocessingMLPackage createNewDoc() throws InvalidFormatException {
+        return createNewDoc(false);
     }
 
-    public static WordprocessingMLPackage createNewDoc(String styleFilePrefix)
-            throws InvalidFormatException {
-        WordprocessingMLPackage wordprocessingMLPackage = WordprocessingMLPackage
-                .createPackage();
-        addCustomStyle(wordprocessingMLPackage, styleFilePrefix);
+    public static WordprocessingMLPackage createNewDoc(boolean multiLevelHeading) throws InvalidFormatException {
+        WordprocessingMLPackage wordprocessingMLPackage = WordprocessingMLPackage.createPackage();
+
+        String[] stylePaths = new String[1];
+        String[] numberingPaths = new String[1];
+        stylePaths[0] = "styles.xml";
+        numberingPaths[0] = "numbering.xml";
+        if (multiLevelHeading) {
+            stylePaths = add(stylePaths, "multi-level-heading/styles.xml");
+            numberingPaths = add(numberingPaths, "multi-level-heading/numbering.xml");
+        }
+
+        Styles styles = null;
+        styles = loadStyles(styles, stylePaths);
+        StyleDefinitionsPart sdp = wordprocessingMLPackage.getMainDocumentPart().getStyleDefinitionsPart();
+        sdp.setJaxbElement(styles);
+
         NumberingDefinitionsPart ndp = new NumberingDefinitionsPart();
-        ndp.setJaxbElement(NumberingHelper.createNumbering());
+        Numbering numbering = null;
+        numbering = loadNumbering(numbering, numberingPaths);
+        ndp.setJaxbElement(numbering);
+
         wordprocessingMLPackage.getMainDocumentPart().addTargetPart(ndp);
         return wordprocessingMLPackage;
     }
@@ -139,7 +185,7 @@ public class WmlAdapter {
     }
 
     public static CTLongHexNumber getCtLongHexNumber(String value) {
-        return getCTLongHexNumberBuilder().withVal(value).getObject();
+        return (value == null) ? null : getCTLongHexNumberBuilder().withVal(value).getObject();
     }
 
     /**
