@@ -8,8 +8,11 @@ import org.docx4j.openpackaging.parts.WordprocessingML.StyleDefinitionsPart;
 import org.docx4j.wml.Numbering;
 import org.docx4j.wml.Styles;
 
+import static com.alphasystem.openxml.builder.wml.NumberingHelper.getDefaultNumbering;
+import static com.alphasystem.openxml.builder.wml.NumberingHelper.getMultiLevelHeadingNumbering;
 import static com.alphasystem.openxml.builder.wml.WmlAdapter.loadNumbering;
 import static com.alphasystem.openxml.builder.wml.WmlAdapter.loadStyles;
+import static org.apache.commons.lang3.ArrayUtils.isEmpty;
 
 /**
  * Fluent API for creating WordML package.
@@ -24,16 +27,21 @@ public class WmlPackageBuilder {
     private boolean multiLevelHeading;
 
     public WmlPackageBuilder() throws InvalidFormatException {
+        this(true);
+    }
+
+    public WmlPackageBuilder(boolean loadDefaultStyles) throws InvalidFormatException {
         wmlPackage = WordprocessingMLPackage.createPackage();
-        styles = loadStyles(styles, "styles.xml");
-        numbering = loadNumbering(numbering, "numbering.xml");
+        if (loadDefaultStyles) {
+            styles = loadStyles(styles, "styles.xml");
+        }
+        numbering = getDefaultNumbering();
     }
 
     public WmlPackageBuilder multiLevelHeading() {
         styles = loadStyles(styles, "multi-level-heading/styles.xml");
-        numbering = loadNumbering(numbering, "multi-level-heading/numbering.xml");
         multiLevelHeading = true;
-        return this;
+        return numbering(getMultiLevelHeadingNumbering());
     }
 
     public WmlPackageBuilder styles(String... paths) {
@@ -41,8 +49,12 @@ public class WmlPackageBuilder {
         return this;
     }
 
-    public WmlPackageBuilder styles(Styles customStyles) {
-        styles.getStyle().addAll(customStyles.getStyle());
+    public WmlPackageBuilder styles(Styles... styles) {
+        if (!isEmpty(styles)) {
+            for (Styles style : styles) {
+                this.styles.getStyle().addAll(style.getStyle());
+            }
+        }
         return this;
     }
 
@@ -51,9 +63,13 @@ public class WmlPackageBuilder {
         return this;
     }
 
-    public WmlPackageBuilder numbering(Numbering customNumbering) {
-        numbering.getAbstractNum().addAll(customNumbering.getAbstractNum());
-        numbering.getNum().addAll(customNumbering.getNum());
+    public WmlPackageBuilder numbering(Numbering... numberings) {
+        if (!isEmpty(numberings)) {
+            for (Numbering numbering : numberings) {
+                this.numbering.getAbstractNum().addAll(numbering.getAbstractNum());
+                this.numbering.getNum().addAll(numbering.getNum());
+            }
+        }
         return this;
     }
 
