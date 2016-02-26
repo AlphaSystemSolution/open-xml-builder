@@ -36,19 +36,19 @@ public class NumberingHelper {
 
     private static void buildDefaultNumbering() throws IOException {
         NumberingBuilder numberingBuilder = getNumberingBuilder();
-        populate(numberingBuilder, OrderedListItem.values());
-        populate(numberingBuilder, UnorderedListItem.values());
+        populate(numberingBuilder, OrderedList.values());
+        populate(numberingBuilder, UnorderedList.values());
         Path path = save(get(USER_DIR, "src/main/resources", META_INF), numberingBuilder.getObject());
         System.out.println(String.format("File created {%s}", path));
 
         numberingBuilder = getNumberingBuilder();
-        populate(numberingBuilder, HeadingListItem.HEADING1);
+        populate(numberingBuilder, HeadingList.HEADING1);
         path = save(get(USER_DIR, "src/main/resources", META_INF, "multi-level-heading"), numberingBuilder.getObject());
         System.out.println(String.format("File created {%s}", path));
     }
 
     @SafeVarargs
-    public static <T extends Enum<T> & ListItem<T>> void populate(final NumberingBuilder numberingBuilder, T... items) {
+    public static <T extends ListItem<T>> void populate(final NumberingBuilder numberingBuilder, T... items) {
         for (T item : items) {
             populateOne(numberingBuilder, item);
         }
@@ -58,7 +58,7 @@ public class NumberingHelper {
         return write(get(targetDir.toString(), NUMBERING_FILE_NAME), marshaltoString(numbering).getBytes());
     }
 
-    private static <T extends Enum<T> & ListItem<T>> void populateOne(NumberingBuilder numberingBuilder, T firstItem) {
+    private static <T extends ListItem<T>> void populateOne(NumberingBuilder numberingBuilder, T firstItem) {
         final List<T> items = getListItems(firstItem);
         long abstractNumId = firstItem.getNumberId() - 1;
         numberingBuilder.addAbstractNum(getAbstractNum(abstractNumId, IdGenerator.nextId(), IdGenerator.nextId(),
@@ -66,7 +66,7 @@ public class NumberingHelper {
     }
 
     @SuppressWarnings({"unchecked"})
-    private static <T extends Enum<T> & ListItem<T>> List<T> getListItems(T firstItem) {
+    private static <T extends ListItem<T>> List<T> getListItems(T firstItem) {
         List<T> list = new ArrayList<>();
         list.add(firstItem);
         T currentItem = firstItem;
@@ -98,7 +98,7 @@ public class NumberingHelper {
         return getNumberingNumBuilder().withNumId(numId).withAbstractNumId(abstractNumId).getObject();
     }
 
-    private static <T extends Enum<T> & ListItem<T>> Lvl[] getLevels(List<T> listItems) {
+    private static <T extends ListItem<T>> Lvl[] getLevels(List<T> listItems) {
         int level = 0;
         Lvl[] levels = new Lvl[0];
         for (T listItem : listItems) {
@@ -108,7 +108,7 @@ public class NumberingHelper {
         return levels;
     }
 
-    private static <T extends Enum<T> & ListItem<T>> Lvl getLevel(T item, int levelId) {
+    private static <T extends ListItem<T>> Lvl getLevel(T item, int levelId) {
         final int number = levelId + 1;
         String levelTextValue = item.getValue(number);
         String styleName = item.linkStyle() ? item.getStyleName() : null;
