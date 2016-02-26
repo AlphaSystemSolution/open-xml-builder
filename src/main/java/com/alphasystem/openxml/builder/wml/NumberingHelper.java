@@ -35,34 +35,42 @@ public class NumberingHelper {
     }
 
     private static void buildDefaultNumbering() throws IOException {
-        NumberingBuilder numberingBuilder = getNumberingBuilder();
-        populate(numberingBuilder, OrderedList.values());
-        populate(numberingBuilder, UnorderedList.values());
-        Path path = save(get(USER_DIR, "src/main/resources", META_INF), numberingBuilder.getObject());
+        Path path = save(get(USER_DIR, "src/main/resources", META_INF), getDefaultNumbering());
         System.out.println(String.format("File created {%s}", path));
 
-        numberingBuilder = getNumberingBuilder();
-        populate(numberingBuilder, HeadingList.HEADING1);
-        path = save(get(USER_DIR, "src/main/resources", META_INF, "multi-level-heading"), numberingBuilder.getObject());
+        path = save(get(USER_DIR, "src/main/resources", META_INF, "multi-level-heading"), getMultiLevelHeadingNumbering());
         System.out.println(String.format("File created {%s}", path));
+    }
+
+    public static Numbering getDefaultNumbering() {
+        final NumberingBuilder numberingBuilder = getNumberingBuilder();
+        populate(numberingBuilder, OrderedList.values());
+        populate(numberingBuilder, UnorderedList.values());
+        return numberingBuilder.getObject();
+    }
+
+    public static Numbering getMultiLevelHeadingNumbering() {
+        final NumberingBuilder numberingBuilder = getNumberingBuilder();
+        populate(numberingBuilder, HeadingList.HEADING1);
+        return numberingBuilder.getObject();
     }
 
     @SafeVarargs
     public static <T extends ListItem<T>> void populate(final NumberingBuilder numberingBuilder, T... items) {
         for (T item : items) {
-            populateOne(numberingBuilder, item);
+            populate(numberingBuilder, getListItems(item));
         }
+    }
+
+    public static <T extends ListItem<T>> void populate(NumberingBuilder numberingBuilder, final List<T> items) {
+        T firstItem = items.get(0);
+        long abstractNumId = firstItem.getNumberId() - 1;
+        numberingBuilder.addAbstractNum(getAbstractNum(abstractNumId, IdGenerator.nextId(), IdGenerator.nextId(),
+                firstItem.getMultiLevelType(), getLevels(items))).addNum(getNum(firstItem.getNumberId()));
     }
 
     public static Path save(Path targetDir, Numbering numbering) throws IOException {
         return write(get(targetDir.toString(), NUMBERING_FILE_NAME), marshaltoString(numbering).getBytes());
-    }
-
-    private static <T extends ListItem<T>> void populateOne(NumberingBuilder numberingBuilder, T firstItem) {
-        final List<T> items = getListItems(firstItem);
-        long abstractNumId = firstItem.getNumberId() - 1;
-        numberingBuilder.addAbstractNum(getAbstractNum(abstractNumId, IdGenerator.nextId(), IdGenerator.nextId(),
-                firstItem.getMultiLevelType(), getLevels(items))).addNum(getNum(firstItem.getNumberId()));
     }
 
     @SuppressWarnings({"unchecked"})
