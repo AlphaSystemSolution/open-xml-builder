@@ -49,7 +49,7 @@ public class MultiLevelHeadingTest {
         mainDocumentPart.addObject(getEmptyPara());
 
         for (int i = 1; i <= 5; i++) {
-            String style = format("Heading%s", i);
+            String style = format("ListHeading%s", i);
             mainDocumentPart.addStyledParagraphOfText(style, style);
         }
     }
@@ -60,7 +60,7 @@ public class MultiLevelHeadingTest {
         mainDocumentPart.addObject(getEmptyPara());
 
         for (int i = 1; i <= 5; i++) {
-            String style = format("Heading%s", i);
+            String style = format("ListHeading%s", i);
             mainDocumentPart.addStyledParagraphOfText(style, style);
         }
     }

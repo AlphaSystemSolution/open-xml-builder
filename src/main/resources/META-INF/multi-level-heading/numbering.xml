@@ -6,7 +6,7 @@
         <w:lvl w:ilvl="0" w:tplc="04090021">
             <w:start w:val="1"/>
             <w:numFmt w:val="decimal"/>
-            <w:pStyle w:val="Heading1"/>
+            <w:pStyle w:val="ListHeading1"/>
             <w:lvlText w:val="%1."/>
             <w:lvlJc w:val="left"/>
             <w:pPr>
@@ -16,7 +16,7 @@
         <w:lvl w:ilvl="1">
             <w:start w:val="1"/>
             <w:numFmt w:val="decimal"/>
-            <w:pStyle w:val="Heading2"/>
+            <w:pStyle w:val="ListHeading2"/>
             <w:lvlText w:val="%1.%2."/>
             <w:lvlJc w:val="left"/>
             <w:pPr>
@@ -26,7 +26,7 @@
         <w:lvl w:ilvl="2">
             <w:start w:val="1"/>
             <w:numFmt w:val="decimal"/>
-            <w:pStyle w:val="Heading3"/>
+            <w:pStyle w:val="ListHeading3"/>
             <w:lvlText w:val="%1.%2.%3."/>
             <w:lvlJc w:val="left"/>
             <w:pPr>
@@ -36,7 +36,7 @@
         <w:lvl w:ilvl="3">
             <w:start w:val="1"/>
             <w:numFmt w:val="decimal"/>
-            <w:pStyle w:val="Heading4"/>
+            <w:pStyle w:val="ListHeading4"/>
             <w:lvlText w:val="%1.%2.%3.%4."/>
             <w:lvlJc w:val="left"/>
             <w:pPr>
@@ -46,7 +46,7 @@
         <w:lvl w:ilvl="4">
             <w:start w:val="1"/>
             <w:numFmt w:val="decimal"/>
-            <w:pStyle w:val="Heading5"/>
+            <w:pStyle w:val="ListHeading5"/>
             <w:lvlText w:val="%1.%2.%3.%4.%5."/>
             <w:lvlJc w:val="left"/>
             <w:pPr>

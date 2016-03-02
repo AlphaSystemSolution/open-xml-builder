@@ -3,7 +3,6 @@ package com.alphasystem.openxml.builder.wml;
 import com.alphasystem.util.IdGenerator;
 import org.docx4j.wml.*;
 import org.docx4j.wml.Numbering.AbstractNum;
-import org.docx4j.wml.Numbering.AbstractNum.MultiLevelType;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -91,10 +90,8 @@ public class NumberingHelper {
     }
 
     private static AbstractNum getAbstractNum(long id, String nsId, String tmpl, String multiLevel, Lvl[] lvls) {
-        final MultiLevelType multiLevelType = (multiLevel == null) ? null :
-                getNumberingAbstractNumMultiLevelTypeBuilder().withVal(multiLevel).getObject();
         return getNumberingAbstractNumBuilder().withAbstractNumId(id).withNsid(getCtLongHexNumber(nsId))
-                .withTmpl(getCtLongHexNumber(tmpl)).withMultiLevelType(multiLevelType).addLvl(lvls).getObject();
+                .withTmpl(getCtLongHexNumber(tmpl)).withMultiLevelType(multiLevel).addLvl(lvls).getObject();
     }
 
     private static Numbering.Num getNum(long numId) {
@@ -102,8 +99,7 @@ public class NumberingHelper {
     }
 
     private static Numbering.Num getNum(long numId, long abstractNumIdValue) {
-        final Numbering.Num.AbstractNumId abstractNumId = getNumberingNumAbstractNumIdBuilder().withVal(abstractNumIdValue).getObject();
-        return getNumberingNumBuilder().withNumId(numId).withAbstractNumId(abstractNumId).getObject();
+        return getNumberingNumBuilder().withNumId(numId).withAbstractNumId(abstractNumIdValue).getObject();
     }
 
     private static <T extends ListItem<T>> Lvl[] getLevels(List<T> listItems) {
@@ -120,31 +116,27 @@ public class NumberingHelper {
         final int number = levelId + 1;
         String levelTextValue = item.getValue(number);
         String styleName = item.linkStyle() ? item.getStyleName() : null;
-        return getLvl(levelId, item.getId(), item.isTentative(levelId), item.getNumberFormat(), levelTextValue, styleName,
+        return getLevel(levelId, item.getId(), item.isTentative(levelId), item.getNumberFormat(), levelTextValue, styleName,
                 getPPr(item.getLeftIndent(levelId), item.getHangingValue(levelId)), item.getRPr());
     }
 
-    private static Lvl getLvl(long ilvl, String tplc, Boolean tentative, NumberFormat numFmtValue, String lvlTextValue,
-                              String styleName, PPr pPr, RPr rPr) {
-        return getLvl(ilvl, tplc, tentative, 1L, numFmtValue, lvlTextValue, styleName, JC_LEFT, pPr, rPr);
+    private static Lvl getLevel(long ilvl, String tplc, Boolean tentative, NumberFormat numFmtValue, String lvlTextValue,
+                                String styleName, PPr pPr, RPr rPr) {
+        return getLevel(ilvl, tplc, tentative, 1L, numFmtValue, lvlTextValue, styleName, JC_LEFT, pPr, rPr);
     }
 
-    private static Lvl getLvl(long ilvl, String tplc, Boolean tentative, long startValue, NumberFormat numFmtValue,
-                              String lvlTextValue, String styleName, Jc jc, PPr pPr, RPr rPr) {
-        Lvl.Start start = getLvlStartBuilder().withVal(startValue).getObject();
+    private static Lvl getLevel(long ilvl, String tplc, Boolean tentative, long startValue, NumberFormat numFmtValue,
+                                String lvlTextValue, String styleName, Jc jc, PPr pPr, RPr rPr) {
+        final LvlBuilder lvlBuilder = getLvlBuilder();
         NumFmt numFmt = getNumFmtBuilder().withVal(numFmtValue).getObject();
-        Lvl.LvlText lvlText = getLvlLvlTextBuilder().withVal(lvlTextValue).getObject();
-        Lvl.PStyle pStyle = null;
-        if (styleName != null) {
-            pStyle = getLvlPStyleBuilder().withVal(styleName).getObject();
-        }
-        return getLvlBuilder().withIlvl(ilvl).withTplc(tplc).withTentative(tentative).withStart(start).withNumFmt(numFmt)
-                .withLvlText(lvlText).withPStyle(pStyle).withLvlJc(jc).withPPr(pPr).withRPr(rPr).getObject();
+        return lvlBuilder.withIlvl(ilvl).withTplc(tplc).withTentative(tentative).withStart(startValue).withNumFmt(numFmt)
+                .withLvlText(lvlTextValue, null).withPStyle(styleName).withLvlJc(jc).withPPr(pPr).withRPr(rPr).getObject();
     }
 
     private static PPr getPPr(long leftValue, long hangingValue) {
-        PPrBase.Ind ind = getPPrBaseIndBuilder().withLeft(leftValue).withHanging(hangingValue).getObject();
-        return getPPrBuilder().withInd(ind).getObject();
+        final PPrBuilder pPrBuilder = getPPrBuilder();
+        PPrBase.Ind ind = pPrBuilder.getIndBuilder().withLeft(leftValue).withHanging(hangingValue).getObject();
+        return pPrBuilder.withInd(ind).getObject();
     }
 
 }

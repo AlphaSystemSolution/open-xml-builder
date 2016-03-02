@@ -4,7 +4,6 @@
 package com.alphasystem.openxml.builder.wml;
 
 import org.docx4j.wml.*;
-import org.docx4j.wml.CTTblPrBase.TblStyle;
 import org.docx4j.wml.TcPrInner.GridSpan;
 import org.docx4j.wml.TcPrInner.TcBorders;
 
@@ -269,9 +268,6 @@ public class TableAdapter {
                     gridWidths[i].toString()).getObject());
         }
 
-        TblStyle tblStyle = getCTTblPrBaseTblStyleBuilder()
-                .withVal("TableGrid").getObject();
-
         TblWidth tblWidth = getTblWidthBuilder().withType(TYPE_PCT)
                 .withW(TOTAL_TABLE_WIDTH.toString()).getObject();
 
@@ -279,7 +275,7 @@ public class TableAdapter {
                 .withLastRow(ZERO).withFirstColumn(ONE).withLastColumn(ZERO)
                 .withNoVBand(ONE).withNoHBand(ZERO).getObject();
 
-        TblPr tblPr = getTblPrBuilder().withTblStyle(tblStyle)
+        TblPr tblPr = getTblPrBuilder().withTblStyle("TableGrid")
                 .withTblW(tblWidth).withTblLook(cTTblLook).getObject();
 
         tblBuilder.withTblGrid(tblGridBuilder.getObject()).withTblPr(tblPr);

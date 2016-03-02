@@ -24,7 +24,6 @@ public class WmlPackageBuilder {
     private WordprocessingMLPackage wmlPackage;
     private Styles styles;
     private Numbering numbering;
-    private boolean multiLevelHeading;
 
     public WmlPackageBuilder() throws InvalidFormatException {
         this(true);
@@ -40,7 +39,6 @@ public class WmlPackageBuilder {
 
     public WmlPackageBuilder multiLevelHeading() {
         styles = loadStyles(styles, "multi-level-heading/styles.xml");
-        multiLevelHeading = true;
         return numbering(getMultiLevelHeadingNumbering());
     }
 
@@ -74,10 +72,6 @@ public class WmlPackageBuilder {
     }
 
     public WordprocessingMLPackage getPackage() throws InvalidFormatException {
-        if (!multiLevelHeading) {
-            // if multi level heading wasn't asked then load default headings
-            styles = loadStyles(styles, "heading/styles.xml");
-        }
         final MainDocumentPart mainDocumentPart = wmlPackage.getMainDocumentPart();
         StyleDefinitionsPart sdp = mainDocumentPart.getStyleDefinitionsPart();
         sdp.setJaxbElement(styles);

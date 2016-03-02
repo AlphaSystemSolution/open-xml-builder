@@ -9,6 +9,7 @@ import org.docx4j.fonts.IdentityPlusMapper;
 import org.docx4j.fonts.Mapper;
 import org.docx4j.fonts.PhysicalFont;
 import org.docx4j.fonts.PhysicalFonts;
+import org.docx4j.jaxb.Context;
 import org.docx4j.openpackaging.exceptions.Docx4JException;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
 import org.docx4j.wml.*;
@@ -25,17 +26,17 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 
-import static com.alphasystem.openxml.builder.OpenXmlBuilder.OBJECT_FACTORY;
 import static com.alphasystem.openxml.builder.wml.WmlBuilderFactory.*;
 import static com.alphasystem.util.IdGenerator.nextId;
 import static java.lang.String.format;
-import static java.lang.String.valueOf;
 import static java.lang.Thread.currentThread;
 import static org.apache.commons.lang3.ArrayUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.docx4j.XmlUtils.unmarshal;
 import static org.docx4j.openpackaging.parts.relationships.Namespaces.NS_WORD12;
 import static org.docx4j.wml.STBrType.PAGE;
+import static org.docx4j.wml.STFldCharType.BEGIN;
+import static org.docx4j.wml.STFldCharType.END;
 
 /**
  * @author sali
@@ -113,6 +114,25 @@ public class WmlAdapter {
         return urls;
     }
 
+    private static void addFieldBegin(P paragraph) {
+        FldChar fldchar = getFldCharBuilder().withDirty(true).withFldCharType(BEGIN).getObject();
+        R r = getRBuilder().addContent(getWrappedFldChar(fldchar)).getObject();
+        paragraph.getContent().add(r);
+    }
+
+    private static void addFieldEnd(P paragraph) {
+        FldChar fldchar = getFldCharBuilder().withFldCharType(END).getObject();
+        R r = getRBuilder().addContent(getWrappedFldChar(fldchar)).getObject();
+        paragraph.getContent().add(r);
+    }
+
+    private static void addTableOfContentField(P paragraph, String tocText) {
+        final ObjectFactory objectFactory = Context.getWmlObjectFactory();
+        Text txt = getText(tocText, "preserve");
+        objectFactory.createRInstrText(txt);
+        paragraph.getContent().add(getRBuilder().addContent(objectFactory.createRInstrText(txt)).getObject());
+    }
+
     public static JAXBElement<CTBookmark> createBodyBookmarkStart(
             CTBookmark bookmark) {
         return OBJECT_FACTORY.createBodyBookmarkStart(bookmark);
@@ -123,12 +143,11 @@ public class WmlAdapter {
         return OBJECT_FACTORY.createBodyBookmarkEnd(value);
     }
 
+
     public static PPr getListParagraphProperties(long listId, long level) {
-        final PPrBaseNumPrIlvlBuilder ilvlBuilder = getPPrBaseNumPrIlvlBuilder().withVal(valueOf(level));
-        final PPrBaseNumPrNumIdBuilder numIdBuilder = getPPrBaseNumPrNumIdBuilder().withVal(valueOf(listId));
-        final PPrBaseNumPrBuilder numPrBuilder = getPPrBaseNumPrBuilder().withIlvl(ilvlBuilder.getObject())
-                .withNumId(numIdBuilder.getObject());
-        return getPPrBuilder().withNumPr(numPrBuilder.getObject()).withPStyle(getPStyle("ListParagraph")).getObject();
+        final PPrBuilder pPrBuilder = getPPrBuilder();
+        final PPrBuilder.NumPrBuilder numPrBuilder = pPrBuilder.getNumPrBuilder().withIlvl(level).withNumId(listId);
+        return pPrBuilder.withNumPr(numPrBuilder.getObject()).withPStyle("ListParagraph").getObject();
     }
 
     public static CTLongHexNumber getCtLongHexNumber(String value) {
@@ -160,16 +179,8 @@ public class WmlAdapter {
      * @param value
      * @return
      */
-    public static GridSpan getGridSpan(int value) {
-        return getGridSpan(Integer.toString(value));
-    }
-
-    /**
-     * @param value
-     * @return
-     */
-    public static GridSpan getGridSpan(String value) {
-        return getTcPrInnerGridSpanBuilder().withVal(value).getObject();
+    public static GridSpan getGridSpan(long value) {
+        return getTcPrInnerBuilder().withGridSpan(value).getGridSpanBuilder().getObject();
     }
 
     /**
@@ -194,7 +205,7 @@ public class WmlAdapter {
      * @return
      */
     public static PStyle getPStyle(String styleName) {
-        return getPPrBasePStyleBuilder().withVal(styleName).getObject();
+        return getPPrBuilder().withPStyle(styleName).getPStyleBuilder().getObject();
     }
 
     /**
@@ -252,13 +263,15 @@ public class WmlAdapter {
 
     public static P getEmptyPara(String styleName) {
         String id = nextId();
-        PPr ppr = null;
         styleName = isBlank(styleName) ? "Normal" : styleName;
-        PStyle style = getPPrBasePStyleBuilder().withVal(styleName).getObject();
-        if (style != null) {
-            ppr = new PPrBuilder().withPStyle(style).getObject();
+
+        final PBuilder pBuilder = getPBuilder();
+        PPr ppr = null;
+        if (styleName != null) {
+            ppr = getPPrBuilder().withPStyle(styleName).getObject();
         }
-        return getPBuilder().withPPr(ppr).withRsidP(id).withRsidR(id).withRsidRDefault(id).getObject();
+
+        return pBuilder.withPPr(ppr).withRsidP(id).withRsidR(id).withRsidRDefault(id).getObject();
     }
 
     public static P getPageBreak() {
@@ -266,6 +279,16 @@ public class WmlAdapter {
         Br br = getBrBuilder().withType(PAGE).getObject();
         R r = getRBuilder().addContent(br).getObject();
         return getPBuilder().withRsidP(id).withRsidR(id).withRsidRDefault(id).addContent(r).getObject();
+    }
+
+    public static P addTableOfContent(String tocText) {
+        final PPr pPr = getPPrBuilder().withPStyle(getPStyle("TOC1")).getObject();
+        P p = getPBuilder().withParaId(nextId()).withRsidR(nextId()).withRsidRDefault(nextId()).withRsidP(nextId())
+                .withPPr(pPr).getObject();
+        addFieldBegin(p);
+        addTableOfContentField(p, tocText);
+        addFieldEnd(p);
+        return p;
     }
 
     public static void save(File file, WordprocessingMLPackage wordMLPackage)

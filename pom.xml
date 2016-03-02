@@ -60,6 +60,8 @@
                                 <srcClassName>org.docx4j.wml.Styles</srcClassName>
                                 <srcClassName>org.docx4j.wml.Style</srcClassName>
                                 <srcClassName>org.docx4j.wml.Numbering</srcClassName>
+                                <srcClassName>org.docx4j.wml.SdtBlock</srcClassName>
+                                <srcClassName>org.docx4j.wml.CTSdtRow</srcClassName>
                             </srcClassNames>
                         </configuration>
                     </execution>
