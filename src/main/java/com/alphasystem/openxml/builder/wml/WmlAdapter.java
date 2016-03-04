@@ -221,8 +221,7 @@ public class WmlAdapter {
      * @return
      */
     public static TblGridCol getTblGridCol(int value) {
-        return getTblGridColBuilder().withW(Integer.toString(value))
-                .getObject();
+        return getTblGridColBuilder().withW(Integer.toString(value)).getObject();
     }
 
     /**
@@ -249,8 +248,7 @@ public class WmlAdapter {
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     public static JAXBElement getWrappedFldChar(FldChar fldchar) {
-        return new JAXBElement(new QName(NS_WORD12, "fldChar"), FldChar.class,
-                fldchar);
+        return new JAXBElement(new QName(NS_WORD12, "fldChar"), FldChar.class, fldchar);
     }
 
     public static P getEmptyPara() {
@@ -281,7 +279,7 @@ public class WmlAdapter {
         return getPBuilder().withRsidP(id).withRsidR(id).withRsidRDefault(id).addContent(r).getObject();
     }
 
-    public static P addTableOfContent(String tocText) {
+    private static P addTableOfContentInternal(String tocText) {
         final PPr pPr = getPPrBuilder().withPStyle(getPStyle("TOC1")).getObject();
         P p = getPBuilder().withParaId(nextId()).withRsidR(nextId()).withRsidRDefault(nextId()).withRsidP(nextId())
                 .withPPr(pPr).getObject();
@@ -289,6 +287,31 @@ public class WmlAdapter {
         addTableOfContentField(p, tocText);
         addFieldEnd(p);
         return p;
+    }
+
+    private static P addTableOfContentTitle(String tocTitle) {
+        final PPrBuilder pPrBuilder = getPPrBuilder();
+        final PPrBase.NumPr numPr = pPrBuilder.getNumPrBuilder().withIlvl(0L).getObject();
+        final PPr pPr = pPrBuilder.withPStyle("TOCHeading").withNumPr(numPr).getObject();
+        final Text text = getText(tocTitle);
+        final R r = WmlBuilderFactory.getRBuilder().addContent(text).getObject();
+        return getPBuilder().withPPr(pPr).addContent(r).getObject();
+    }
+
+    public static List<P> addTableOfContent(String tocTitle, String tocText) {
+        List<P> paras = new ArrayList<>();
+        paras.add(addTableOfContentTitle(tocTitle));
+        paras.add(addTableOfContentInternal(tocText));
+        paras.add(getPageBreak());
+        return paras;
+    }
+
+    public static List<P> addTableOfContent(String tocTitle) {
+        return addTableOfContent(tocTitle, " TOC \\o \"1-3\" \\h \\z \\u \\h ");
+    }
+
+    public static List<P> addTableOfContent() {
+        return addTableOfContent("Table of Contents");
     }
 
     public static void save(File file, WordprocessingMLPackage wordMLPackage)

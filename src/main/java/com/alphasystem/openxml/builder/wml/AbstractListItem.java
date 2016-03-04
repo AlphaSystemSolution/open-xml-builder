@@ -23,10 +23,7 @@ public abstract class AbstractListItem<T> implements ListItem<T> {
     }
 
     public AbstractListItem(int numberId, String styleName, String id) {
-        this.numberId = numberId;
-        this.styleName = styleName;
-        this.numberFormat = DECIMAL;
-        this.id = id;
+        this(numberId, styleName, DECIMAL, id);
     }
 
     protected AbstractListItem(int numberId, String styleName, NumberFormat numberFormat) {

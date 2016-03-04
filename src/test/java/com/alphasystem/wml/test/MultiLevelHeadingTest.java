@@ -5,12 +5,14 @@ import org.docx4j.openpackaging.exceptions.Docx4JException;
 import org.docx4j.openpackaging.exceptions.InvalidFormatException;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
 import org.docx4j.openpackaging.parts.WordprocessingML.MainDocumentPart;
+import org.docx4j.wml.P;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import static com.alphasystem.openxml.builder.wml.WmlAdapter.getEmptyPara;
-import static com.alphasystem.openxml.builder.wml.WmlAdapter.save;
+import java.util.List;
+
+import static com.alphasystem.openxml.builder.wml.WmlAdapter.*;
 import static java.lang.String.format;
 import static java.nio.file.Paths.get;
 import static org.testng.Assert.fail;
@@ -42,8 +44,14 @@ public class MultiLevelHeadingTest {
         }
     }
 
-
     @Test
+    public void addTableOfContents() {
+        final MainDocumentPart mainDocumentPart = wmlPackage.getMainDocumentPart();
+        final List<P> list = addTableOfContent();
+        list.forEach(mainDocumentPart::addObject);
+    }
+
+    @Test(dependsOnMethods = {"addTableOfContents"})
     public void createMultiLevelHeading1() {
         final MainDocumentPart mainDocumentPart = wmlPackage.getMainDocumentPart();
         mainDocumentPart.addObject(getEmptyPara());
@@ -52,9 +60,10 @@ public class MultiLevelHeadingTest {
             String style = format("ListHeading%s", i);
             mainDocumentPart.addStyledParagraphOfText(style, style);
         }
+        mainDocumentPart.addObject(getPageBreak());
     }
 
-    @Test
+    @Test(dependsOnMethods = {"createMultiLevelHeading1"})
     public void createMultiLevelHeading2() {
         final MainDocumentPart mainDocumentPart = wmlPackage.getMainDocumentPart();
         mainDocumentPart.addObject(getEmptyPara());
