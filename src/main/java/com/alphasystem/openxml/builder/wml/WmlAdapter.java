@@ -145,9 +145,14 @@ public class WmlAdapter {
 
 
     public static PPr getListParagraphProperties(long listId, long level) {
+        return getListParagraphProperties(listId, level, "ListParagraph");
+    }
+
+    public static PPr getListParagraphProperties(long listId, long level, String style) {
+        style = isBlank(style) ? "ListParagraph" : style;
         final PPrBuilder pPrBuilder = getPPrBuilder();
         final PPrBuilder.NumPrBuilder numPrBuilder = pPrBuilder.getNumPrBuilder().withIlvl(level).withNumId(listId);
-        return pPrBuilder.withNumPr(numPrBuilder.getObject()).withPStyle("ListParagraph").getObject();
+        return pPrBuilder.withNumPr(numPrBuilder.getObject()).withPStyle(style).getObject();
     }
 
     public static CTLongHexNumber getCtLongHexNumber(String value) {
