@@ -185,16 +185,15 @@ public class WmlAdapter {
      * @return
      */
     public static GridSpan getGridSpan(long value) {
-        return getTcPrInnerBuilder().withGridSpan(value).getGridSpanBuilder().getObject();
+        return getTcPrInnerBuilder().getGridSpanBuilder().withVal(value).getObject();
     }
 
     /**
      * @param value
      * @return
      */
-    public static HpsMeasure getHpsMeasure(Integer value) {
-        return getHpsMeasureBuilder().withVal(Integer.toString(value))
-                .getObject();
+    public static HpsMeasure getHpsMeasure(long value) {
+        return getHpsMeasureBuilder().withVal(value).getObject();
     }
 
     /**
@@ -210,7 +209,7 @@ public class WmlAdapter {
      * @return
      */
     public static PStyle getPStyle(String styleName) {
-        return getPPrBuilder().withPStyle(styleName).getPStyleBuilder().getObject();
+        return getPPrBuilder().getPStyleBuilder().withVal(styleName).getObject();
     }
 
     /**
@@ -225,8 +224,8 @@ public class WmlAdapter {
      * @param value
      * @return
      */
-    public static TblGridCol getTblGridCol(int value) {
-        return getTblGridColBuilder().withW(Integer.toString(value)).getObject();
+    public static TblGridCol getTblGridCol(long value) {
+        return getTblGridColBuilder().withW(value).getObject();
     }
 
     /**
