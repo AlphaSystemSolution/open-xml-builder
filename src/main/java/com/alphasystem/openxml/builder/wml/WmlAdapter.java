@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.alphasystem.openxml.builder.wml.WmlBuilderFactory.*;
 import static com.alphasystem.util.IdGenerator.nextId;
@@ -46,6 +47,8 @@ public class WmlAdapter {
     public static final Text SINGLE_SPACE = getText(" ", "preserve");
 
     private static final ClassLoader CLASS_LOADER = currentThread().getContextClassLoader();
+
+    private static final AtomicInteger bookmarkCount = new AtomicInteger(0);
 
     static Styles loadStyles(Styles styles, String... paths) {
         if (isEmpty(paths)) {
@@ -131,6 +134,28 @@ public class WmlAdapter {
         Text txt = getText(tocText, "preserve");
         objectFactory.createRInstrText(txt);
         paragraph.getContent().add(getRBuilder().addContent(objectFactory.createRInstrText(txt)).getObject());
+    }
+
+    public static void addBookMark(PBuilder pBuilder, String id) {
+        if (isBlank(id)) {
+            return;
+        }
+        final long value = bookmarkCount.longValue();
+        final CTBookmark bookmarkStart = getCTBookmarkBuilder().withId(value).withName(id).getObject();
+        final JAXBElement<CTMarkupRange> bookmarkEnd = createCTMarkupRange(getCTBookmarkRangeBuilder().withId(value).getObject());
+        pBuilder.getObject().getContent().add(0, bookmarkStart);
+        pBuilder.addContent(bookmarkEnd);
+    }
+
+    public static void addBookMark(P p, String id) {
+        if (isBlank(id)) {
+            return;
+        }
+        String bookmarkId = String.valueOf(bookmarkCount.incrementAndGet());
+        CTBookmark bookmarkStart = getCTBookmarkBuilder().withId(bookmarkId).withName(id).getObject();
+        JAXBElement<CTMarkupRange> bookmarkEnd = createCTMarkupRange(getCTBookmarkRangeBuilder().withId(bookmarkId).getObject());
+        p.getContent().add(0, bookmarkStart);
+        p.getContent().add(bookmarkEnd);
     }
 
     public static JAXBElement<CTBookmark> createBodyBookmarkStart(
