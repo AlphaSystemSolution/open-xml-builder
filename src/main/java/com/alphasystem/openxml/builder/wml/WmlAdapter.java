@@ -35,6 +35,7 @@ import static org.apache.commons.lang3.ArrayUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.docx4j.XmlUtils.unmarshal;
 import static org.docx4j.openpackaging.parts.relationships.Namespaces.NS_WORD12;
+import static org.docx4j.wml.STBorder.NONE;
 import static org.docx4j.wml.STBrType.PAGE;
 import static org.docx4j.wml.STFldCharType.BEGIN;
 import static org.docx4j.wml.STFldCharType.END;
@@ -261,6 +262,14 @@ public class WmlAdapter {
         return getTblGridColBuilder().withW(value).getObject();
     }
 
+    public static CTBorder getNilBorder() {
+        return getBorder(NONE, 0L, 0L, "auto");
+    }
+
+    public static CTBorder getBorder(STBorder borderType, Long size, Long space, String color) {
+        return getCTBorderBuilder().withVal(borderType).withSz(size).withSpace(space).withColor(color).getObject();
+    }
+
     /**
      * @param value
      * @param space
@@ -290,15 +299,19 @@ public class WmlAdapter {
 
     public static P getEmptyPara(String styleName) {
         String id = nextId();
-        styleName = isBlank(styleName) ? "Normal" : styleName;
 
-        final PBuilder pBuilder = getPBuilder();
         PPr ppr = null;
         if (styleName != null) {
             ppr = getPPrBuilder().withPStyle(styleName).getObject();
         }
 
-        return pBuilder.withPPr(ppr).withRsidP(id).withRsidR(id).withRsidRDefault(id).getObject();
+        return getPBuilder().withPPr(ppr).withRsidP(id).withRsidR(id).withRsidRDefault(id).getObject();
+    }
+
+    public static P getParagraphWithStyle(String styleName, String text) {
+        String rsidRPr = nextId();
+        R r = getRBuilder().withRsidRPr(rsidRPr).addContent(getText(text)).getObject();
+        return getPBuilder(getEmptyPara(styleName)).withRsidRPr(rsidRPr).addContent(r).getObject();
     }
 
     public static P getPageBreak() {
