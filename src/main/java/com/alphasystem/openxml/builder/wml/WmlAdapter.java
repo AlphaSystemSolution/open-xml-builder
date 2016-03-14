@@ -169,16 +169,19 @@ public class WmlAdapter {
         return OBJECT_FACTORY.createBodyBookmarkEnd(value);
     }
 
-
-    public static PPr getListParagraphProperties(long listId, long level) {
-        return getListParagraphProperties(listId, level, "ListParagraph");
+    public static PPr getListParagraphProperties(long listId, long level, boolean applyNumbering) {
+        return getListParagraphProperties(listId, level, "ListParagraph", applyNumbering);
     }
 
-    public static PPr getListParagraphProperties(long listId, long level, String style) {
+    public static PPr getListParagraphProperties(long listId, long level, String style, boolean applyNumbering) {
         style = isBlank(style) ? "ListParagraph" : style;
         final PPrBuilder pPrBuilder = getPPrBuilder();
-        final PPrBuilder.NumPrBuilder numPrBuilder = pPrBuilder.getNumPrBuilder().withIlvl(level).withNumId(listId);
-        return pPrBuilder.withNumPr(numPrBuilder.getObject()).withPStyle(style).getObject();
+        PPrBase.NumPr numPr = null;
+        if (applyNumbering) {
+            final PPrBuilder.NumPrBuilder numPrBuilder = pPrBuilder.getNumPrBuilder().withIlvl(level).withNumId(listId);
+            numPr = numPrBuilder.getObject();
+        }
+        return pPrBuilder.withNumPr(numPr).withPStyle(style).getObject();
     }
 
     public static CTLongHexNumber getCtLongHexNumber(String value) {

@@ -47,9 +47,9 @@ public class NumberedParagraphTest {
      *
      * @return p
      */
-    private static P createNumberedParagraph(long listId, long number, String paragraphText) {
+    private static P createNumberedParagraph(long listId, long number, String paragraphText, boolean applyNumbering) {
         final RBuilder rBuilder = getRBuilder().addContent(getText(paragraphText));
-        return getPBuilder().withPPr(WmlAdapter.getListParagraphProperties(listId, number))
+        return getPBuilder().withPPr(WmlAdapter.getListParagraphProperties(listId, number, applyNumbering))
                 .addContent(rBuilder.getObject()).getObject();
     }
 
@@ -202,15 +202,16 @@ public class NumberedParagraphTest {
 
     private void addList(final MainDocumentPart mainDocumentPart, long numId, long ilvl) {
         mainDocumentPart.addParagraphOfText(format("List of type: %s", numId));
-        mainDocumentPart.addObject(createNumberedParagraph(numId, ilvl, nextId()));
-        mainDocumentPart.addObject(createNumberedParagraph(numId, ilvl, nextId()));
+        mainDocumentPart.addObject(createNumberedParagraph(numId, ilvl, nextId(), true));
+        mainDocumentPart.addObject(createNumberedParagraph(numId, ilvl, nextId(), false));
+        mainDocumentPart.addObject(createNumberedParagraph(numId, ilvl, nextId(), true));
         mainDocumentPart.addObject(getEmptyPara());
     }
 
     private void addMultiLevelList(final MainDocumentPart mainDocumentPart, long numId, long actualNumId) {
         mainDocumentPart.addParagraphOfText(format("Multi-Level List of type: %s", actualNumId));
         for (int i = 0; i < 5; i++) {
-            mainDocumentPart.addObject(createNumberedParagraph(numId, i, nextId()));
+            mainDocumentPart.addObject(createNumberedParagraph(numId, i, nextId(), true));
         }
         mainDocumentPart.addObject(getEmptyPara());
     }
