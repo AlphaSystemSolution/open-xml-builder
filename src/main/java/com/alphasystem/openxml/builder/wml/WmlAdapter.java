@@ -169,6 +169,10 @@ public class WmlAdapter {
         return OBJECT_FACTORY.createBodyBookmarkEnd(value);
     }
 
+    public static PPrBase.NumPr getNumPr(Long numId, Long level) {
+        return new PPrBaseBuilder().getNumPrBuilder().withNumId(numId).withIlvl(level).getObject();
+    }
+
     public static PPr getListParagraphProperties(long listId, long level, boolean applyNumbering) {
         return getListParagraphProperties(listId, level, "ListParagraph", applyNumbering);
     }
