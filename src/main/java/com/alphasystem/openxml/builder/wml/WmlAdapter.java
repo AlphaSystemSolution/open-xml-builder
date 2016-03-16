@@ -321,6 +321,13 @@ public class WmlAdapter {
         return getPBuilder(getEmptyPara(styleName)).withRsidRPr(rsidRPr).addContent(r).getObject();
     }
 
+    public static P getHorizontalLine() {
+        PPrBase.PBdr pBdr = WmlBuilderFactory.getPPrBaseBuilder().getPBdrBuilder().
+                withTop(getBorder(STBorder.SINGLE, 6L, 1L, "auto")).getObject();
+        PPr pPr = getPPrBuilder().withPBdr(pBdr).getObject();
+        return getPBuilder().withPPr(pPr).getObject();
+    }
+
     public static P getPageBreak() {
         String id = nextId();
         Br br = getBrBuilder().withType(PAGE).getObject();
