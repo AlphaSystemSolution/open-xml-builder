@@ -47,9 +47,9 @@ public class NumberedParagraphTest {
      *
      * @return p
      */
-    private static P createNumberedParagraph(long listId, long number, String paragraphText, boolean applyNumbering) {
+    private static P createNumberedParagraph(long listId, long level, String paragraphText, boolean applyNumbering) {
         final RBuilder rBuilder = getRBuilder().addContent(getText(paragraphText));
-        return getPBuilder().withPPr(WmlAdapter.getListParagraphProperties(listId, number, applyNumbering))
+        return getPBuilder().withPPr(WmlAdapter.getListParagraphProperties(listId, level, applyNumbering))
                 .addContent(rBuilder.getObject()).getObject();
     }
 
@@ -210,8 +210,8 @@ public class NumberedParagraphTest {
 
     private void addMultiLevelList(final MainDocumentPart mainDocumentPart, long numId, long actualNumId) {
         mainDocumentPart.addParagraphOfText(format("Multi-Level List of type: %s", actualNumId));
-        for (int i = 0; i < 5; i++) {
-            mainDocumentPart.addObject(createNumberedParagraph(numId, i, nextId(), true));
+        for (int level = 0; level < 5; level++) {
+            mainDocumentPart.addObject(createNumberedParagraph(numId, level, nextId(), true));
         }
         mainDocumentPart.addObject(getEmptyPara());
     }

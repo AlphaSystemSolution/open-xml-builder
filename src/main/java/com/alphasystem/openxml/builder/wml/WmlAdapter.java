@@ -180,11 +180,7 @@ public class WmlAdapter {
     public static PPr getListParagraphProperties(long listId, long level, String style, boolean applyNumbering) {
         style = isBlank(style) ? "ListParagraph" : style;
         final PPrBuilder pPrBuilder = getPPrBuilder();
-        PPrBase.NumPr numPr = null;
-        if (applyNumbering) {
-            final PPrBuilder.NumPrBuilder numPrBuilder = pPrBuilder.getNumPrBuilder().withIlvl(level).withNumId(listId);
-            numPr = numPrBuilder.getObject();
-        }
+        PPrBase.NumPr numPr = applyNumbering ? getNumPr(listId, level) : null;
         return pPrBuilder.withNumPr(numPr).withPStyle(style).getObject();
     }
 
