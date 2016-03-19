@@ -66,8 +66,8 @@ public class WmlPackageBuilder {
                     if (!numIdVal.equals(requiredValue)) {
                         logger.info("Found number ID value of \"{}\" but requires value of \"{}\" for style \"{}\", changing it now.", numIdVal, numberId, styleName);
                         numId.setVal(requiredValue);
-                        break;
                     }
+                    break;
                 }
             } // end of for loop
             if (!styleFound) {
