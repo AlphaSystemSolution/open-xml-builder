@@ -60,13 +60,11 @@ public class NumberedParagraphTest {
 
     @BeforeClass
     public void setup() {
-        System.out.println("########################################");
         try {
             wmlPackage = new WmlPackageBuilder().styles("example-caption/styles.xml").multiLevelHeading(DocumentCaption.EXAMPLE).getPackage();
         } catch (InvalidFormatException e) {
             fail(e.getMessage(), e);
         }
-        System.out.println("########################################");
     }
 
     @AfterClass
