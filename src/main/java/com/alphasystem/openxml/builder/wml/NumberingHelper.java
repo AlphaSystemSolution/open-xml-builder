@@ -4,73 +4,20 @@ import com.alphasystem.util.IdGenerator;
 import org.docx4j.wml.*;
 import org.docx4j.wml.Numbering.AbstractNum;
 
-import java.io.IOException;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.alphasystem.openxml.builder.wml.WmlAdapter.getCtLongHexNumber;
 import static com.alphasystem.openxml.builder.wml.WmlBuilderFactory.*;
-import static com.alphasystem.util.nio.NIOFileUtils.USER_DIR;
-import static java.nio.file.Files.write;
-import static java.nio.file.Paths.get;
 import static org.apache.commons.lang3.ArrayUtils.add;
-import static org.docx4j.XmlUtils.marshaltoString;
 
 /**
  * @author sali
  */
 public class NumberingHelper {
 
-    private static final String META_INF = "META-INF";
-    private static final String NUMBERING_FILE_NAME = "numbering.xml";
-
-    public static void main(String[] args) {
-        try {
-            buildDefaultNumbering();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private static void buildDefaultNumbering() throws IOException {
-        Path path = save(get(USER_DIR, "src/main/resources", META_INF), getDefaultNumbering());
-        System.out.println(String.format("File created {%s}", path));
-
-        path = save(get(USER_DIR, "src/main/resources", META_INF, "multi-level-heading"), getMultiLevelHeadingNumbering());
-        System.out.println(String.format("File created {%s}", path));
-    }
-
-    public static Numbering getDefaultNumbering() {
-        final NumberingBuilder numberingBuilder = getNumberingBuilder();
-        populate(numberingBuilder, OrderedList.values());
-        populate(numberingBuilder, UnorderedList.values());
-        return numberingBuilder.getObject();
-    }
-
-    public static Numbering getMultiLevelHeadingNumbering() {
-        final NumberingBuilder numberingBuilder = getNumberingBuilder();
-        populate(numberingBuilder, HeadingList.HEADING1);
-        return numberingBuilder.getObject();
-    }
-
-    @SafeVarargs
-    public static <T extends ListItem<T>> void populate(final NumberingBuilder numberingBuilder, T... items) {
-        for (T item : items) {
-            populate(numberingBuilder, getListItems(item));
-        }
-    }
-
-    public static <T extends ListItem<T>> void populate(NumberingBuilder numberingBuilder, final List<T> items) {
-        T firstItem = items.get(0);
-        long abstractNumId = firstItem.getNumberId() - 1;
-        numberingBuilder.addAbstractNum(getAbstractNum(abstractNumId, IdGenerator.nextId(), IdGenerator.nextId(),
-                firstItem.getMultiLevelType(), getLevels(items))).addNum(getNum(firstItem.getNumberId()));
-    }
-
-    public static Path save(Path targetDir, Numbering numbering) throws IOException {
-        return write(get(targetDir.toString(), NUMBERING_FILE_NAME), marshaltoString(numbering).getBytes());
-    }
+//    private static final String META_INF = "META-INF";
+//    private static final String NUMBERING_FILE_NAME = "numbering.xml";
 
     @SuppressWarnings({"unchecked"})
     private static <T extends ListItem<T>> List<T> getListItems(T firstItem) {
@@ -87,11 +34,6 @@ public class NumberingHelper {
         }
 
         return list;
-    }
-
-    private static AbstractNum getAbstractNum(long id, String nsId, String tmpl, String multiLevel, Lvl[] lvls) {
-        return getNumberingAbstractNumBuilder().withAbstractNumId(id).withNsid(getCtLongHexNumber(nsId))
-                .withTmpl(getCtLongHexNumber(tmpl)).withMultiLevelType(multiLevel).addLvl(lvls).getObject();
     }
 
     private static Numbering.Num getNum(long numId) {
@@ -138,5 +80,58 @@ public class NumberingHelper {
         PPrBase.Ind ind = pPrBuilder.getIndBuilder().withLeft(leftValue).withHanging(hangingValue).getObject();
         return pPrBuilder.withInd(ind).getObject();
     }
+
+    private static AbstractNum getAbstractNum(long id, String nsId, String tmpl, String multiLevel, Lvl[] lvls) {
+        return getNumberingAbstractNumBuilder().withAbstractNumId(id).withNsid(getCtLongHexNumber(nsId))
+                .withTmpl(getCtLongHexNumber(tmpl)).withMultiLevelType(multiLevel).addLvl(lvls).getObject();
+    }
+
+    private final NumberingBuilder numberingBuilder = getNumberingBuilder();
+    private int numbers = 0;
+
+    /*private void buildDefaultNumbering() throws IOException {
+        Path path = save(get(USER_DIR, "src/main/resources", META_INF), );
+        System.out.println(format("File created {%s}", path));
+
+        path = save(get(USER_DIR, "src/main/resources", META_INF, "multi-level-heading"), getMultiLevelHeadingNumbering());
+        System.out.println(format("File created {%s}", path));
+    }*/
+
+    public Numbering getNumbering() {
+        return numberingBuilder.getObject();
+    }
+
+    public void populateDefaultNumbering() {
+        for (OrderedList orderedList : OrderedList.values()) {
+            populate(orderedList);
+        }
+        for (UnorderedList unorderedList : UnorderedList.values()) {
+            populate(unorderedList);
+        }
+    }
+
+//    public Numbering getMultiLevelHeadingNumbering() {
+//        populate(HeadingList.HEADING1);
+//        return numberingBuilder.getObject();
+//    }
+
+    public <T extends ListItem<T>> int populate(T item) {
+        return populate(getListItems(item));
+    }
+
+    private <T extends ListItem<T>> int populate(final List<T> items) {
+        numbers++;
+        T firstItem = items.get(0);
+        int numberId = firstItem.getNumberId();
+        numberId = numberId != numbers ? numbers : numberId;
+        long abstractNumId = numberId - 1;
+        numberingBuilder.addAbstractNum(getAbstractNum(abstractNumId, IdGenerator.nextId(), IdGenerator.nextId(),
+                firstItem.getMultiLevelType(), getLevels(items))).addNum(getNum(numberId));
+        return numberId;
+    }
+
+//    public Path save(Path targetDir, Numbering numbering) throws IOException {
+//        return write(get(targetDir.toString(), NUMBERING_FILE_NAME), marshaltoString(numbering).getBytes());
+//    }
 
 }

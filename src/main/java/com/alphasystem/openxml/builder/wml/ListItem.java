@@ -113,4 +113,11 @@ public interface ListItem<T> {
      * @return next item value
      */
     T getNext();
+
+    /**
+     * Name of this ListItem.
+     *
+     * @return name of this list item.
+     */
+    String getName();
 }

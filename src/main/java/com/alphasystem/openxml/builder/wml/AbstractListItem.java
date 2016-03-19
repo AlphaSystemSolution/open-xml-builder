@@ -85,4 +85,8 @@ public abstract class AbstractListItem<T> implements ListItem<T> {
         return null;
     }
 
+    @Override
+    public String getName() {
+        return "Unknown";
+    }
 }

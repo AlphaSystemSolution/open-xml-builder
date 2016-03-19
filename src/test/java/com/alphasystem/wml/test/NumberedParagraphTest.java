@@ -13,6 +13,9 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import javax.xml.bind.JAXBException;
+import java.awt.*;
+import java.io.File;
+import java.io.IOException;
 
 import static com.alphasystem.openxml.builder.wml.WmlAdapter.*;
 import static com.alphasystem.openxml.builder.wml.WmlBuilderFactory.getPBuilder;
@@ -57,17 +60,24 @@ public class NumberedParagraphTest {
 
     @BeforeClass
     public void setup() {
+        System.out.println("########################################");
         try {
-            wmlPackage = new WmlPackageBuilder().getPackage();
+            wmlPackage = new WmlPackageBuilder().styles("example-caption/styles.xml").multiLevelHeading(DocumentCaption.EXAMPLE).getPackage();
         } catch (InvalidFormatException e) {
             fail(e.getMessage(), e);
         }
+        System.out.println("########################################");
     }
 
     @AfterClass
     public void tearDown() {
         try {
-            save(get(PARENT_PATH, "test.docx").toFile(), wmlPackage);
+            final File file = get(PARENT_PATH, "test.docx").toFile();
+            save(file, wmlPackage);
+            try {
+                Desktop.getDesktop().open(file);
+            } catch (IOException e) {
+            }
         } catch (Docx4JException e) {
             fail(e.getMessage(), e);
         }
@@ -119,6 +129,15 @@ public class NumberedParagraphTest {
         mainDocumentPart.addObject(getEmptyPara());
         UnorderedList unorderedListItem = UnorderedList.getByStyleName(styleName);
         addList(mainDocumentPart, unorderedListItem.getNumberId(), 0L);
+    }
+
+    @Test(dependsOnMethods = "createListByStyleName")
+    public void exampleTitle() {
+        final MainDocumentPart mainDocumentPart = wmlPackage.getMainDocumentPart();
+        mainDocumentPart.addObject(getEmptyPara());
+        mainDocumentPart.addStyledParagraphOfText("ExampleTitle", "Example");
+        mainDocumentPart.addObject(getEmptyPara());
+        mainDocumentPart.addStyledParagraphOfText("ExampleTitle", "Example 2");
     }
 
     @Test
