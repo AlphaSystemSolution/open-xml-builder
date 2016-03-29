@@ -2,7 +2,6 @@ package com.alphasystem.wml.test;
 
 import com.alphasystem.openxml.builder.wml.WmlPackageBuilder;
 import org.docx4j.openpackaging.exceptions.Docx4JException;
-import org.docx4j.openpackaging.exceptions.InvalidFormatException;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
 import org.docx4j.openpackaging.parts.WordprocessingML.MainDocumentPart;
 import org.testng.annotations.AfterClass;
@@ -29,7 +28,7 @@ public class NormalHeadingTest {
         try {
             wmlPackage = new WmlPackageBuilder().styles("example-caption/styles.xml")
                     .numbering("example-caption/numbering.xml").getPackage();
-        } catch (InvalidFormatException e) {
+        } catch (Docx4JException e) {
             fail(e.getMessage(), e);
         }
     }

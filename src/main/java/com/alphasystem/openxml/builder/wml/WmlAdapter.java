@@ -15,12 +15,17 @@ import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
 import org.docx4j.wml.*;
 import org.docx4j.wml.PPrBase.PStyle;
 import org.docx4j.wml.TcPrInner.GridSpan;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.namespace.QName;
 import java.io.*;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -47,17 +52,22 @@ public class WmlAdapter {
 
     public static final Text SINGLE_SPACE = getText(" ", "preserve");
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(WmlAdapter.class);
+
     private static final ClassLoader CLASS_LOADER = currentThread().getContextClassLoader();
 
     private static final AtomicInteger bookmarkCount = new AtomicInteger(0);
 
     static Styles loadStyles(Styles styles, String... paths) {
         if (isEmpty(paths)) {
-            return null;
+            return styles;
         }
         for (String p : paths) {
             try {
                 final List<URL> urls = readResources(p);
+                if (urls.isEmpty()) {
+                    return styles;
+                }
                 for (URL url : urls) {
                     System.out.println(format("Reading style {%s}", url));
                     try (InputStream ins = url.openStream()) {
@@ -85,6 +95,9 @@ public class WmlAdapter {
         for (String p : paths) {
             try {
                 final List<URL> urls = readResources(p);
+                if (urls.isEmpty()) {
+                    return numbering;
+                }
                 for (URL url : urls) {
                     System.out.println(format("Reading numbering {%s}", url));
                     try (InputStream ins = url.openStream()) {
@@ -106,15 +119,31 @@ public class WmlAdapter {
         return numbering;
     }
 
-    private static List<URL> readResources(String path) throws IOException {
+    static List<URL> readResources(String pathName) throws IOException {
+        LOGGER.info("Loading resource \"{}\".", pathName);
         List<URL> urls = new ArrayList<>();
-        Enumeration<URL> resources = CLASS_LOADER.getResources(format("META-INF/%s", path));
-        if (resources != null) {
+        Path path = Paths.get(pathName);
+        if (Files.exists(path)) {
+            // path is a absolute file
+            LOGGER.info("Path \"{}\" is an absolute file.", pathName);
+            urls.add(path.toUri().toURL());
+        } else {
+            Enumeration<URL> resources;
+            resources = CLASS_LOADER.getResources(pathName);
+            if (resources == null || !resources.hasMoreElements()) {
+                LOGGER.info("Resource \"{}\" does not exists.", pathName);
+                pathName = format("META-INF/%s", pathName);
+                resources = CLASS_LOADER.getResources(pathName);
+            }
+            if (resources == null || !resources.hasMoreElements()) {
+                LOGGER.info("Resource \"{}\" does not exists.", pathName);
+                return urls;
+            }
             while (resources.hasMoreElements()) {
                 urls.add(resources.nextElement());
             }
+            Collections.reverse(urls);
         }
-        Collections.reverse(urls);
         return urls;
     }
 

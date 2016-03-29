@@ -1,23 +1,36 @@
 package com.alphasystem.openxml.builder.wml;
 
+import org.docx4j.jaxb.Context;
+import org.docx4j.openpackaging.contenttype.CTOverride;
+import org.docx4j.openpackaging.contenttype.ContentTypeManager;
+import org.docx4j.openpackaging.exceptions.Docx4JException;
 import org.docx4j.openpackaging.exceptions.InvalidFormatException;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
+import org.docx4j.openpackaging.parts.WordprocessingML.DocumentSettingsPart;
 import org.docx4j.openpackaging.parts.WordprocessingML.MainDocumentPart;
 import org.docx4j.openpackaging.parts.WordprocessingML.NumberingDefinitionsPart;
 import org.docx4j.openpackaging.parts.WordprocessingML.StyleDefinitionsPart;
-import org.docx4j.wml.Numbering;
-import org.docx4j.wml.PPrBase;
-import org.docx4j.wml.Style;
-import org.docx4j.wml.Styles;
+import org.docx4j.openpackaging.parts.relationships.Namespaces;
+import org.docx4j.openpackaging.parts.relationships.RelationshipsPart;
+import org.docx4j.wml.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.math.BigInteger;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.List;
 
 import static com.alphasystem.openxml.builder.wml.WmlAdapter.loadNumbering;
 import static com.alphasystem.openxml.builder.wml.WmlAdapter.loadStyles;
+import static com.alphasystem.openxml.builder.wml.WmlBuilderFactory.getCTRelBuilder;
 import static org.apache.commons.lang3.ArrayUtils.isEmpty;
+import static org.docx4j.openpackaging.contenttype.ContentTypes.WORDPROCESSINGML_DOCUMENT;
+import static org.docx4j.openpackaging.contenttype.ContentTypes.WORDPROCESSINGML_DOCUMENT_MACROENABLED;
 
 /**
  * Fluent API for creating WordML package.
@@ -32,11 +45,11 @@ public class WmlPackageBuilder {
     private Styles styles;
     private Numbering numbering;
 
-    public WmlPackageBuilder() throws InvalidFormatException {
+    public WmlPackageBuilder() throws Docx4JException {
         this(true);
     }
 
-    public WmlPackageBuilder(boolean loadDefaultStyles) throws InvalidFormatException {
+    public WmlPackageBuilder(boolean loadDefaultStyles) throws Docx4JException {
         wmlPackage = WordprocessingMLPackage.createPackage();
         if (loadDefaultStyles) {
             styles = loadStyles(styles, "styles.xml");
@@ -44,6 +57,63 @@ public class WmlPackageBuilder {
         numberingHelper = new NumberingHelper();
         numberingHelper.populateDefaultNumbering();
         numbering = numberingHelper.getNumbering();
+    }
+
+    public WmlPackageBuilder(String templatePath) throws Docx4JException {
+        URL url;
+        final List<URL> urls;
+        try {
+            urls = WmlAdapter.readResources(templatePath);
+            url = urls.get(0);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e.getMessage(), e);
+        }
+        if (url == null) {
+            throw new RuntimeException(String.format("Unable to open template \"%s\".", templatePath));
+        }
+        try {
+            loadTemplate(templatePath, url);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e.getMessage(), e);
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e.getMessage(), e);
+        }
+        numberingHelper = new NumberingHelper();
+        numberingHelper.populateDefaultNumbering();
+        numbering = numberingHelper.getNumbering();
+    }
+
+    private void loadTemplate(String templatePath, URL url) throws Docx4JException, IOException, URISyntaxException {
+        try (InputStream is = url.openStream()) {
+            wmlPackage = WordprocessingMLPackage.load(is);
+
+            // Replace dotx content type with docx
+            ContentTypeManager ctm = wmlPackage.getContentTypeManager();
+
+            // Get <Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.template.main+xml"/>
+            CTOverride override = ctm.getOverrideContentType().get(new URI("/word/document.xml")); // note this assumption
+
+            String contentType = templatePath.endsWith("dotm") /* macro enabled? */ ? WORDPROCESSINGML_DOCUMENT_MACROENABLED : WORDPROCESSINGML_DOCUMENT;
+            override.setContentType(contentType);
+
+            // Create settings part, and init content
+            DocumentSettingsPart dsp = new DocumentSettingsPart();
+            CTSettings settings = Context.getWmlObjectFactory().createCTSettings();
+            dsp.setJaxbElement(settings);
+            wmlPackage.getMainDocumentPart().addTargetPart(dsp);
+
+            // Create external rel
+            RelationshipsPart rp = RelationshipsPart.createRelationshipsPartForPart(dsp);
+            org.docx4j.relationships.Relationship rel = new org.docx4j.relationships.ObjectFactory().createRelationship();
+            rel.setType(Namespaces.ATTACHED_TEMPLATE);
+            rel.setTarget(url.toExternalForm());
+            rel.setTargetMode("External");
+            rp.addRelationship(rel); // addRelationship sets the rel's @Id
+
+            settings.setAttachedTemplate(getCTRelBuilder().withId(rel.getId()).getObject());
+
+            styles = wmlPackage.getMainDocumentPart().getStyleDefinitionsPart().getContents();
+        }
     }
 
     public <T extends ListItem<T>> WmlPackageBuilder multiLevelHeading(T item) {

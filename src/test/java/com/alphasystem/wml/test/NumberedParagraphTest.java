@@ -3,7 +3,6 @@ package com.alphasystem.wml.test;
 import com.alphasystem.openxml.builder.wml.*;
 import org.docx4j.XmlUtils;
 import org.docx4j.openpackaging.exceptions.Docx4JException;
-import org.docx4j.openpackaging.exceptions.InvalidFormatException;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
 import org.docx4j.openpackaging.parts.WordprocessingML.MainDocumentPart;
 import org.docx4j.openpackaging.parts.WordprocessingML.NumberingDefinitionsPart;
@@ -13,9 +12,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import javax.xml.bind.JAXBException;
-import java.awt.*;
 import java.io.File;
-import java.io.IOException;
 
 import static com.alphasystem.openxml.builder.wml.WmlAdapter.*;
 import static com.alphasystem.openxml.builder.wml.WmlBuilderFactory.getPBuilder;
@@ -62,7 +59,7 @@ public class NumberedParagraphTest {
     public void setup() {
         try {
             wmlPackage = new WmlPackageBuilder().styles("example-caption/styles.xml").multiLevelHeading(DocumentCaption.EXAMPLE).getPackage();
-        } catch (InvalidFormatException e) {
+        } catch (Docx4JException e) {
             fail(e.getMessage(), e);
         }
     }
@@ -72,10 +69,6 @@ public class NumberedParagraphTest {
         try {
             final File file = get(PARENT_PATH, "test.docx").toFile();
             save(file, wmlPackage);
-            try {
-                Desktop.getDesktop().open(file);
-            } catch (IOException e) {
-            }
         } catch (Docx4JException e) {
             fail(e.getMessage(), e);
         }
