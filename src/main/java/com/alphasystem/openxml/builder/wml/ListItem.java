@@ -27,6 +27,13 @@ public interface ListItem<T> {
     }
 
     /**
+     * Sets the number id for this item.
+     *
+     * @param numberId current number Id
+     */
+    void setNumberId(int numberId);
+
+    /**
      * ID of the list.
      *
      * @return list id
@@ -106,13 +113,6 @@ public interface ListItem<T> {
      * @return run properties
      */
     RPr getRPr();
-
-    /**
-     * Next list item. This value is used to create numbering levels for the numbering system.
-     *
-     * @return next item value
-     */
-    T getNext();
 
     /**
      * Name of this ListItem.

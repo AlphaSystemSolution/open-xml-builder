@@ -10,24 +10,28 @@ import static org.docx4j.wml.NumberFormat.DECIMAL;
  */
 public abstract class AbstractListItem<T> implements ListItem<T> {
 
-    private final int numberId;
+    private int numberId;
     private final String styleName;
     private final NumberFormat numberFormat;
     private final String id;
 
-    protected AbstractListItem(int numberId, String styleName, NumberFormat numberFormat, String id) {
-        this.numberId = numberId;
+    protected AbstractListItem(String styleName, NumberFormat numberFormat, String id) {
         this.styleName = styleName;
         this.numberFormat = numberFormat;
         this.id = id;
     }
 
-    public AbstractListItem(int numberId, String styleName, String id) {
-        this(numberId, styleName, DECIMAL, id);
+    public AbstractListItem(String styleName, String id) {
+        this(styleName, DECIMAL, id);
     }
 
-    protected AbstractListItem(int numberId, String styleName, NumberFormat numberFormat) {
-        this(numberId, styleName, numberFormat, null);
+    protected AbstractListItem(String styleName, NumberFormat numberFormat) {
+        this(styleName, numberFormat, null);
+    }
+
+    @Override
+    public void setNumberId(int numberId) {
+        this.numberId = numberId;
     }
 
     @Override
@@ -87,6 +91,6 @@ public abstract class AbstractListItem<T> implements ListItem<T> {
 
     @Override
     public String getName() {
-        return "Unknown";
+        return getStyleName();
     }
 }

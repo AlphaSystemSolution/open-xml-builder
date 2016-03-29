@@ -11,7 +11,7 @@ import static org.docx4j.wml.NumberFormat.DECIMAL;
  */
 public abstract class DocumentCaption extends AbstractListItem<DocumentCaption> {
 
-    public static final DocumentCaption EXAMPLE = new DocumentCaption(12, "ExampleTitle", DECIMAL) {
+    public static final DocumentCaption EXAMPLE = new DocumentCaption("ExampleTitle", DECIMAL) {
 
         @Override
         public String getValue(int i) {
@@ -23,14 +23,10 @@ public abstract class DocumentCaption extends AbstractListItem<DocumentCaption> 
             return "EXAMPLE";
         }
 
-        @Override
-        public DocumentCaption getNext() {
-            return null;
-        }
     };
 
-    DocumentCaption(int numberId, String styleName, NumberFormat numberFormat) {
-        super(numberId, styleName, numberFormat);
+    DocumentCaption(String styleName, NumberFormat numberFormat) {
+        super(styleName, numberFormat);
     }
 
     @Override

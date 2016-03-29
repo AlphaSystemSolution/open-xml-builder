@@ -25,6 +25,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
 
+import static com.alphasystem.openxml.builder.wml.HeadingList.*;
 import static com.alphasystem.openxml.builder.wml.WmlAdapter.loadNumbering;
 import static com.alphasystem.openxml.builder.wml.WmlAdapter.loadStyles;
 import static com.alphasystem.openxml.builder.wml.WmlBuilderFactory.getCTRelBuilder;
@@ -116,14 +117,15 @@ public class WmlPackageBuilder {
         }
     }
 
-    public <T extends ListItem<T>> WmlPackageBuilder multiLevelHeading(T item) {
-        final int numberId = numberingHelper.populate(item);
+    @SafeVarargs
+    public final <T extends ListItem<T>> WmlPackageBuilder multiLevelHeading(T... items) {
+        final int numberId = numberingHelper.populate(items);
         final BigInteger requiredValue = BigInteger.valueOf(numberId);
-        T currentItem = item;
-        while (currentItem != null) {
+        T firstItem = items[0];
+        for (T currentItem : items) {
             final String styleName = currentItem.getStyleName();
             if (styleName == null) {
-                logger.error("No name defined in multi level heading item \"{}\"", item.getName());
+                logger.error("No name defined in multi level heading item \"{}\"", firstItem.getName());
                 continue;
             }
             boolean styleFound = false;
@@ -145,15 +147,14 @@ public class WmlPackageBuilder {
                 logger.error("##### No style with name \"{}\" for \"{}\", possible reason is that style might not initialized first #####", styleName, currentItem.getName());
                 logger.error("######################################################################################################################");
             }
-            currentItem = currentItem.getNext();
-        } // end of while
+        } // end of for
         numbering = numberingHelper.getNumbering();
         return this;
     }
 
     public WmlPackageBuilder multiLevelHeading() {
         styles = loadStyles(styles, "multi-level-heading/styles.xml");
-        return multiLevelHeading(HeadingList.HEADING1);
+        return multiLevelHeading(HEADING1, HEADING2, HEADING3, HEADING4, HEADING5);
     }
 
     public WmlPackageBuilder styles(String... paths) {
