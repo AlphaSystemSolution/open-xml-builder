@@ -13,22 +13,10 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
  */
 public abstract class OrderedList extends AbstractListItem<OrderedList> {
 
-    public static final OrderedList UPPER_ROMAN = new OrderedList(5, "upperroman", NumberFormat.UPPER_ROMAN, "04090009") {
+    public static final OrderedList ARABIC = new OrderedList(1, "arabic", NumberFormat.DECIMAL, "04090001") {
         @Override
         public OrderedList getNext() {
-            return ARABIC;
-        }
-    };
-    public static final OrderedList UPPER_ALPHA = new OrderedList(4, "upperalpha", NumberFormat.UPPER_LETTER, "04090007") {
-        @Override
-        public OrderedList getNext() {
-            return UPPER_ROMAN;
-        }
-    };
-    public static final OrderedList LOWER_ROMAN = new OrderedList(3, "lowerroman", NumberFormat.LOWER_ROMAN, "04090005") {
-        @Override
-        public OrderedList getNext() {
-            return UPPER_ALPHA;
+            return LOWER_ALPHA;
         }
     };
     public static final OrderedList LOWER_ALPHA = new OrderedList(2, "loweralpha", NumberFormat.LOWER_LETTER, "04090003") {
@@ -37,12 +25,25 @@ public abstract class OrderedList extends AbstractListItem<OrderedList> {
             return LOWER_ROMAN;
         }
     };
-    public static final OrderedList ARABIC = new OrderedList(1, "arabic", NumberFormat.DECIMAL, "04090001") {
+    public static final OrderedList LOWER_ROMAN = new OrderedList(3, "lowerroman", NumberFormat.LOWER_ROMAN, "04090005") {
         @Override
         public OrderedList getNext() {
-            return LOWER_ALPHA;
+            return UPPER_ALPHA;
         }
     };
+    public static final OrderedList UPPER_ALPHA = new OrderedList(4, "upperalpha", NumberFormat.UPPER_LETTER, "04090007") {
+        @Override
+        public OrderedList getNext() {
+            return UPPER_ROMAN;
+        }
+    };
+    public static final OrderedList UPPER_ROMAN = new OrderedList(5, "upperroman", NumberFormat.UPPER_ROMAN, "04090009") {
+        @Override
+        public OrderedList getNext() {
+            return ARABIC;
+        }
+    };
+
     private static final int LEFT_INDENT_VALUE = 720;
     private static final int HANGING_VALUE = 360;
     private static Map<String, OrderedList> valuesMap = new LinkedHashMap<>();

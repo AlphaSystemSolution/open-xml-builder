@@ -123,7 +123,7 @@ public class NumberingHelper {
         numbers++;
         T firstItem = items.get(0);
         int numberId = firstItem.getNumberId();
-        numberId = numberId != numbers ? numbers : numberId;
+        numberId = (numberId != numbers) ? numbers : numberId;
         long abstractNumId = numberId - 1;
         numberingBuilder.addAbstractNum(getAbstractNum(abstractNumId, IdGenerator.nextId(), IdGenerator.nextId(),
                 firstItem.getMultiLevelType(), getLevels(items))).addNum(getNum(numberId));
