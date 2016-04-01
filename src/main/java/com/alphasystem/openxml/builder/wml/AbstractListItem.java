@@ -11,6 +11,7 @@ import static org.docx4j.wml.NumberFormat.DECIMAL;
 public abstract class AbstractListItem<T> implements ListItem<T> {
 
     private int numberId;
+    private String name;
     private final String styleName;
     private final NumberFormat numberFormat;
     private final String id;
@@ -19,6 +20,7 @@ public abstract class AbstractListItem<T> implements ListItem<T> {
         this.styleName = styleName;
         this.numberFormat = numberFormat;
         this.id = id;
+        setName(styleName);
     }
 
     public AbstractListItem(String styleName, String id) {
@@ -89,8 +91,12 @@ public abstract class AbstractListItem<T> implements ListItem<T> {
         return null;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     @Override
     public String getName() {
-        return getStyleName();
+        return name;
     }
 }

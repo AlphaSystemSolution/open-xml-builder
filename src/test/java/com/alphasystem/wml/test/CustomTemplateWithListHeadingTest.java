@@ -21,7 +21,7 @@ import static org.testng.Assert.fail;
 /**
  * @author sali
  */
-public class CustomStylesTest {
+public class CustomTemplateWithListHeadingTest {
 
     private static final String PARENT_PATH = "C:\\Users\\sali\\git-hub\\AlphaSystemSolution\\open-xml-builder\\target";
 
@@ -30,7 +30,7 @@ public class CustomStylesTest {
     @BeforeClass
     public void setup() {
         try {
-            wmlPackage = new WmlPackageBuilder("META-INF/Custom.dotx").getPackage();
+            wmlPackage = new WmlPackageBuilder("META-INF/Custom.dotx").multiLevelHeading().getPackage();
         } catch (Docx4JException e) {
             fail(e.getMessage(), e);
         }
@@ -39,13 +39,17 @@ public class CustomStylesTest {
     @AfterClass
     public void tearDown() {
         try {
-            final File file = get(PARENT_PATH, "Custom.docx").toFile();
+            final File file = get(PARENT_PATH, "CustomWithListHeading.docx").toFile();
             save(file, wmlPackage);
-            try {
-                Desktop.getDesktop().open(file);
-            } catch (IOException e) {
-                // ignore
-            }
+            Thread thread = new Thread(() -> {
+                try {
+                    Desktop.getDesktop().open(file);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    // ignore
+                }
+            });
+            thread.start();
         } catch (Docx4JException e) {
             fail(e.getMessage(), e);
         }
@@ -57,7 +61,7 @@ public class CustomStylesTest {
         mainDocumentPart.addObject(getEmptyPara());
 
         for (int i = 1; i <= 5; i++) {
-            String style = format("Heading%s", i);
+            String style = format("ListHeading%s", i);
             mainDocumentPart.addStyledParagraphOfText(style, style);
         }
     }

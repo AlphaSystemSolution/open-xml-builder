@@ -5,51 +5,39 @@ package com.alphasystem.openxml.builder.wml;
  */
 public class HeadingList extends AbstractListItem<HeadingList> {
 
-    public static final HeadingList HEADING1 = new HeadingList("ListHeading1", "04090021") {
-        @Override
-        public String getName() {
-            return "HEADING1";
-        }
-    };
+    public static final HeadingList HEADING1 = new HeadingList("ListHeading1", "List Heading 1", "04090021", "Heading1");
 
-    public static final HeadingList HEADING2 = new HeadingList("ListHeading2") {
-        @Override
-        public String getName() {
-            return "HEADING2";
-        }
-    };
+    public static final HeadingList HEADING2 = new HeadingList("ListHeading2", "List Heading 2", "Heading2");
 
-    public static final HeadingList HEADING3 = new HeadingList("ListHeading3") {
-        @Override
-        public String getName() {
-            return "HEADING3";
-        }
-    };
+    public static final HeadingList HEADING3 = new HeadingList("ListHeading3", "List Heading 3", "Heading3");
 
-    public static final HeadingList HEADING4 = new HeadingList("ListHeading4") {
-        @Override
-        public String getName() {
-            return "HEADING4";
-        }
-    };
+    public static final HeadingList HEADING4 = new HeadingList("ListHeading4", "List Heading 4", "Heading4");
 
-    public static final HeadingList HEADING5 = new HeadingList("ListHeading5") {
-        @Override
-        public String getName() {
-            return "HEADING5";
-        }
-    };
-
+    public static final HeadingList HEADING5 = new HeadingList("ListHeading5", "List Heading 5", "Heading5");
 
     private static final int LEFT_INDENT_VALUE = 432;
     private static final int INCREMENT_VALUE = 144;
 
-    HeadingList(String styleName) {
-        this(styleName, null);
+    protected String baseStyle;
+    protected boolean createNewStyle;
+
+    public HeadingList(String styleName, String name, String baseStyle, boolean createNewStyle) {
+        this(styleName, name, null, baseStyle, createNewStyle);
     }
 
-    HeadingList(String styleName, String id) {
+    public HeadingList(String styleName, String name, String baseStyle) {
+        this(styleName, name, null, baseStyle, true);
+    }
+
+    public HeadingList(String styleName, String name, String id, String baseStyle) {
+        this(styleName, name, id, baseStyle, true);
+    }
+
+    public HeadingList(String styleName, String name, String id, String baseStyle, boolean createNewStyle) {
         super(styleName, id);
+        setName(name);
+        setBaseStyle(baseStyle);
+        setCreateNewStyle(createNewStyle);
     }
 
     @Override
@@ -74,5 +62,21 @@ public class HeadingList extends AbstractListItem<HeadingList> {
     @Override
     public String getMultiLevelType() {
         return "multilevel";
+    }
+
+    public String getBaseStyle() {
+        return baseStyle;
+    }
+
+    public void setBaseStyle(String baseStyle) {
+        this.baseStyle = baseStyle;
+    }
+
+    public boolean isCreateNewStyle() {
+        return createNewStyle;
+    }
+
+    public void setCreateNewStyle(boolean createNewStyle) {
+        this.createNewStyle = createNewStyle;
     }
 }

@@ -6,7 +6,8 @@
             <class name="com.alphasystem.wml.test.NumberedParagraphTest"/>
             <class name="com.alphasystem.wml.test.MultiLevelHeadingTest"/>
             <class name="com.alphasystem.wml.test.NormalHeadingTest"/>
-            <class name="com.alphasystem.wml.test.CustomStylesTest"/>
+            <class name="com.alphasystem.wml.test.CustomTemplateTest"/>
+            <class name="com.alphasystem.wml.test.CustomTemplateWithListHeadingTest"/>
         </classes>
     </test>
     <!-- Test -->
