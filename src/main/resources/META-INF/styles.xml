@@ -1114,41 +1114,4 @@
             <w:color w:val="2E74B5" w:themeColor="accent1" w:themeShade="BF"/>
         </w:rPr>
     </w:style>
-    <w:style w:type="paragraph" w:customStyle="1" w:styleId="DefaultTitle">
-        <w:name w:val="Default Title"/>
-        <w:basedOn w:val="Caption"/>
-        <w:qFormat/>
-        <w:rsid w:val="002E0C9E"/>
-        <w:pPr>
-            <w:keepNext/>
-            <w:keepLines/>
-        </w:pPr>
-        <w:rPr>
-            <w:smallCaps/>
-            <w:color w:val="5B9BD5" w:themeColor="accent1" w:themeShade="BF"/>
-            <w:sz w:val="24"/>
-            <w:szCs w:val="24"/>
-        </w:rPr>
-    </w:style>
-    <w:style w:type="paragraph" w:styleId="Caption">
-        <w:name w:val="caption"/>
-        <w:basedOn w:val="Normal"/>
-        <w:next w:val="Normal"/>
-        <w:uiPriority w:val="35"/>
-        <w:semiHidden/>
-        <w:unhideWhenUsed/>
-        <w:qFormat/>
-        <w:rsid w:val="006B1B67"/>
-        <w:pPr>
-            <w:spacing w:after="200" w:line="240" w:lineRule="auto"/>
-        </w:pPr>
-        <w:rPr>
-            <w:i/>
-            <w:iCs/>
-            <w:color w:val="44546A" w:themeColor="text2"/>
-            <w:sz w:val="18"/>
-            <w:szCs w:val="18"/>
-            <w:spacing w:val="5"/>
-        </w:rPr>
-    </w:style>
 </w:styles>

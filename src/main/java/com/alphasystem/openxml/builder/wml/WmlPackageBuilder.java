@@ -28,6 +28,7 @@ import java.util.List;
 import static com.alphasystem.openxml.builder.wml.HeadingList.*;
 import static com.alphasystem.openxml.builder.wml.WmlAdapter.loadNumbering;
 import static com.alphasystem.openxml.builder.wml.WmlAdapter.loadStyles;
+import static com.alphasystem.openxml.builder.wml.WmlBuilderFactory.BOOLEAN_DEFAULT_TRUE_TRUE;
 import static com.alphasystem.openxml.builder.wml.WmlBuilderFactory.getCTRelBuilder;
 import static java.lang.String.format;
 import static org.apache.commons.lang3.ArrayUtils.isEmpty;
@@ -47,7 +48,7 @@ public class WmlPackageBuilder {
     private Numbering numbering;
 
     public WmlPackageBuilder() throws Docx4JException {
-        this(true);
+        this("META-INF/default.dotx");
     }
 
     public WmlPackageBuilder(boolean loadDefaultStyles) throws Docx4JException {
@@ -146,36 +147,45 @@ public class WmlPackageBuilder {
 
     public final <T extends HeadingList> WmlPackageBuilder multiLevelHeading(T... items) {
         final int numberId = numberingHelper.populate(items);
-        final boolean createNewStyle = items[0].isCreateNewStyle();
         for (int i = 0; i < items.length; i++) {
             final T currentItem = items[i];
-            final String baseStyleId = currentItem.getBaseStyle();
+            final String styleName = currentItem.getStyleName();
             final StyleDefinitionsPart styleDefinitionsPart = wmlPackage.getMainDocumentPart().getStyleDefinitionsPart();
-            Style style = styleDefinitionsPart.getStyleById(baseStyleId);
-            StyleBuilder styleBuilder = createNewStyle ? new StyleBuilder(style, null) : new StyleBuilder(style);
+            Style style = styleDefinitionsPart.getStyleById(styleName);
             if (style == null) {
-                throw new RuntimeException(format("No style found with id \"%s\"", baseStyleId));
+                throw new RuntimeException(format("No style found with id \"%s\"", styleName));
             }
-            styleBuilder.withName(currentItem.getName()).withStyleId(currentItem.getStyleName());
+            StyleBuilder styleBuilder = new StyleBuilder(style);
             PPrBuilder pPrBuilder = new PPrBuilder(styleBuilder.getObject().getPPr());
             Long level = i <= 0 ? null : Long.valueOf(i);
             final PPrBase.NumPr numPr = pPrBuilder.getNumPrBuilder().withNumId(Long.valueOf(numberId))
                     .withIlvl(level).getObject();
             pPrBuilder.withNumPr(numPr);
-            style = styleBuilder.getObject();
-            if (createNewStyle) {
-                try {
-                    styleDefinitionsPart.getContents().getStyle().add(style);
-                } catch (Docx4JException e) {
-                    e.printStackTrace();
-                }
-            }
         }
         return this;
     }
 
     public WmlPackageBuilder multiLevelHeading() {
-        // styles = loadStyles(styles, "multi-level-heading/styles.xml");
+        // copy Heading1, TOCHeading is based on it
+        final StyleDefinitionsPart styleDefinitionsPart = wmlPackage.getMainDocumentPart().getStyleDefinitionsPart();
+        final Style tocHeading = styleDefinitionsPart.getStyleById("TOCHeading");
+        if (tocHeading != null) {
+            String styleName = HEADING1.getStyleName();
+            Style style = styleDefinitionsPart.getStyleById(styleName);
+            if (style == null) {
+                throw new RuntimeException(format("No style found with id \"%s\"", styleName));
+            }
+            StyleBuilder styleBuilder = new StyleBuilder(style, null);
+            styleName = format("_%s", styleName);
+            styleBuilder.withStyleId(styleName).withName(format("_", HEADING1.getName()))
+                    .withUnhideWhenUsed(null).withSemiHidden(null).withHidden(BOOLEAN_DEFAULT_TRUE_TRUE);
+            try {
+                styleDefinitionsPart.getContents().getStyle().add(styleBuilder.getObject());
+                new StyleBuilder(tocHeading).withBasedOn(styleName);
+            } catch (Docx4JException e) {
+                logger.warn("Unable to add style \"{}\" into style gallery.", styleName, e);
+            }
+        }
         return multiLevelHeading(HEADING1, HEADING2, HEADING3, HEADING4, HEADING5);
     }
 
@@ -189,15 +199,6 @@ public class WmlPackageBuilder {
         }
         return this;
     }
-
-//    public WmlPackageBuilder styles(Styles... styles) {
-//        if (!isEmpty(styles)) {
-//            for (Styles style : styles) {
-//                this.styles.getStyle().addAll(style.getStyle());
-//            }
-//        }
-//        return this;
-//    }
 
     public WmlPackageBuilder numbering(String... customNumberings) {
         numbering = loadNumbering(numbering, customNumberings);
