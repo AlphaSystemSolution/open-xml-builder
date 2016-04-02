@@ -37,7 +37,7 @@
             <w:szCs w:val="32"/>
         </w:rPr>
     </w:style>
-    <!--w:style w:type="paragraph" w:customStyle="1" w:styleId="ExampleTitle">
+    <w:style w:type="paragraph" w:customStyle="1" w:styleId="ExampleTitle">
         <w:name w:val="ExampleTitle"/>
         <w:basedOn w:val="Normal"/>
         <w:link w:val="ExampleTitleChar"/>
@@ -65,5 +65,5 @@
             <w:sz w:val="24"/>
             <w:szCs w:val="24"/>
         </w:rPr>
-    </w:style-->
+    </w:style>
 </w:styles>

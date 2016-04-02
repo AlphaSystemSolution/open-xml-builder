@@ -7,16 +7,16 @@ import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
 /**
  * @author sali
  */
-public class CustomTemplateTest extends TemplateTest {
+public class CustomTemplateWithNumberedHeadingTest extends TemplateTest {
 
     @Override
     protected String getFileName() {
-        return "custom-template.docx";
+        return "custom-template-numbered-heading.docx";
     }
 
     @Override
     protected WordprocessingMLPackage loadWmlPackage() throws Docx4JException {
-        return new WmlPackageBuilder("META-INF/Custom.dotx").getPackage();
+        return new WmlPackageBuilder("META-INF/Custom.dotx").multiLevelHeading().getPackage();
     }
 
 }

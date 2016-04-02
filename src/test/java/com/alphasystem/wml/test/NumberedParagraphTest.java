@@ -1,7 +1,6 @@
 package com.alphasystem.wml.test;
 
 import com.alphasystem.openxml.builder.wml.*;
-import org.docx4j.XmlUtils;
 import org.docx4j.openpackaging.exceptions.Docx4JException;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
 import org.docx4j.openpackaging.parts.WordprocessingML.MainDocumentPart;
@@ -11,7 +10,6 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import javax.xml.bind.JAXBException;
 import java.io.File;
 
 import static com.alphasystem.openxml.builder.wml.WmlAdapter.*;
@@ -25,7 +23,7 @@ import static org.testng.Assert.fail;
 /**
  * @author sali
  */
-public class NumberedParagraphTest {
+public class NumberedParagraphTest extends CommonTest {
 
     private static final String PARENT_PATH = "C:\\Users\\sali\\git-hub\\AlphaSystemSolution\\open-xml-builder\\target";
 
@@ -55,10 +53,20 @@ public class NumberedParagraphTest {
 
     private WordprocessingMLPackage wmlPackage;
 
+    @Override
+    protected String getFileName() {
+        return null;
+    }
+
+    @Override
+    protected WordprocessingMLPackage loadWmlPackage() throws Docx4JException {
+        return null;
+    }
+
     @BeforeClass
     public void setup() {
         try {
-            wmlPackage = new WmlPackageBuilder().styles("example-caption/styles.xml").multiLevelHeading(DocumentCaption.EXAMPLE).getPackage();
+            wmlPackage = new WmlPackageBuilder().getPackage();
         } catch (Docx4JException e) {
             fail(e.getMessage(), e);
         }
@@ -129,85 +137,6 @@ public class NumberedParagraphTest {
         mainDocumentPart.addStyledParagraphOfText("ExampleTitle", "Example");
         mainDocumentPart.addObject(getEmptyPara());
         mainDocumentPart.addStyledParagraphOfText("ExampleTitle", "Example 2");
-    }
-
-    @Test
-    public void testUnMarshall() {
-        String s = "<w:sdt xmlns:w=\"http://schemas.openxmlformats.org/wordprocessingml/2006/main\" " +
-                "xmlns:ve=\"http://schemas.openxmlformats.org/markup-compatibility/2006\"" +
-                " xmlns:o=\"urn:schemas-microsoft-com:office:office\" " +
-                "xmlns:r=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships\" " +
-                "xmlns:m=\"http://schemas.openxmlformats.org/officeDocument/2006/math\" " +
-                "xmlns:v=\"urn:schemas-microsoft-com:vml\" " +
-                "xmlns:wp=\"http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing\" " +
-                "xmlns:w10=\"urn:schemas-microsoft-com:office:word\" " +
-                "xmlns:wne=\"http://schemas.microsoft.com/office/word/2006/wordml\">\n" +
-                "    <w:sdtPr>\n" +
-                "        <w:id w:val=\"770900403\"/>\n" +
-                "        <w:docPartObj>\n" +
-                "            <w:docPartGallery w:val=\"Table of Contents\"/>\n" +
-                "            <w:docPartUnique/>\n" +
-                "        </w:docPartObj>\n" +
-                "    </w:sdtPr>\n" +
-                "    <w:sdtEndPr>\n" +
-                "        <w:rPr>\n" +
-                "            <w:rFonts w:asciiTheme=\"minorHAnsi\" w:eastAsiaTheme=\"minorHAnsi\" w:hAnsiTheme=\"minorHAnsi\"\n" +
-                "                      w:cstheme=\"minorBidi\"/>\n" +
-                "            <w:b/>\n" +
-                "            <w:bCs/>\n" +
-                "            <w:noProof/>\n" +
-                "            <w:color w:val=\"auto\"/>\n" +
-                "            <w:sz w:val=\"22\"/>\n" +
-                "            <w:szCs w:val=\"22\"/>\n" +
-                "        </w:rPr>\n" +
-                "    </w:sdtEndPr>\n" +
-                "    <w:sdtContent>\n" +
-                "        <w:p w:rsidR=\"0015683B\" w:rsidRDefault=\"0015683B\">\n" +
-                "            <w:pPr>\n" +
-                "                <w:pStyle w:val=\"TOCHeading\"/>\n" +
-                "            </w:pPr>\n" +
-                "            <w:r>\n" +
-                "                <w:t>Contents</w:t>\n" +
-                "            </w:r>\n" +
-                "        </w:p>\n" +
-                "        <w:p w:rsidR=\"0015683B\" w:rsidRDefault=\"0015683B\">\n" +
-                "            <w:pPr>\n" +
-                "                <w:pStyle w:val=\"TOC1\"/>\n" +
-                "                <w:tabs>\n" +
-                "                    <w:tab w:val=\"right\" w:leader=\"dot\" w:pos=\"9350\"/>\n" +
-                "                </w:tabs>\n" +
-                "                <w:rPr>\n" +
-                "                    <w:noProof/>\n" +
-                "                </w:rPr>\n" +
-                "            </w:pPr>\n" +
-                "            <w:r>\n" +
-                "                <w:fldChar w:fldCharType=\"begin\"/>\n" +
-                "            </w:r>\n" +
-                "            <w:r>\n" +
-                "                <w:instrText xml:space=\"preserve\"> TOC \\o \"1-3\" \\h \\z \\u </w:instrText>\n" +
-                "            </w:r>\n" +
-                "            <w:r>\n" +
-                "                <w:fldChar w:fldCharType=\"separate\"/>\n" +
-                "            </w:r>\n" +
-                "        </w:p>\n" +
-                "        <w:p w:rsidR=\"0015683B\" w:rsidRDefault=\"0015683B\">\n" +
-                "            <w:r>\n" +
-                "                <w:rPr>\n" +
-                "                    <w:b/>\n" +
-                "                    <w:bCs/>\n" +
-                "                    <w:noProof/>\n" +
-                "                </w:rPr>\n" +
-                "                <w:fldChar w:fldCharType=\"end\"/>\n" +
-                "            </w:r>\n" +
-                "        </w:p>\n" +
-                "    </w:sdtContent>\n" +
-                "</w:sdt>";
-        try {
-            final Object o = XmlUtils.unmarshalString(s);
-            System.out.println("///////////////////////////////////// " + o);
-        } catch (JAXBException e) {
-            e.printStackTrace();
-        }
     }
 
     private void addList(final MainDocumentPart mainDocumentPart, long numId, long ilvl) {

@@ -3,11 +3,11 @@
 <suite name="Suite">
     <test name="Test" preserve-order="true">
         <classes>
-            <class name="com.alphasystem.wml.test.NumberedParagraphTest"/>
-            <class name="com.alphasystem.wml.test.MultiLevelHeadingTest"/>
-            <class name="com.alphasystem.wml.test.NormalHeadingTest"/>
+            <class name="com.alphasystem.wml.test.DefaultTemplateTest"/>
+            <class name="com.alphasystem.wml.test.DefaultTemplateWithNumberedHeadingTest"/>
             <class name="com.alphasystem.wml.test.CustomTemplateTest"/>
-            <class name="com.alphasystem.wml.test.CustomTemplateWithListHeadingTest"/>
+            <class name="com.alphasystem.wml.test.CustomTemplateWithNumberedHeadingTest"/>
+            <!--<class name="com.alphasystem.wml.test.NumberedParagraphTest"/>-->
         </classes>
     </test>
     <!-- Test -->

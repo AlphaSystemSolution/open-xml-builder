@@ -77,7 +77,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <systemProperties>
-                        <docs.dir>${project.build.directory}/docs</docs.dir>
+                        <docs.dir>${project.build.directory}/generated-test-sources/docx</docs.dir>
                     </systemProperties>
                 </configuration>
             </plugin>

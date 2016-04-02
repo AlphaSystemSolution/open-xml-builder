@@ -7,16 +7,16 @@ import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
 /**
  * @author sali
  */
-public class CustomTemplateTest extends TemplateTest {
+public class DefaultTemplateTest extends TemplateTest {
 
     @Override
     protected String getFileName() {
-        return "custom-template.docx";
+        return "default-template.docx";
     }
 
     @Override
     protected WordprocessingMLPackage loadWmlPackage() throws Docx4JException {
-        return new WmlPackageBuilder("META-INF/Custom.dotx").getPackage();
+        return new WmlPackageBuilder().getPackage();
     }
 
 }
