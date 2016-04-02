@@ -54,7 +54,8 @@ public abstract class TemplateTest extends CommonTest {
 
     @Test(dependsOnMethods = {"testHeading5"})
     public void testAnotherHeading1() {
-        getMainDocumentPart().addObject(getParagraphWithStyle("Heading1", "Heading Level 1"));
+        getMainDocumentPart().addObject(getPageBreak());
+        getMainDocumentPart().addObject(getParagraphWithStyle("Heading1", "Another Heading Level 1"));
         getMainDocumentPart().addObject(getEmptyPara());
     }
 }

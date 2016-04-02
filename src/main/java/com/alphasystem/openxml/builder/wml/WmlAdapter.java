@@ -10,6 +10,7 @@ import org.docx4j.fonts.Mapper;
 import org.docx4j.fonts.PhysicalFont;
 import org.docx4j.fonts.PhysicalFonts;
 import org.docx4j.jaxb.Context;
+import org.docx4j.model.fields.FieldUpdater;
 import org.docx4j.openpackaging.exceptions.Docx4JException;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
 import org.docx4j.openpackaging.parts.WordprocessingML.MainDocumentPart;
@@ -410,8 +411,31 @@ public class WmlAdapter {
         wordMLPackage.save(getFile(file, "docx"));
     }
 
-    public static void saveAsPdf(File file,
-                                 WordprocessingMLPackage wordMLPackage, String fontName,
+    public static void saveAsPdf(File file, WordprocessingMLPackage wordMLPackage, boolean saveFO) throws Exception {
+        File pdfFile = getFile(file, "pdf");
+
+        PhysicalFonts.setRegex(null);
+
+        // Refresh the values of DOCPROPERTY fields
+        FieldUpdater updater = new FieldUpdater(wordMLPackage);
+        updater.update(true);
+
+        // Set up font mapper (optional)
+        Mapper fontMapper = new IdentityPlusMapper();
+        wordMLPackage.setFontMapper(fontMapper);
+
+        FOSettings foSettings = Docx4J.createFOSettings();
+        if (saveFO) {
+            foSettings.setFoDumpFile(getFile(file, "fo"));
+        }
+        foSettings.setWmlPackage(wordMLPackage);
+
+        try (OutputStream os = new java.io.FileOutputStream(pdfFile)){
+            Docx4J.toFO(foSettings, os, Docx4J.FLAG_EXPORT_PREFER_XSL);
+        }
+    }
+
+    public static void saveAsPdf(File file, WordprocessingMLPackage wordMLPackage, String fontName,
                                  boolean saveFO) throws Exception {
         File pdfFile = getFile(file, "pdf");
 

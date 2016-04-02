@@ -1,6 +1,7 @@
 package com.alphasystem.wml.test;
 
 import com.alphasystem.openxml.builder.wml.WmlAdapter;
+import com.alphasystem.util.AppUtil;
 import org.docx4j.openpackaging.exceptions.Docx4JException;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
 import org.docx4j.openpackaging.parts.WordprocessingML.MainDocumentPart;
@@ -23,7 +24,7 @@ public abstract class CommonTest {
     protected static Path docsPath;
 
     static {
-        docsPath = Paths.get(System.getProperty("docs.dir"));
+        docsPath = Paths.get(System.getProperty("docs.dir", AppUtil.USER_TEMP_DIR.getAbsolutePath()));
         System.out.println(">>>>>>>>>>>> " + docsPath);
         if (!Files.exists(docsPath)) {
             try {

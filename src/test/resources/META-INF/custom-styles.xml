@@ -45,6 +45,10 @@
         <w:uiPriority w:val="9"/>
         <w:unhideWhenUsed/>
         <w:rsid w:val="00BC0CAB"/>
+        <w:pPr>
+            <w:keepNext/>
+            <w:keepLines/>
+        </w:pPr>
         <w:rPr>
             <w:i/>
             <w:iCs/>

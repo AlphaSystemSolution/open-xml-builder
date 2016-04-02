@@ -1,17 +1,15 @@
 package com.alphasystem.wml.test;
 
-import com.alphasystem.openxml.builder.wml.AbstractListItem;
-import org.docx4j.wml.NumberFormat;
+import com.alphasystem.openxml.builder.wml.HeadingList;
 
 import static java.lang.String.format;
-import static org.docx4j.wml.NumberFormat.DECIMAL;
 
 /**
  * @author sali
  */
-public abstract class DocumentCaption extends AbstractListItem<DocumentCaption> {
+public abstract class DocumentCaption extends HeadingList<DocumentCaption> {
 
-    public static final DocumentCaption EXAMPLE = new DocumentCaption("ExampleTitle", DECIMAL) {
+    public static final DocumentCaption EXAMPLE = new DocumentCaption("ExampleTitle") {
 
         @Override
         public String getValue(int i) {
@@ -25,13 +23,8 @@ public abstract class DocumentCaption extends AbstractListItem<DocumentCaption> 
 
     };
 
-    DocumentCaption(String styleName, NumberFormat numberFormat) {
-        super(styleName, numberFormat);
-    }
-
-    @Override
-    public boolean linkStyle() {
-        return true;
+    DocumentCaption(String styleName) {
+        super(styleName);
     }
 
     @Override
@@ -39,8 +32,4 @@ public abstract class DocumentCaption extends AbstractListItem<DocumentCaption> 
         return 432;
     }
 
-    @Override
-    public String getMultiLevelType() {
-        return "multilevel";
-    }
 }
