@@ -19,19 +19,16 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
-import java.math.BigInteger;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
 
-import static com.alphasystem.openxml.builder.wml.HeadingList.*;
-import static com.alphasystem.openxml.builder.wml.WmlAdapter.loadNumbering;
+import static com.alphasystem.openxml.builder.wml.Headings.*;
 import static com.alphasystem.openxml.builder.wml.WmlAdapter.loadStyles;
 import static com.alphasystem.openxml.builder.wml.WmlBuilderFactory.BOOLEAN_DEFAULT_TRUE_TRUE;
 import static com.alphasystem.openxml.builder.wml.WmlBuilderFactory.getCTRelBuilder;
 import static java.lang.String.format;
-import static org.apache.commons.lang3.ArrayUtils.isEmpty;
 import static org.docx4j.openpackaging.contenttype.ContentTypes.WORDPROCESSINGML_DOCUMENT;
 import static org.docx4j.openpackaging.contenttype.ContentTypes.WORDPROCESSINGML_DOCUMENT_MACROENABLED;
 
@@ -45,7 +42,6 @@ public class WmlPackageBuilder {
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private NumberingHelper numberingHelper;
     private WordprocessingMLPackage wmlPackage;
-    private Numbering numbering;
 
     public WmlPackageBuilder() throws Docx4JException {
         this("META-INF/default.dotx");
@@ -58,7 +54,6 @@ public class WmlPackageBuilder {
         }
         numberingHelper = new NumberingHelper();
         numberingHelper.populateDefaultNumbering();
-        numbering = numberingHelper.getNumbering();
     }
 
     public WmlPackageBuilder(String templatePath) throws Docx4JException {
@@ -82,7 +77,6 @@ public class WmlPackageBuilder {
         }
         numberingHelper = new NumberingHelper();
         numberingHelper.populateDefaultNumbering();
-        numbering = numberingHelper.getNumbering();
     }
 
     private void loadTemplate(String templatePath, URL url) throws Docx4JException, IOException, URISyntaxException {
@@ -117,35 +111,7 @@ public class WmlPackageBuilder {
     }
 
     @SafeVarargs
-    public final <T extends ListItem<T>> WmlPackageBuilder multiLevelHeading(T... items) {
-        final int numberId = numberingHelper.populate(items);
-        final BigInteger requiredValue = BigInteger.valueOf(numberId);
-        T firstItem = items[0];
-        for (T currentItem : items) {
-            final String styleName = currentItem.getStyleName();
-            if (styleName == null) {
-                logger.error("No name defined in multi level heading item \"{}\"", firstItem.getName());
-                continue;
-            }
-            final Style style = wmlPackage.getMainDocumentPart().getStyleDefinitionsPart().getStyleById(styleName);
-            if (style == null) {
-                logger.error("######################################################################################################################");
-                logger.error("##### No style with name \"{}\" for \"{}\", possible reason is that style might not initialized first #####", styleName, currentItem.getName());
-                logger.error("######################################################################################################################");
-            } else {
-                final PPrBase.NumPr.NumId numId = style.getPPr().getNumPr().getNumId();
-                final BigInteger numIdVal = numId.getVal();
-                if (!numIdVal.equals(requiredValue)) {
-                    logger.info("Found number ID value of \"{}\" but requires value of \"{}\" for style \"{}\", changing it now.", numIdVal, numberId, styleName);
-                    numId.setVal(requiredValue);
-                }
-            }
-        } // end of for
-        numbering = numberingHelper.getNumbering();
-        return this;
-    }
-
-    public final <T extends HeadingList> WmlPackageBuilder multiLevelHeading(T... items) {
+    public final <T extends HeadingList<T>> WmlPackageBuilder multiLevelHeading(T... items) {
         final int numberId = numberingHelper.populate(items);
         for (int i = 0; i < items.length; i++) {
             final T currentItem = items[i];
@@ -156,11 +122,16 @@ public class WmlPackageBuilder {
                 throw new RuntimeException(format("No style found with id \"%s\"", styleName));
             }
             StyleBuilder styleBuilder = new StyleBuilder(style);
-            PPrBuilder pPrBuilder = new PPrBuilder(styleBuilder.getObject().getPPr());
-            Long level = i <= 0 ? null : Long.valueOf(i);
+            final PPr pPr = styleBuilder.getObject().getPPr();
+            boolean setPPr = pPr == null;
+            PPrBuilder pPrBuilder = new PPrBuilder(pPr);
+            Long level = i <= 0 ? null : (long) i;
             final PPrBase.NumPr numPr = pPrBuilder.getNumPrBuilder().withNumId(Long.valueOf(numberId))
                     .withIlvl(level).getObject();
             pPrBuilder.withNumPr(numPr);
+            if (setPPr) {
+                styleBuilder.withPPr(pPrBuilder.getObject());
+            }
         }
         return this;
     }
@@ -177,7 +148,7 @@ public class WmlPackageBuilder {
             }
             StyleBuilder styleBuilder = new StyleBuilder(style, null);
             styleName = format("_%s", styleName);
-            styleBuilder.withStyleId(styleName).withName(format("_", HEADING1.getName()))
+            styleBuilder.withStyleId(styleName).withName(format("_%s", HEADING1.getName()))
                     .withUnhideWhenUsed(null).withSemiHidden(null).withHidden(BOOLEAN_DEFAULT_TRUE_TRUE);
             try {
                 styleDefinitionsPart.getContents().getStyle().add(styleBuilder.getObject());
@@ -200,26 +171,11 @@ public class WmlPackageBuilder {
         return this;
     }
 
-    public WmlPackageBuilder numbering(String... customNumberings) {
-        numbering = loadNumbering(numbering, customNumberings);
-        return this;
-    }
-
-    public WmlPackageBuilder numbering(Numbering... numberings) {
-        if (!isEmpty(numberings)) {
-            for (Numbering numbering : numberings) {
-                this.numbering.getAbstractNum().addAll(numbering.getAbstractNum());
-                this.numbering.getNum().addAll(numbering.getNum());
-            }
-        }
-        return this;
-    }
-
     public WordprocessingMLPackage getPackage() throws InvalidFormatException {
         final MainDocumentPart mainDocumentPart = wmlPackage.getMainDocumentPart();
         mainDocumentPart.getContent().clear();
         NumberingDefinitionsPart ndp = new NumberingDefinitionsPart();
-        ndp.setJaxbElement(numbering);
+        ndp.setJaxbElement(numberingHelper.getNumbering());
         mainDocumentPart.addTargetPart(ndp);
 
         return wmlPackage;

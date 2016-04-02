@@ -3,17 +3,7 @@ package com.alphasystem.openxml.builder.wml;
 /**
  * @author sali
  */
-public class HeadingList extends AbstractListItem<HeadingList> {
-
-    public static final HeadingList HEADING1 = new HeadingList("Heading1", "04090021");
-
-    public static final HeadingList HEADING2 = new HeadingList("Heading2");
-
-    public static final HeadingList HEADING3 = new HeadingList("Heading3");
-
-    public static final HeadingList HEADING4 = new HeadingList("Heading4");
-
-    public static final HeadingList HEADING5 = new HeadingList("Heading5");
+public class HeadingList<T extends HeadingList> extends AbstractListItem<T> {
 
     private static final int LEFT_INDENT_VALUE = 432;
     private static final int INCREMENT_VALUE = 144;
