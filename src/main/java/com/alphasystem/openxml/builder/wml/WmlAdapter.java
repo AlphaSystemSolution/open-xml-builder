@@ -12,6 +12,7 @@ import org.docx4j.fonts.PhysicalFonts;
 import org.docx4j.jaxb.Context;
 import org.docx4j.openpackaging.exceptions.Docx4JException;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
+import org.docx4j.openpackaging.parts.WordprocessingML.MainDocumentPart;
 import org.docx4j.wml.*;
 import org.docx4j.wml.PPrBase.PStyle;
 import org.docx4j.wml.TcPrInner.GridSpan;
@@ -379,20 +380,29 @@ public class WmlAdapter {
         return getPBuilder().withPPr(pPr).addContent(r).getObject();
     }
 
-    public static List<P> addTableOfContent(String tocTitle, String tocText) {
+    public static void addTableOfContent(final MainDocumentPart mainDocumentPart, String tocTitle, int level) {
+        tocTitle = isBlank(tocTitle) ? "Table of Contents" : tocTitle;
+        level = ((level < 3) || (level > 5)) ? 3 : level;
+        String tocText = format(" TOC \\o \"1-%s\" \\h \\z \\u \\h ", level);
+
         List<P> paras = new ArrayList<>();
         paras.add(addTableOfContentTitle(tocTitle));
         paras.add(addTableOfContentInternal(tocText));
         paras.add(getPageBreak());
-        return paras;
+
+        paras.forEach(mainDocumentPart::addObject);
     }
 
-    public static List<P> addTableOfContent(String tocTitle) {
-        return addTableOfContent(tocTitle, " TOC \\o \"1-3\" \\h \\z \\u \\h ");
+    public static void addTableOfContent(final MainDocumentPart mainDocumentPart, String tocTitle) {
+        addTableOfContent(mainDocumentPart, tocTitle, 3);
     }
 
-    public static List<P> addTableOfContent() {
-        return addTableOfContent("Table of Contents");
+    public static void addTableOfContent(final MainDocumentPart mainDocumentPart) {
+        addTableOfContent(mainDocumentPart, null);
+    }
+
+    public static void addTableOfContent(final MainDocumentPart mainDocumentPart, int level) {
+        addTableOfContent(mainDocumentPart, null, level);
     }
 
     public static void save(File file, WordprocessingMLPackage wordMLPackage)
