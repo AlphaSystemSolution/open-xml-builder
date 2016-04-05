@@ -15,6 +15,7 @@ import static com.alphasystem.util.IdGenerator.nextId;
 import static java.lang.String.format;
 import static java.math.RoundingMode.CEILING;
 import static org.apache.commons.lang3.ArrayUtils.isEmpty;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.docx4j.sharedtypes.STOnOff.ONE;
 import static org.docx4j.sharedtypes.STOnOff.ZERO;
 
@@ -56,14 +57,13 @@ public class TableAdapter {
     private TrBuilder trBuilder;
 
     /**
-     * @param columnWidthPercentages
-     * @throws IllegalArgumentException
+     * @param columnWidthPercentages array of width of columns, <strong>this should be percentage of columns width</strong>
+     * @throws IllegalArgumentException if argument <code>columnWidthPercentages</code> is null or array of length 0
      */
     public TableAdapter(Double... columnWidthPercentages)
             throws IllegalArgumentException {
         if (isEmpty(columnWidthPercentages)) {
-            throw new IllegalArgumentException(
-                    "Columns width are not initailized");
+            throw new IllegalArgumentException("Columns width are not be initialized");
         }
         tblBuilder = getTblBuilder();
         numOfColumns = columnWidthPercentages.length;
@@ -79,7 +79,9 @@ public class TableAdapter {
     }
 
     /**
-     * @param numOfColumns
+     * Create <code>TableAdapter</code> with specified number of columns.
+     *
+     * @param numOfColumns total number of columns
      */
     public TableAdapter(int numOfColumns) {
         this(new Double[numOfColumns]);
@@ -115,6 +117,18 @@ public class TableAdapter {
         Tc tc = getTcBuilder().withTcPr(tcPrBuilder.getObject()).addContent(content).getObject();
         trBuilder.addContent(tc);
         return this;
+    }
+
+    /**
+     * Add a column into this table at specified index.
+     *
+     * @param columnIndex column index
+     * @param content     content of this column
+     * @return reference to this
+     * @throws ArrayIndexOutOfBoundsException if <code>columnIndex</code> is out of bound
+     */
+    public TableAdapter addColumn(Integer columnIndex, Object... content) throws ArrayIndexOutOfBoundsException {
+        return addColumn(columnIndex, null, null, content);
     }
 
     /**
@@ -228,10 +242,18 @@ public class TableAdapter {
     }
 
     public TableAdapter startTable() {
-        return startTable(null);
+        return startTable(null, "TableGrid");
+    }
+
+    public TableAdapter startTable(String tableStyle) {
+        return startTable(null, tableStyle);
     }
 
     public TableAdapter startTable(TblPr extraTblPr) {
+        return startTable(extraTblPr, null);
+    }
+
+    public TableAdapter startTable(TblPr extraTblPr, String tableStyle) {
         TblGridBuilder tblGridBuilder = getTblGridBuilder();
         for (int i = 0; i < numOfColumns; i++) {
             tblGridBuilder.addGridCol(getTblGridColBuilder().withW(gridWidths[i].toString()).getObject());
@@ -242,7 +264,8 @@ public class TableAdapter {
         CTTblLook cTTblLook = getCTTblLookBuilder().withFirstRow(ONE).withLastRow(ZERO).withFirstColumn(ONE)
                 .withLastColumn(ZERO).withNoVBand(ONE).withNoHBand(ZERO).getObject();
 
-        TblPr tblPr = getTblPrBuilder().withTblStyle("TableGrid").withTblW(tblWidth).withTblLook(cTTblLook).getObject();
+        tableStyle = isBlank(tableStyle) ? "TableGrid" : tableStyle;
+        TblPr tblPr = getTblPrBuilder().withTblStyle(tableStyle).withTblW(tblWidth).withTblLook(cTTblLook).getObject();
         TblPrBuilder tblPrBuilder = new TblPrBuilder(tblPr, extraTblPr);
         tblPr = tblPrBuilder.getObject();
 
