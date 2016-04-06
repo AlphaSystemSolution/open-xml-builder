@@ -105,7 +105,7 @@ public class TableAdapter {
         if (gridSpanValue != null && gridSpanValue > 1) {
             // sanity check, make sure we are not going out of bound
             checkColumnIndex(columnIndex + gridSpanValue - 1);
-            // iterate through width and get the total width for the gridspan
+            // iterate through width and get the total width for the grid span
             for (int i = columnIndex + 1; i < gridSpanValue; i++) {
                 cw += columnsWidths[i];
             }
@@ -132,8 +132,10 @@ public class TableAdapter {
     }
 
     /**
-     * @param columnIndex
-     * @throws ArrayIndexOutOfBoundsException
+     * Checks whether <code>columnIndex</code> is within range.
+     *
+     * @param columnIndex index of column
+     * @throws ArrayIndexOutOfBoundsException if <code>columnIndex</code> is out of bound.
      */
     protected void checkColumnIndex(int columnIndex)
             throws ArrayIndexOutOfBoundsException {
@@ -145,7 +147,9 @@ public class TableAdapter {
     }
 
     /**
-     * @return
+     * Ends current row.
+     *
+     * @return reference to this
      */
     public TableAdapter endRow() {
         tblBuilder.addContent(trBuilder.getObject());
@@ -242,7 +246,7 @@ public class TableAdapter {
     }
 
     public TableAdapter startTable() {
-        return startTable(null, "TableGrid");
+        return startTable("TableGrid");
     }
 
     public TableAdapter startTable(String tableStyle) {

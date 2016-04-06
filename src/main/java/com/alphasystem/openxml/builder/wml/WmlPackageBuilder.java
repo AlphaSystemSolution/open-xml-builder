@@ -149,7 +149,7 @@ public class WmlPackageBuilder {
             StyleBuilder styleBuilder = new StyleBuilder(style, null);
             styleName = format("_%s", styleName);
             styleBuilder.withStyleId(styleName).withName(format("_%s", HEADING1.getName()))
-                    .withUnhideWhenUsed(null).withSemiHidden(null).withHidden(BOOLEAN_DEFAULT_TRUE_TRUE);
+                    .withUnhideWhenUsed((BooleanDefaultTrue) null).withSemiHidden((BooleanDefaultTrue) null).withHidden(BOOLEAN_DEFAULT_TRUE_TRUE);
             try {
                 styleDefinitionsPart.getContents().getStyle().add(styleBuilder.getObject());
                 new StyleBuilder(tocHeading).withBasedOn(styleName);

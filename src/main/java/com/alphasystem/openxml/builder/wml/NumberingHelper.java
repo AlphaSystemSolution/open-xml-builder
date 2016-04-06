@@ -9,7 +9,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.alphasystem.openxml.builder.wml.OrderedList.*;
 import static com.alphasystem.openxml.builder.wml.UnorderedList.*;
-import static com.alphasystem.openxml.builder.wml.WmlAdapter.getCtLongHexNumber;
 import static com.alphasystem.openxml.builder.wml.WmlBuilderFactory.*;
 import static java.util.Arrays.asList;
 import static org.apache.commons.lang3.ArrayUtils.add;
@@ -65,8 +64,8 @@ public class NumberingHelper {
     }
 
     private static AbstractNum getAbstractNum(long id, String nsId, String tmpl, String multiLevel, Lvl[] lvls) {
-        return getNumberingAbstractNumBuilder().withAbstractNumId(id).withNsid(getCtLongHexNumber(nsId))
-                .withTmpl(getCtLongHexNumber(tmpl)).withMultiLevelType(multiLevel).addLvl(lvls).getObject();
+        return getNumberingAbstractNumBuilder().withAbstractNumId(id).withNsid(nsId).withTmpl(tmpl)
+                .withMultiLevelType(multiLevel).addLvl(lvls).getObject();
     }
 
     private final NumberingBuilder numberingBuilder = getNumberingBuilder();

@@ -15,7 +15,6 @@ import org.docx4j.openpackaging.exceptions.Docx4JException;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
 import org.docx4j.openpackaging.parts.WordprocessingML.MainDocumentPart;
 import org.docx4j.wml.*;
-import org.docx4j.wml.PPrBase.PStyle;
 import org.docx4j.wml.TcPrInner.GridSpan;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -215,10 +214,6 @@ public class WmlAdapter {
         return pPrBuilder.withNumPr(numPr).withPStyle(style).getObject();
     }
 
-    public static CTLongHexNumber getCtLongHexNumber(String value) {
-        return (value == null) ? null : getCTLongHexNumberBuilder().withVal(value).getObject();
-    }
-
     /**
      * @param value
      * @return
@@ -246,54 +241,6 @@ public class WmlAdapter {
      */
     public static GridSpan getGridSpan(long value) {
         return getTcPrInnerBuilder().getGridSpanBuilder().withVal(value).getObject();
-    }
-
-    /**
-     * @param value
-     * @return
-     */
-    public static HpsMeasure getHpsMeasure(long value) {
-        return getHpsMeasureBuilder().withVal(value).getObject();
-    }
-
-    /**
-     * @param value
-     * @return
-     */
-    public static HpsMeasure getHpsMeasure(String value) {
-        return getHpsMeasureBuilder().withVal(value).getObject();
-    }
-
-    /**
-     * @param styleName
-     * @return
-     */
-    public static PStyle getPStyle(String styleName) {
-        return getPPrBuilder().getPStyleBuilder().withVal(styleName).getObject();
-    }
-
-    /**
-     * @param styleName
-     * @return
-     */
-    public static RStyle getRStyle(String styleName) {
-        return getRStyleBuilder().withVal(styleName).getObject();
-    }
-
-    /**
-     * @param value
-     * @return
-     */
-    public static TblGridCol getTblGridCol(long value) {
-        return getTblGridColBuilder().withW(value).getObject();
-    }
-
-    /**
-     * @param value
-     * @return
-     */
-    public static TblGridCol getTblGridCol(String value) {
-        return getTblGridColBuilder().withW(value).getObject();
     }
 
     public static CTBorder getNilBorder() {
@@ -363,7 +310,7 @@ public class WmlAdapter {
     }
 
     private static P addTableOfContentInternal(String tocText) {
-        final PPr pPr = getPPrBuilder().withPStyle(getPStyle("TOC1")).getObject();
+        final PPr pPr = getPPrBuilder().withPStyle("TOC1").getObject();
         P p = getPBuilder().withParaId(nextId()).withRsidR(nextId()).withRsidRDefault(nextId()).withRsidP(nextId())
                 .withPPr(pPr).getObject();
         addFieldBegin(p);

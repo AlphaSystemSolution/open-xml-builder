@@ -27,7 +27,7 @@ public class CustomTemplateCustomStyles extends CustomStylesTest {
     @Test
     public void testCustomTableStyle() {
         TableAdapter tableAdapter = new TableAdapter(20.0, 80.0).startTable("AdmonitionTable");
-        tableAdapter.startRow().addColumn(0, getParagraphWithStyle(null, "Important"))
+        tableAdapter.startRow().addColumn(0, getParagraphWithStyle("DefaultTitle", "Important"))
                 .addColumn(1, getParagraphWithStyle(null, "Some text")).endRow();
         getMainDocumentPart().addObject(tableAdapter.getTable());
     }

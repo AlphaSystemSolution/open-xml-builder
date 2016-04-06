@@ -48,7 +48,7 @@ public class CreateCustomStyle {
         ctTblStylePrs[1] = new CTTblStylePrBuilder().withType(LAST_COL).withRPr(rPr).withTcPr(tcPr).getObject();
 
         StyleBuilder styleBuilder = new StyleBuilder().withType("table").withCustomStyle(true).withStyleId("AdmonitionTable")
-                .withName("Admonition Table").withBasedOn("TableNormal").withUiPriority(47L).withRsid(getCtLongHexNumber(nextId()))
+                .withName("Admonition Table").withBasedOn("TableNormal").withUiPriority(47L).withRsid(nextId())
                 .withPPr(pPr).withTblPr(tblPr).addTblStylePr(ctTblStylePrs);
 
         System.out.println(marshaltoString(styleBuilder.getObject()));
