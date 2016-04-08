@@ -104,4 +104,28 @@
             </w:tcPr>
         </w:tblStylePr>
     </w:style>
+    <w:style w:type="table" w:styleId="HorizontalList" w:customStyle="true">
+        <w:name w:val="Horizontal List"/>
+        <w:basedOn w:val="TableNormal"/>
+        <w:uiPriority w:val="47"/>
+        <w:rsid w:val="3E0C5B55"/>
+        <w:pPr>
+            <w:spacing w:after="0" w:line="240" w:lineRule="auto"/>
+        </w:pPr>
+        <w:tblPr>
+            <w:tblBorders>
+                <w:top w:val="none" w:color="auto" w:sz="0" w:space="0"/>
+                <w:left w:val="none" w:color="auto" w:sz="0" w:space="0"/>
+                <w:bottom w:val="none" w:color="auto" w:sz="0" w:space="0"/>
+                <w:right w:val="none" w:color="auto" w:sz="0" w:space="0"/>
+                <w:insideH w:val="none" w:color="auto" w:sz="0" w:space="0"/>
+                <w:insideV w:val="none" w:color="auto" w:sz="0" w:space="0"/>
+            </w:tblBorders>
+        </w:tblPr>
+        <w:tblStylePr w:type="firstCol">
+            <w:rPr>
+                <w:rStyle w:val="Strong"/>
+            </w:rPr>
+        </w:tblStylePr>
+    </w:style>
 </w:styles>

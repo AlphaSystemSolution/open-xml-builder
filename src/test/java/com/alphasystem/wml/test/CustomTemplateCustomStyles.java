@@ -6,6 +6,7 @@ import org.docx4j.openpackaging.exceptions.Docx4JException;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
 import org.testng.annotations.Test;
 
+import static com.alphasystem.openxml.builder.wml.WmlAdapter.getParagraph;
 import static com.alphasystem.openxml.builder.wml.WmlAdapter.getParagraphWithStyle;
 import static com.alphasystem.wml.test.DocumentCaption.EXAMPLE;
 
@@ -26,9 +27,17 @@ public class CustomTemplateCustomStyles extends CustomStylesTest {
 
     @Test
     public void testCustomTableStyle() {
-        TableAdapter tableAdapter = new TableAdapter(20.0, 80.0).startTable("AdmonitionTable");
+        TableAdapter tableAdapter = new TableAdapter(10.0, 90.0).startTable("AdmonitionTable");
         tableAdapter.startRow().addColumn(0, getParagraphWithStyle("DefaultTitle", "Important"))
-                .addColumn(1, getParagraphWithStyle(null, "Some text")).endRow();
+                .addColumn(1, getParagraph("Some text")).endRow();
+        getMainDocumentPart().addObject(tableAdapter.getTable());
+    }
+
+    @Test
+    public void testCreateHorizontalList() {
+        TableAdapter tableAdapter = new TableAdapter(15.0, 85.0).startTable("HorizontalList");
+        tableAdapter.startRow().addColumn(0, getParagraph("Some Long Title"))
+                .addColumn(1, getParagraph("Some text")).endRow();
         getMainDocumentPart().addObject(tableAdapter.getTable());
     }
 

@@ -53,4 +53,29 @@ public class CreateCustomStyle {
 
         System.out.println(marshaltoString(styleBuilder.getObject()));
     }
+
+    @Test
+    public void createHorizontalListTableStyle() {
+        final PPrBuilder pPrBuilder = new PPrBuilder();
+        Spacing spacing = pPrBuilder.getSpacingBuilder().withAfter(0L).withLine(240L).withLineRule(AUTO).getObject();
+        PPr pPr = pPrBuilder.withSpacing(spacing).getObject();
+
+        final CTTblPrBaseBuilder ctTblPrBaseBuilder = new CTTblPrBaseBuilder();
+        TblBorders tblBorders = new TblBordersBuilder().withTop(getNilBorder()).withLeft(getNilBorder())
+                .withBottom(getNilBorder()).withRight(getNilBorder()).withInsideH(getNilBorder()).withInsideV(getNilBorder())
+                .getObject();
+        CTTblPrBase tblPr = ctTblPrBaseBuilder.withTblBorders(tblBorders).getObject();
+
+        CTTblStylePr[] ctTblStylePrs = new CTTblStylePr[1];
+
+        // first column
+        RPr rPr = new RPrBuilder().withRStyle("Strong").getObject();
+        ctTblStylePrs[0] = new CTTblStylePrBuilder().withType(FIRST_COL).withRPr(rPr).getObject();
+
+        StyleBuilder styleBuilder = new StyleBuilder().withType("table").withCustomStyle(true).withStyleId("HorizontalList")
+                .withName("Horizontal List").withBasedOn("TableNormal").withUiPriority(47L).withRsid(nextId())
+                .withPPr(pPr).withTblPr(tblPr).addTblStylePr(ctTblStylePrs);
+
+        System.out.println(marshaltoString(styleBuilder.getObject()));
+    }
 }
