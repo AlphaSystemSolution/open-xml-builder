@@ -42,6 +42,7 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.docx4j.XmlUtils.unmarshal;
 import static org.docx4j.openpackaging.parts.relationships.Namespaces.NS_WORD12;
 import static org.docx4j.wml.STBorder.NONE;
+import static org.docx4j.wml.STBorder.SINGLE;
 import static org.docx4j.wml.STBrType.PAGE;
 import static org.docx4j.wml.STFldCharType.BEGIN;
 import static org.docx4j.wml.STFldCharType.END;
@@ -243,6 +244,10 @@ public class WmlAdapter {
         return getTcPrInnerBuilder().getGridSpanBuilder().withVal(value).getObject();
     }
 
+    public static CTBorder getDefaultBorder(){
+        return getBorder(SINGLE, 0L, 0L, "auto");
+    }
+
     public static CTBorder getNilBorder() {
         return getBorder(NONE, 0L, 0L, "auto");
     }
@@ -301,7 +306,7 @@ public class WmlAdapter {
 
     public static P getHorizontalLine() {
         PPrBase.PBdr pBdr = WmlBuilderFactory.getPPrBaseBuilder().getPBdrBuilder().
-                withTop(getBorder(STBorder.SINGLE, 6L, 1L, "auto")).getObject();
+                withTop(getBorder(SINGLE, 6L, 1L, "auto")).getObject();
         PPr pPr = getPPrBuilder().withPBdr(pBdr).getObject();
         return getPBuilder().withPPr(pPr).getObject();
     }
