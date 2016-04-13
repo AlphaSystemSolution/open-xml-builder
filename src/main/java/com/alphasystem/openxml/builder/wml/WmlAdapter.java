@@ -289,6 +289,10 @@ public class WmlAdapter {
         return getPBuilder().withPPr(ppr).withRsidP(id).withRsidR(id).withRsidRDefault(id).getObject();
     }
 
+    public static P getParagraph( String text){
+        return getParagraphWithStyle(null, text);
+    }
+
     public static P getParagraphWithStyle(String styleName, String text) {
         String rsidRPr = nextId();
         R r = getRBuilder().withRsidRPr(rsidRPr).addContent(getText(text)).getObject();
