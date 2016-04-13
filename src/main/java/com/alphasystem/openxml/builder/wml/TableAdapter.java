@@ -171,19 +171,6 @@ public class TableAdapter {
     }
 
     /**
-     * Initialize equal column widths for all columns.
-     *
-     * @return reference to this
-     */
-    public TableAdapter initializeColumnsWidth() {
-        final double width = PERCENT.divide(bigNumOfColumn).doubleValue();
-        for (int i = 0; i < numOfColumns; i++) {
-            setColumnWidth(i, width);
-        }
-        return this;
-    }
-
-    /**
      * @param columnsIndices
      * @param percent
      * @return reference to this
