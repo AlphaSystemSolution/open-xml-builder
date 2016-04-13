@@ -74,7 +74,7 @@ public class TableAdapter {
 
         for (int index = 0; index < columnWidthPercentages.length; index++) {
             Double percent = columnWidthPercentages[index];
-            setColumnWidth(index, percent, true);
+            setColumnWidthInternal(index, percent);
         }
     }
 
@@ -159,8 +159,7 @@ public class TableAdapter {
 
     private double getDefaultPercent() {
         BigDecimal width = TOTAL_TABLE_WIDTH.divide(bigNumOfColumn, ROUNDING);
-        return width.divide(TOTAL_TABLE_WIDTH).multiply(PERCENT, ROUNDING)
-                .doubleValue();
+        return width.divide(TOTAL_TABLE_WIDTH).multiply(PERCENT, ROUNDING).doubleValue();
     }
 
     public int getNumOfColumns() {
@@ -172,9 +171,22 @@ public class TableAdapter {
     }
 
     /**
+     * Initialize equal column widths for all columns.
+     *
+     * @return reference to this
+     */
+    public TableAdapter initializeColumnsWidth() {
+        final double width = PERCENT.divide(bigNumOfColumn).doubleValue();
+        for (int i = 0; i < numOfColumns; i++) {
+            setColumnWidth(i, width);
+        }
+        return this;
+    }
+
+    /**
      * @param columnsIndices
      * @param percent
-     * @return
+     * @return reference to this
      * @throws ArrayIndexOutOfBoundsException
      */
     public TableAdapter setColumnsWidth(int[] columnsIndices, double percent)
@@ -188,7 +200,7 @@ public class TableAdapter {
     /**
      * @param columnsIndices
      * @param percents
-     * @return
+     * @return reference to this
      * @throws ArrayIndexOutOfBoundsException
      */
     public TableAdapter setColumnsWidth(int[] columnsIndices, double[] percents)
@@ -200,32 +212,26 @@ public class TableAdapter {
     }
 
     /**
-     * @param columnIndex
-     * @param percent
-     * @throws ArrayIndexOutOfBoundsException
+     * @param columnIndex index of column
+     * @param percent     percentage of column
+     * @throws ArrayIndexOutOfBoundsException if columnIndex is out of range
      */
-    public TableAdapter setColumnWidth(int columnIndex, Double percent)
-            throws ArrayIndexOutOfBoundsException {
-        setColumnWidth(columnIndex, percent, true);
+    public TableAdapter setColumnWidth(int columnIndex, Double percent) throws ArrayIndexOutOfBoundsException {
+        setColumnWidthInternal(columnIndex, percent);
         return this;
     }
 
     /**
-     * @param columnIndex
-     * @param percent
-     * @param dummy
-     * @throws ArrayIndexOutOfBoundsException
+     * @param columnIndex index of column
+     * @param percent     percentage of column
+     * @throws ArrayIndexOutOfBoundsException if columnIndex is out of range
      */
-    private void setColumnWidth(int columnIndex, Double percent, boolean dummy)
-            throws ArrayIndexOutOfBoundsException {
+    private void setColumnWidthInternal(int columnIndex, Double percent) throws ArrayIndexOutOfBoundsException {
         checkColumnIndex(columnIndex);
-        BigDecimal bigPercent = new BigDecimal(percent == null ? defaultPercent
-                : percent);
-        int width = TOTAL_TABLE_WIDTH.multiply(bigPercent, ROUNDING)
-                .divide(PERCENT).intValue();
+        BigDecimal bigPercent = new BigDecimal((percent == null) ? defaultPercent : percent);
+        int width = TOTAL_TABLE_WIDTH.multiply(bigPercent, ROUNDING).divide(PERCENT).intValue();
         columnsWidths[columnIndex] = width;
-        width = TOTAL_GRID_COL_WIDTH.multiply(bigPercent, ROUNDING)
-                .divide(PERCENT).intValue();
+        width = TOTAL_GRID_COL_WIDTH.multiply(bigPercent, ROUNDING).divide(PERCENT).intValue();
         gridWidths[columnIndex] = width;
     }
 
