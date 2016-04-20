@@ -128,4 +128,105 @@
             </w:rPr>
         </w:tblStylePr>
     </w:style>
+    <w:style w:type="table" w:styleId="TableGrid1" w:customStyle="true">
+        <w:name w:val="Table Grid With Header"/>
+        <w:basedOn w:val="TableNormal"/>
+        <w:uiPriority w:val="48"/>
+        <w:rsid w:val="60BE864B"/>
+        <w:pPr>
+            <w:spacing w:after="0" w:line="240" w:lineRule="auto"/>
+        </w:pPr>
+        <w:tblPr>
+            <w:tblBorders>
+                <w:top w:val="single" w:color="2C2C2C" w:themeColor="text1" w:sz="4" w:space="0"/>
+                <w:left w:val="single" w:color="2C2C2C" w:themeColor="text1" w:sz="4" w:space="0"/>
+                <w:bottom w:val="single" w:color="2C2C2C" w:themeColor="text1" w:sz="4" w:space="0"/>
+                <w:right w:val="single" w:color="2C2C2C" w:themeColor="text1" w:sz="4" w:space="0"/>
+                <w:insideH w:val="single" w:color="2C2C2C" w:themeColor="text1" w:sz="4" w:space="0"/>
+                <w:insideV w:val="single" w:color="2C2C2C" w:themeColor="text1" w:sz="4" w:space="0"/>
+            </w:tblBorders>
+        </w:tblPr>
+        <w:tblStylePr w:type="firstRow">
+            <w:pPr>
+                <w:jc w:val="center"/>
+            </w:pPr>
+            <w:rPr>
+                <w:rStyle w:val="Strong"/>
+            </w:rPr>
+            <w:tcPr>
+                <w:vAlign w:val="center"/>
+            </w:tcPr>
+        </w:tblStylePr>
+    </w:style>
+    <w:style w:type="table" w:styleId="TableGrid2" w:customStyle="true">
+        <w:name w:val="Table Grid With Footer"/>
+        <w:basedOn w:val="TableNormal"/>
+        <w:uiPriority w:val="49"/>
+        <w:rsid w:val="45094091"/>
+        <w:pPr>
+            <w:spacing w:after="0" w:line="240" w:lineRule="auto"/>
+        </w:pPr>
+        <w:tblPr>
+            <w:tblBorders>
+                <w:top w:val="single" w:color="2C2C2C" w:themeColor="text1" w:sz="4" w:space="0"/>
+                <w:left w:val="single" w:color="2C2C2C" w:themeColor="text1" w:sz="4" w:space="0"/>
+                <w:bottom w:val="single" w:color="2C2C2C" w:themeColor="text1" w:sz="4" w:space="0"/>
+                <w:right w:val="single" w:color="2C2C2C" w:themeColor="text1" w:sz="4" w:space="0"/>
+                <w:insideH w:val="single" w:color="2C2C2C" w:themeColor="text1" w:sz="4" w:space="0"/>
+                <w:insideV w:val="single" w:color="2C2C2C" w:themeColor="text1" w:sz="4" w:space="0"/>
+            </w:tblBorders>
+        </w:tblPr>
+        <w:tblStylePr w:type="lastRow">
+            <w:pPr>
+                <w:jc w:val="center"/>
+            </w:pPr>
+            <w:rPr>
+                <w:rStyle w:val="Strong"/>
+            </w:rPr>
+            <w:tcPr>
+                <w:vAlign w:val="center"/>
+            </w:tcPr>
+        </w:tblStylePr>
+    </w:style>
+    <w:style w:type="table" w:styleId="TableGrid3" w:customStyle="true">
+        <w:name w:val="Table Grid With Header And Footer"/>
+        <w:basedOn w:val="TableNormal"/>
+        <w:uiPriority w:val="49"/>
+        <w:rsid w:val="A289E8AB"/>
+        <w:pPr>
+            <w:spacing w:after="0" w:line="240" w:lineRule="auto"/>
+        </w:pPr>
+        <w:tblPr>
+            <w:tblBorders>
+                <w:top w:val="single" w:color="2C2C2C" w:themeColor="text1" w:sz="4" w:space="0"/>
+                <w:left w:val="single" w:color="2C2C2C" w:themeColor="text1" w:sz="4" w:space="0"/>
+                <w:bottom w:val="single" w:color="2C2C2C" w:themeColor="text1" w:sz="4" w:space="0"/>
+                <w:right w:val="single" w:color="2C2C2C" w:themeColor="text1" w:sz="4" w:space="0"/>
+                <w:insideH w:val="single" w:color="2C2C2C" w:themeColor="text1" w:sz="4" w:space="0"/>
+                <w:insideV w:val="single" w:color="2C2C2C" w:themeColor="text1" w:sz="4" w:space="0"/>
+            </w:tblBorders>
+        </w:tblPr>
+        <w:tblStylePr w:type="firstRow">
+            <w:pPr>
+                <w:jc w:val="center"/>
+            </w:pPr>
+            <w:rPr>
+                <w:rStyle w:val="Strong"/>
+            </w:rPr>
+            <w:tcPr>
+                <w:vAlign w:val="center"/>
+            </w:tcPr>
+        </w:tblStylePr>
+        <w:tblStylePr w:type="lastRow">
+            <w:pPr>
+                <w:jc w:val="center"/>
+            </w:pPr>
+            <w:rPr>
+                <w:rStyle w:val="Strong"/>
+            </w:rPr>
+            <w:tcPr>
+                <w:vAlign w:val="center"/>
+            </w:tcPr>
+        </w:tblStylePr>
+    </w:style>
 </w:styles>
