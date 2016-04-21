@@ -5,12 +5,14 @@ import org.docx4j.wml.*;
 import org.docx4j.wml.PPrBase.Spacing;
 import org.testng.annotations.Test;
 
-import static com.alphasystem.openxml.builder.wml.WmlAdapter.*;
+import static com.alphasystem.openxml.builder.wml.WmlAdapter.getBorder;
+import static com.alphasystem.openxml.builder.wml.WmlAdapter.getNilBorder;
 import static com.alphasystem.openxml.builder.wml.WmlBuilderFactory.*;
 import static com.alphasystem.util.IdGenerator.nextId;
 import static org.docx4j.XmlUtils.marshaltoString;
 import static org.docx4j.wml.STBorder.SINGLE;
 import static org.docx4j.wml.STLineSpacingRule.AUTO;
+import static org.docx4j.wml.STShd.CLEAR;
 import static org.docx4j.wml.STTblStyleOverrideType.*;
 import static org.docx4j.wml.STThemeColor.TEXT_1;
 import static org.docx4j.wml.STVerticalJc.CENTER;
@@ -36,17 +38,19 @@ public class CreateCustomStyle {
 
         // first col, "right" border and Vertical Align "Center"
         TcPrBuilder tcPrBuilder = new TcPrBuilder();
-        TcPrInner.TcBorders tcBorders = tcPrBuilder.getTcBordersBuilder().withRight(getBorder(SINGLE, 8L, 0L, "DDDDD8")).getObject();
-        TcPr tcPr = tcPrBuilder.withTcBorders(tcBorders).withVAlign(CENTER).getObject();
-        RPr rPr = new RPrBuilder().withColor(getColor("808080")).getObject();
+        final CTBorder border = getBorder(SINGLE, 8L, 0L, "2C2C2C");
+        TcPrInner.TcBorders tcBorders = tcPrBuilder.getTcBordersBuilder().withRight(border).getObject();
+        CTShd shade = getCTShdBuilder().withVal(CLEAR).withColor("auto").withFill("D4D4D4").withThemeFill(TEXT_1)
+                .withThemeFillTint("22").getObject();
+        TcPr tcPr = tcPrBuilder.withTcBorders(tcBorders).withVAlign(CENTER).withShd(shade).getObject();
+        RPr rPr = new RPrBuilder().withRStyle("Strong").getObject();
         ctTblStylePrs[0] = new CTTblStylePrBuilder().withType(FIRST_COL).withRPr(rPr).withTcPr(tcPr).getObject();
 
         // second column, "left" border
         tcPrBuilder = new TcPrBuilder();
-        tcBorders = tcPrBuilder.getTcBordersBuilder().withLeft(getBorder(SINGLE, 8L, 0L, "DDDDD8")).getObject();
-        tcPr = tcPrBuilder.withTcBorders(tcBorders).getObject();
-        rPr = new RPrBuilder().withColor(getColor("808080")).getObject();
-        ctTblStylePrs[1] = new CTTblStylePrBuilder().withType(LAST_COL).withRPr(rPr).withTcPr(tcPr).getObject();
+        tcBorders = tcPrBuilder.getTcBordersBuilder().withLeft(border).getObject();
+        tcPr = tcPrBuilder.withTcBorders(tcBorders).withShd(shade).getObject();
+        ctTblStylePrs[1] = new CTTblStylePrBuilder().withType(LAST_COL).withTcPr(tcPr).getObject();
 
         StyleBuilder styleBuilder = getStyleBuilder().withType("table").withCustomStyle(true).withStyleId("AdmonitionTable")
                 .withName("Admonition Table").withBasedOn("TableNormal").withUiPriority(47L).withRsid(nextId())
@@ -120,7 +124,7 @@ public class CreateCustomStyle {
         System.out.println(marshaltoString(styleBuilder.getObject()));
     }
 
-    private CTTblStylePr createTableStyle(STTblStyleOverrideType type){
+    private CTTblStylePr createTableStyle(STTblStyleOverrideType type) {
         RPr rPr = getRPrBuilder().withRStyle("Strong").getObject();
         PPr pPr = getPPrBuilder().withJc(JcEnumeration.CENTER).getObject();
         TcPr tcPr = getTcPrBuilder().withVAlign(CENTER).getObject();

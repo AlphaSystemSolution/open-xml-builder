@@ -74,7 +74,7 @@
         <w:name w:val="Admonition Table"/>
         <w:basedOn w:val="TableNormal"/>
         <w:uiPriority w:val="47"/>
-        <w:rsid w:val="4D54AE2E"/>
+        <w:rsid w:val="E508A910"/>
         <w:pPr>
             <w:spacing w:after="0" w:line="240" w:lineRule="auto"/>
         </w:pPr>
@@ -89,18 +89,23 @@
             </w:tblBorders>
         </w:tblPr>
         <w:tblStylePr w:type="firstCol">
+            <w:rPr>
+                <w:rStyle w:val="Strong"/>
+            </w:rPr>
             <w:tcPr>
                 <w:tcBorders>
-                    <w:right w:val="single" w:color="DDDDD8" w:sz="8" w:space="0"/>
+                    <w:right w:val="single" w:color="2C2C2C" w:sz="8" w:space="0"/>
                 </w:tcBorders>
+                <w:shd w:val="clear" w:color="auto" w:fill="D4D4D4" w:themeFill="text1" w:themeFillTint="22"/>
                 <w:vAlign w:val="center"/>
             </w:tcPr>
         </w:tblStylePr>
         <w:tblStylePr w:type="lastCol">
             <w:tcPr>
                 <w:tcBorders>
-                    <w:left w:val="single" w:color="DDDDD8" w:sz="8" w:space="0"/>
+                    <w:left w:val="single" w:color="2C2C2C" w:sz="8" w:space="0"/>
                 </w:tcBorders>
+                <w:shd w:val="clear" w:color="auto" w:fill="D4D4D4" w:themeFill="text1" w:themeFillTint="22"/>
             </w:tcPr>
         </w:tblStylePr>
     </w:style>
