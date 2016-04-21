@@ -17,7 +17,6 @@ import static java.math.RoundingMode.CEILING;
 import static org.apache.commons.lang3.ArrayUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.docx4j.sharedtypes.STOnOff.ONE;
-import static org.docx4j.sharedtypes.STOnOff.ZERO;
 
 /**
  * Table Adapter.
@@ -259,7 +258,7 @@ public class TableAdapter {
         TblWidth tblWidth = getTblWidthBuilder().withType(TYPE_PCT).withW(TOTAL_TABLE_WIDTH.toString()).getObject();
 
         CTTblLook cTTblLook = getCTTblLookBuilder().withFirstRow(ONE).withLastRow(ONE).withFirstColumn(ONE)
-                .withLastColumn(ZERO).withNoVBand(ONE).withNoHBand(ZERO).getObject();
+                .withLastColumn(ONE).withNoVBand(ONE).withNoHBand(ONE).getObject();
 
         tableStyle = isBlank(tableStyle) ? "TableGrid" : tableStyle;
         TblPr tblPr = getTblPrBuilder().withTblStyle(tableStyle).withTblW(tblWidth).withTblLook(cTTblLook).getObject();
