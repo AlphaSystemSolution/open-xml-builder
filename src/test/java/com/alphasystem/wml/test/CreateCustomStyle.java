@@ -24,10 +24,6 @@ public class CreateCustomStyle {
 
     @Test
     public void createAdmonitionTableStyle() {
-        final PPrBuilder pPrBuilder = new PPrBuilder();
-        Spacing spacing = pPrBuilder.getSpacingBuilder().withAfter(0L).withLine(240L).withLineRule(AUTO).getObject();
-        PPr pPr = pPrBuilder.withSpacing(spacing).getObject();
-
         final CTTblPrBaseBuilder ctTblPrBaseBuilder = new CTTblPrBaseBuilder();
         TblBorders tblBorders = new TblBordersBuilder().withTop(getNilBorder()).withLeft(getNilBorder())
                 .withBottom(getNilBorder()).withRight(getNilBorder()).withInsideH(getNilBorder()).withInsideV(getNilBorder())
@@ -44,13 +40,18 @@ public class CreateCustomStyle {
                 .withThemeFillTint("22").getObject();
         TcPr tcPr = tcPrBuilder.withTcBorders(tcBorders).withVAlign(CENTER).withShd(shade).getObject();
         RPr rPr = new RPrBuilder().withRStyle("Strong").getObject();
-        ctTblStylePrs[0] = new CTTblStylePrBuilder().withType(FIRST_COL).withRPr(rPr).withTcPr(tcPr).getObject();
+        ctTblStylePrs[0] = new CTTblStylePrBuilder().withType(FIRST_COL).withRPr(rPr)
+                .withPPr(getPPrBuilder().withJc(JcEnumeration.CENTER).getObject()).withTcPr(tcPr).getObject();
 
         // second column, "left" border
         tcPrBuilder = new TcPrBuilder();
         tcBorders = tcPrBuilder.getTcBordersBuilder().withLeft(border).getObject();
         tcPr = tcPrBuilder.withTcBorders(tcBorders).withShd(shade).getObject();
         ctTblStylePrs[1] = new CTTblStylePrBuilder().withType(LAST_COL).withTcPr(tcPr).getObject();
+
+        final PPrBuilder pPrBuilder = new PPrBuilder();
+        Spacing spacing = pPrBuilder.getSpacingBuilder().withAfter(0L).withLine(240L).withLineRule(AUTO).getObject();
+        PPr pPr = pPrBuilder.withSpacing(spacing).getObject();
 
         StyleBuilder styleBuilder = getStyleBuilder().withType("table").withCustomStyle(true).withStyleId("AdmonitionTable")
                 .withName("Admonition Table").withBasedOn("TableNormal").withUiPriority(47L).withRsid(nextId())

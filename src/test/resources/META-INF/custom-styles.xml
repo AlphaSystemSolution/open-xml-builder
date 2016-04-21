@@ -74,7 +74,7 @@
         <w:name w:val="Admonition Table"/>
         <w:basedOn w:val="TableNormal"/>
         <w:uiPriority w:val="47"/>
-        <w:rsid w:val="E508A910"/>
+        <w:rsid w:val="2B01FAD4"/>
         <w:pPr>
             <w:spacing w:after="0" w:line="240" w:lineRule="auto"/>
         </w:pPr>
@@ -89,6 +89,9 @@
             </w:tblBorders>
         </w:tblPr>
         <w:tblStylePr w:type="firstCol">
+            <w:pPr>
+                <w:jc w:val="center"/>
+            </w:pPr>
             <w:rPr>
                 <w:rStyle w:val="Strong"/>
             </w:rPr>
