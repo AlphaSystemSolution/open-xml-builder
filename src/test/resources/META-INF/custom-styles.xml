@@ -97,18 +97,18 @@
             </w:rPr>
             <w:tcPr>
                 <w:tcBorders>
-                    <w:right w:val="single" w:color="2C2C2C" w:sz="8" w:space="0"/>
+                    <w:right w:val="single" w:color="808080" w:sz="2" w:space="2"/>
                 </w:tcBorders>
-                <w:shd w:val="clear" w:color="auto" w:fill="D4D4D4" w:themeFill="text1" w:themeFillTint="22"/>
+                <w:shd w:val="clear" w:color="auto" w:fill="F8F8F7"/>
                 <w:vAlign w:val="center"/>
             </w:tcPr>
         </w:tblStylePr>
         <w:tblStylePr w:type="lastCol">
             <w:tcPr>
                 <w:tcBorders>
-                    <w:left w:val="single" w:color="2C2C2C" w:sz="8" w:space="0"/>
+                    <w:left w:val="single" w:color="808080" w:sz="2" w:space="2"/>
                 </w:tcBorders>
-                <w:shd w:val="clear" w:color="auto" w:fill="D4D4D4" w:themeFill="text1" w:themeFillTint="22"/>
+                <w:shd w:val="clear" w:color="auto" w:fill="F8F8F7"/>
             </w:tcPr>
         </w:tblStylePr>
     </w:style>

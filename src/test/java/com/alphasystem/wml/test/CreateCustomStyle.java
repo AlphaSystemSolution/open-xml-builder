@@ -34,10 +34,9 @@ public class CreateCustomStyle {
 
         // first col, "right" border and Vertical Align "Center"
         TcPrBuilder tcPrBuilder = new TcPrBuilder();
-        final CTBorder border = getBorder(SINGLE, 8L, 0L, "2C2C2C");
+        final CTBorder border = getBorder(SINGLE, 2L, 2L, "2C2C2C");
         TcPrInner.TcBorders tcBorders = tcPrBuilder.getTcBordersBuilder().withRight(border).getObject();
-        CTShd shade = getCTShdBuilder().withVal(CLEAR).withColor("auto").withFill("D4D4D4").withThemeFill(TEXT_1)
-                .withThemeFillTint("22").getObject();
+        CTShd shade = getCTShdBuilder().withVal(CLEAR).withColor("auto").withFill("F8F8F7").getObject();
         TcPr tcPr = tcPrBuilder.withTcBorders(tcBorders).withVAlign(CENTER).withShd(shade).getObject();
         RPr rPr = new RPrBuilder().withRStyle("Strong").getObject();
         ctTblStylePrs[0] = new CTTblStylePrBuilder().withType(FIRST_COL).withRPr(rPr)
