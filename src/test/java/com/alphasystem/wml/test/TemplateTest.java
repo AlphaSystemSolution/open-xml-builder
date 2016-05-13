@@ -1,6 +1,7 @@
 package com.alphasystem.wml.test;
 
 import com.alphasystem.openxml.builder.wml.WmlAdapter;
+import org.docx4j.openpackaging.exceptions.Docx4JException;
 import org.testng.annotations.Test;
 
 import static com.alphasystem.openxml.builder.wml.WmlAdapter.*;
@@ -16,13 +17,7 @@ public abstract class TemplateTest extends CommonTest {
         getMainDocumentPart().addObject(getHorizontalLine());
     }
 
-
     @Test(dependsOnMethods = {"testTitle"})
-    public void addTableOfContent() {
-         WmlAdapter.addTableOfContent(getMainDocumentPart(), 5);
-    }
-
-    @Test(dependsOnMethods = {"addTableOfContent"})
     public void testHeading1() {
         getMainDocumentPart().addObject(getParagraphWithStyle("Heading1", "Heading Level 1"));
         getMainDocumentPart().addObject(getParagraphWithStyle(null, "A paragraph with document default font"));
@@ -57,5 +52,14 @@ public abstract class TemplateTest extends CommonTest {
         getMainDocumentPart().addObject(getPageBreak());
         getMainDocumentPart().addObject(getParagraphWithStyle("Heading1", "Another Heading Level 1"));
         getMainDocumentPart().addObject(getEmptyPara());
+    }
+
+    @Test(dependsOnMethods = {"testHeading5"})
+    public void addTableOfContent() {
+        try {
+            WmlAdapter.addTableOfContent(wmlPackage, 5);
+        } catch (Docx4JException e) {
+            e.printStackTrace();
+        }
     }
 }

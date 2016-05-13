@@ -35,7 +35,7 @@ public abstract class CommonTest {
         }
     }
 
-    private WordprocessingMLPackage wmlPackage;
+    protected WordprocessingMLPackage wmlPackage;
     private MainDocumentPart mainDocumentPart;
 
     protected abstract String getFileName();

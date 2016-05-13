@@ -62,6 +62,7 @@
                                 <srcClassName>org.docx4j.wml.Numbering</srcClassName>
                                 <srcClassName>org.docx4j.wml.SdtBlock</srcClassName>
                                 <srcClassName>org.docx4j.wml.CTSdtRow</srcClassName>
+                                <srcClassName>org.docx4j.wml.CTSdtDocPart</srcClassName>
                             </srcClassNames>
                         </configuration>
                     </execution>
