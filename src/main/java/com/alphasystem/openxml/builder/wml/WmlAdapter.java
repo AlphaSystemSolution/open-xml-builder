@@ -15,7 +15,6 @@ import org.docx4j.openpackaging.exceptions.Docx4JException;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
 import org.docx4j.openpackaging.parts.WordprocessingML.DocumentSettingsPart;
 import org.docx4j.openpackaging.parts.WordprocessingML.MainDocumentPart;
-import org.docx4j.toc.TocGenerator;
 import org.docx4j.wml.*;
 import org.docx4j.wml.TcPrInner.GridSpan;
 import org.slf4j.Logger;
@@ -46,8 +45,6 @@ import static org.docx4j.openpackaging.parts.relationships.Namespaces.NS_WORD12;
 import static org.docx4j.wml.STBorder.NONE;
 import static org.docx4j.wml.STBorder.SINGLE;
 import static org.docx4j.wml.STBrType.PAGE;
-import static org.docx4j.wml.STFldCharType.BEGIN;
-import static org.docx4j.wml.STFldCharType.END;
 
 /**
  * @author sali
@@ -149,25 +146,6 @@ public class WmlAdapter {
             Collections.reverse(urls);
         }
         return urls;
-    }
-
-    private static void addFieldBegin(P paragraph) {
-        FldChar fldchar = getFldCharBuilder().withDirty(true).withFldCharType(BEGIN).getObject();
-        R r = getRBuilder().addContent(getWrappedFldChar(fldchar)).getObject();
-        paragraph.getContent().add(r);
-    }
-
-    private static void addFieldEnd(P paragraph) {
-        FldChar fldchar = getFldCharBuilder().withFldCharType(END).getObject();
-        R r = getRBuilder().addContent(getWrappedFldChar(fldchar)).getObject();
-        paragraph.getContent().add(r);
-    }
-
-    private static void addTableOfContentField(P paragraph, String tocText) {
-        final ObjectFactory objectFactory = Context.getWmlObjectFactory();
-        Text txt = getText(tocText, "preserve");
-        objectFactory.createRInstrText(txt);
-        paragraph.getContent().add(getRBuilder().addContent(objectFactory.createRInstrText(txt)).getObject());
     }
 
     public static void addBookMark(PBuilder pBuilder, String id) {
@@ -320,18 +298,12 @@ public class WmlAdapter {
         return getPBuilder().withRsidP(id).withRsidR(id).withRsidRDefault(id).addContent(r).getObject();
     }
 
-    public static void addTableOfContent(final WordprocessingMLPackage wmlPackage, @SuppressWarnings({"unused"}) String tocTitle,
+    public static void addTableOfContent(final MainDocumentPart mainDocumentPart, String tocTitle,
                                          int level) throws Docx4JException {
-        // tocTitle = isBlank(tocTitle) ? "Table of Contents" : tocTitle;
-        level = ((level < 3) || (level > 5)) ? 3 : level;
-        String instruction = format(" TOC \\o \"1-%s\" \\h \\z \\u ", level);
-
-        TocGenerator tocGenerator = new TocGenerator(wmlPackage);
         int index = 0;
-        tocGenerator.generateToc(index, instruction, false);
-        tocGenerator.updateToc(false);
+        TocGenerator tocGenerator = new TocGenerator().index(index).level(level).tocHeading(tocTitle).mainDocumentPart(mainDocumentPart);
+        tocGenerator.generateToc();
 
-        MainDocumentPart mainDocumentPart = wmlPackage.getMainDocumentPart();
         //Adding Print View and Setting Update Field to true
         DocumentSettingsPart dsp = mainDocumentPart.getDocumentSettingsPart();
         if (dsp == null) {
@@ -347,16 +319,16 @@ public class WmlAdapter {
         mainDocumentPart.getContent().add(index + 1, getPageBreak());
     }
 
-    public static void addTableOfContent(final WordprocessingMLPackage wmlPackage, String tocTitle) throws Docx4JException {
-        addTableOfContent(wmlPackage, tocTitle, 3);
+    public static void addTableOfContent(final MainDocumentPart mainDocumentPart, String tocTitle) throws Docx4JException {
+        addTableOfContent(mainDocumentPart, tocTitle, 3);
     }
 
-    public static void addTableOfContent(final WordprocessingMLPackage wmlPackage) throws Docx4JException {
-        addTableOfContent(wmlPackage, null);
+    public static void addTableOfContent(final MainDocumentPart mainDocumentPart) throws Docx4JException {
+        addTableOfContent(mainDocumentPart, null);
     }
 
-    public static void addTableOfContent(final WordprocessingMLPackage wmlPackage, int level) throws Docx4JException {
-        addTableOfContent(wmlPackage, null, level);
+    public static void addTableOfContent(final MainDocumentPart mainDocumentPart, int level) throws Docx4JException {
+        addTableOfContent(mainDocumentPart, null, level);
     }
 
     public static void save(File file, WordprocessingMLPackage wordMLPackage)

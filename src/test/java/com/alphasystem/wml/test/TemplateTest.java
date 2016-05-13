@@ -57,7 +57,7 @@ public abstract class TemplateTest extends CommonTest {
     @Test(dependsOnMethods = {"testHeading5"})
     public void addTableOfContent() {
         try {
-            WmlAdapter.addTableOfContent(wmlPackage, 5);
+            WmlAdapter.addTableOfContent(getMainDocumentPart(), 5);
         } catch (Docx4JException e) {
             e.printStackTrace();
         }
