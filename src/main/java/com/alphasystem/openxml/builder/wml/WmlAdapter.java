@@ -236,6 +236,12 @@ public class WmlAdapter {
         return getCTBorderBuilder().withVal(borderType).withSz(size).withSpace(space).withColor(color).getObject();
     }
 
+    public static TcPrInner.TcBorders getNilBorders() {
+        return getTcPrBuilder().getTcBordersBuilder().withTop(getNilBorder()).withBottom(getNilBorder())
+                .withLeft(getNilBorder()).withRight(getNilBorder()).withInsideH(getNilBorder()).withInsideV(getNilBorder())
+                .getObject();
+    }
+
     /**
      * @param value
      * @param space
