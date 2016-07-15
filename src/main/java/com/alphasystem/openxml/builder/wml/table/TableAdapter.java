@@ -90,6 +90,14 @@ public final class TableAdapter {
         return this;
     }
 
+    public TableAdapter addColumn(Integer columnIndex, Object... content) {
+        return addColumn(columnIndex, null, null, content);
+    }
+
+    public TableAdapter addColumn(Integer columnIndex, TcPr columnProperties, Object... content) {
+        return addColumn(columnIndex, null, columnProperties, content);
+    }
+
     public TableAdapter addColumn(Integer columnIndex, Integer gridSpanValue, Object... content) {
         return addColumn(columnIndex, gridSpanValue, null, content);
     }
