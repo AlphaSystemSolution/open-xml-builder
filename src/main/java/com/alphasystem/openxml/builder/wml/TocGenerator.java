@@ -6,7 +6,6 @@ import org.docx4j.wml.*;
 
 import javax.xml.bind.JAXBElement;
 
-import static com.alphasystem.openxml.builder.wml.WmlAdapter.*;
 import static com.alphasystem.openxml.builder.wml.WmlBuilderFactory.*;
 import static java.lang.String.format;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -112,7 +111,7 @@ public final class TocGenerator {
     }
 
     private SdtContentBlock createSdtContentBlock() {
-        P headingP = getParagraphWithStyle(tocHeadingStyle, tocHeading);
+        P headingP = WmlAdapter.getParagraphWithStyle(tocHeadingStyle, tocHeading);
         P contentP = getSdtContentP();
         P fldEndP = getFieldEndPara();
         return getSdtContentBlockBuilder().addContent(headingP, contentP, fldEndP).getObject();
@@ -131,11 +130,11 @@ public final class TocGenerator {
 
     private static R getFieldBeginRun() {
         FldChar fldchar = getFldCharBuilder().withDirty(true).withFldCharType(BEGIN).getObject();
-        return getRBuilder().addContent(getWrappedFldChar(fldchar)).getObject();
+        return getRBuilder().addContent(WmlAdapter.getWrappedFldChar(fldchar)).getObject();
     }
 
     private static R getInstructionRun(String instruction) {
-        Text txt = getText(instruction, "preserve");
+        Text txt = WmlAdapter.getText(instruction, "preserve");
         wmlObjectFactory.createRInstrText(txt);
         return getRBuilder().addContent(wmlObjectFactory.createRInstrText(txt)).getObject();
     }
@@ -143,12 +142,12 @@ public final class TocGenerator {
 
     private static R getFieldSeparateRun() {
         FldChar fldchar = getFldCharBuilder().withDirty(true).withFldCharType(SEPARATE).getObject();
-        return getRBuilder().addContent(getWrappedFldChar(fldchar)).getObject();
+        return getRBuilder().addContent(WmlAdapter.getWrappedFldChar(fldchar)).getObject();
     }
 
     private static P getFieldEndPara() {
         FldChar fldchar = getFldCharBuilder().withFldCharType(END).getObject();
-        R r = getRBuilder().addContent(getWrappedFldChar(fldchar)).getObject();
+        R r = getRBuilder().addContent(WmlAdapter.getWrappedFldChar(fldchar)).getObject();
         return getPBuilder().addContent(r).getObject();
     }
 

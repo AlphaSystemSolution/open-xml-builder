@@ -12,6 +12,7 @@ import org.docx4j.fonts.PhysicalFonts;
 import org.docx4j.jaxb.Context;
 import org.docx4j.model.fields.FieldUpdater;
 import org.docx4j.openpackaging.exceptions.Docx4JException;
+import org.docx4j.openpackaging.exceptions.InvalidFormatException;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
 import org.docx4j.openpackaging.parts.WordprocessingML.DocumentSettingsPart;
 import org.docx4j.openpackaging.parts.WordprocessingML.MainDocumentPart;
@@ -309,7 +310,20 @@ public class WmlAdapter {
         int index = 0;
         TocGenerator tocGenerator = new TocGenerator().index(index).level(level).tocHeading(tocTitle).mainDocumentPart(mainDocumentPart);
         tocGenerator.generateToc();
+        updateSettings(mainDocumentPart);
+        mainDocumentPart.getContent().add(index + 1, getPageBreak());
+    }
 
+    public static void addTableOfContent(final MainDocumentPart mainDocumentPart, String tocTitle, String instruction) throws Docx4JException {
+        int index = 0;
+        TocGenerator tocGenerator = new TocGenerator().index(index).tocHeading(tocTitle).instruction(instruction)
+                .mainDocumentPart(mainDocumentPart);
+        tocGenerator.generateToc();
+        updateSettings(mainDocumentPart);
+        mainDocumentPart.getContent().add(index + 1, getPageBreak());
+    }
+
+    private static void updateSettings(MainDocumentPart mainDocumentPart) throws InvalidFormatException {
         //Adding Print View and Setting Update Field to true
         DocumentSettingsPart dsp = mainDocumentPart.getDocumentSettingsPart();
         if (dsp == null) {
@@ -322,7 +336,6 @@ public class WmlAdapter {
             dsp.setJaxbElement(ct);
             mainDocumentPart.addTargetPart(dsp);
         }
-        mainDocumentPart.getContent().add(index + 1, getPageBreak());
     }
 
     public static void addTableOfContent(final MainDocumentPart mainDocumentPart, String tocTitle) throws Docx4JException {

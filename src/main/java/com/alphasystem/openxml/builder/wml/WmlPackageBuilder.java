@@ -24,8 +24,6 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
 
-import static com.alphasystem.openxml.builder.wml.Headings.*;
-import static com.alphasystem.openxml.builder.wml.WmlAdapter.loadStyles;
 import static com.alphasystem.openxml.builder.wml.WmlBuilderFactory.BOOLEAN_DEFAULT_TRUE_TRUE;
 import static com.alphasystem.openxml.builder.wml.WmlBuilderFactory.getCTRelBuilder;
 import static java.lang.String.format;
@@ -50,7 +48,7 @@ public class WmlPackageBuilder {
     public WmlPackageBuilder(boolean loadDefaultStyles) throws Docx4JException {
         wmlPackage = WordprocessingMLPackage.createPackage();
         if (loadDefaultStyles) {
-            wmlPackage.getMainDocumentPart().getStyleDefinitionsPart().setJaxbElement(loadStyles(null, "styles.xml"));
+            wmlPackage.getMainDocumentPart().getStyleDefinitionsPart().setJaxbElement(WmlAdapter.loadStyles(null, "styles.xml"));
         }
         numberingHelper = new NumberingHelper();
         numberingHelper.populateDefaultNumbering();
@@ -141,14 +139,14 @@ public class WmlPackageBuilder {
         final StyleDefinitionsPart styleDefinitionsPart = wmlPackage.getMainDocumentPart().getStyleDefinitionsPart();
         final Style tocHeading = styleDefinitionsPart.getStyleById("TOCHeading");
         if (tocHeading != null) {
-            String styleName = HEADING1.getStyleName();
+            String styleName = Headings.HEADING1.getStyleName();
             Style style = styleDefinitionsPart.getStyleById(styleName);
             if (style == null) {
                 throw new RuntimeException(format("No style found with id \"%s\"", styleName));
             }
             StyleBuilder styleBuilder = new StyleBuilder(style, null);
             styleName = format("_%s", styleName);
-            styleBuilder.withStyleId(styleName).withName(format("_%s", HEADING1.getName()))
+            styleBuilder.withStyleId(styleName).withName(format("_%s", Headings.HEADING1.getName()))
                     .withUnhideWhenUsed((BooleanDefaultTrue) null).withSemiHidden((BooleanDefaultTrue) null).withHidden(BOOLEAN_DEFAULT_TRUE_TRUE);
             try {
                 styleDefinitionsPart.getContents().getStyle().add(styleBuilder.getObject());
@@ -157,13 +155,13 @@ public class WmlPackageBuilder {
                 logger.warn("Unable to add style \"{}\" into style gallery.", styleName, e);
             }
         }
-        return multiLevelHeading(HEADING1, HEADING2, HEADING3, HEADING4, HEADING5);
+        return multiLevelHeading(Headings.HEADING1, Headings.HEADING2, Headings.HEADING3, Headings.HEADING4, Headings.HEADING5);
     }
 
     public WmlPackageBuilder styles(String... paths) {
         try {
             final StyleDefinitionsPart styleDefinitionsPart = wmlPackage.getMainDocumentPart().getStyleDefinitionsPart();
-            Styles styles = loadStyles(styleDefinitionsPart.getContents(), paths);
+            Styles styles = WmlAdapter.loadStyles(styleDefinitionsPart.getContents(), paths);
             styleDefinitionsPart.setJaxbElement(styles);
         } catch (Docx4JException e) {
             e.printStackTrace();
