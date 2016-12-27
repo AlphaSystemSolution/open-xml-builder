@@ -1,5 +1,6 @@
 package com.alphasystem.openxml.builder.wml;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.docx4j.jaxb.Context;
 import org.docx4j.openpackaging.contenttype.CTOverride;
 import org.docx4j.openpackaging.contenttype.ContentTypeManager;
@@ -27,6 +28,7 @@ import java.util.List;
 import static com.alphasystem.openxml.builder.wml.WmlBuilderFactory.BOOLEAN_DEFAULT_TRUE_TRUE;
 import static com.alphasystem.openxml.builder.wml.WmlBuilderFactory.getCTRelBuilder;
 import static java.lang.String.format;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.docx4j.openpackaging.contenttype.ContentTypes.WORDPROCESSINGML_DOCUMENT;
 import static org.docx4j.openpackaging.contenttype.ContentTypes.WORDPROCESSINGML_DOCUMENT_MACROENABLED;
 
@@ -55,6 +57,7 @@ public class WmlPackageBuilder {
     }
 
     public WmlPackageBuilder(String templatePath) throws Docx4JException {
+        templatePath = isBlank(templatePath) ? "META-INF/default.dotx" : templatePath;
         URL url;
         final List<URL> urls;
         try {
@@ -163,6 +166,21 @@ public class WmlPackageBuilder {
             final StyleDefinitionsPart styleDefinitionsPart = wmlPackage.getMainDocumentPart().getStyleDefinitionsPart();
             Styles styles = WmlAdapter.loadStyles(styleDefinitionsPart.getContents(), paths);
             styleDefinitionsPart.setJaxbElement(styles);
+        } catch (Docx4JException e) {
+            e.printStackTrace();
+        }
+        return this;
+    }
+
+    public WmlPackageBuilder styles(Styles... styles) {
+        if (ArrayUtils.isEmpty(styles)) {
+            return this;
+        }
+        final StyleDefinitionsPart styleDefinitionsPart = wmlPackage.getMainDocumentPart().getStyleDefinitionsPart();
+        try {
+            for (Styles style : styles) {
+                styleDefinitionsPart.getContents().getStyle().addAll(style.getStyle());
+            }
         } catch (Docx4JException e) {
             e.printStackTrace();
         }
