@@ -305,25 +305,7 @@ public class WmlAdapter {
         return getPBuilder().withRsidP(id).withRsidR(id).withRsidRDefault(id).addContent(r).getObject();
     }
 
-    public static void addTableOfContent(final MainDocumentPart mainDocumentPart, String tocTitle,
-                                         int level) throws Docx4JException {
-        int index = 0;
-        TocGenerator tocGenerator = new TocGenerator().index(index).level(level).tocHeading(tocTitle).mainDocumentPart(mainDocumentPart);
-        tocGenerator.generateToc();
-        updateSettings(mainDocumentPart);
-        mainDocumentPart.getContent().add(index + 1, getPageBreak());
-    }
-
-    public static void addTableOfContent(final MainDocumentPart mainDocumentPart, String tocTitle, String instruction) throws Docx4JException {
-        int index = 0;
-        TocGenerator tocGenerator = new TocGenerator().index(index).tocHeading(tocTitle).instruction(instruction)
-                .mainDocumentPart(mainDocumentPart);
-        tocGenerator.generateToc();
-        updateSettings(mainDocumentPart);
-        mainDocumentPart.getContent().add(index + 1, getPageBreak());
-    }
-
-    private static void updateSettings(MainDocumentPart mainDocumentPart) throws InvalidFormatException {
+    static void updateSettings(MainDocumentPart mainDocumentPart) throws InvalidFormatException {
         //Adding Print View and Setting Update Field to true
         DocumentSettingsPart dsp = mainDocumentPart.getDocumentSettingsPart();
         if (dsp == null) {
@@ -338,14 +320,37 @@ public class WmlAdapter {
         }
     }
 
+    @Deprecated
+    public static void addTableOfContent(final MainDocumentPart mainDocumentPart, String tocTitle,
+                                         int level) throws Docx4JException {
+        int index = 0;
+        TocGenerator tocGenerator = new TocGenerator().index(index).level(level).tocHeading(tocTitle).mainDocumentPart(mainDocumentPart);
+        tocGenerator.generateToc();
+        updateSettings(mainDocumentPart);
+        mainDocumentPart.getContent().add(index + 1, getPageBreak());
+    }
+
+    @Deprecated
+    public static void addTableOfContent(final MainDocumentPart mainDocumentPart, String tocTitle, String instruction) throws Docx4JException {
+        int index = 0;
+        TocGenerator tocGenerator = new TocGenerator().index(index).tocHeading(tocTitle).instruction(instruction)
+                .mainDocumentPart(mainDocumentPart);
+        tocGenerator.generateToc();
+        updateSettings(mainDocumentPart);
+        mainDocumentPart.getContent().add(index + 1, getPageBreak());
+    }
+
+    @Deprecated
     public static void addTableOfContent(final MainDocumentPart mainDocumentPart, String tocTitle) throws Docx4JException {
         addTableOfContent(mainDocumentPart, tocTitle, 3);
     }
 
+    @Deprecated
     public static void addTableOfContent(final MainDocumentPart mainDocumentPart) throws Docx4JException {
         addTableOfContent(mainDocumentPart, null);
     }
 
+    @Deprecated
     public static void addTableOfContent(final MainDocumentPart mainDocumentPart, int level) throws Docx4JException {
         addTableOfContent(mainDocumentPart, null, level);
     }

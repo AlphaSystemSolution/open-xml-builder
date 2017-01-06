@@ -1,6 +1,7 @@
 package com.alphasystem.openxml.builder.wml;
 
 import org.docx4j.jaxb.Context;
+import org.docx4j.openpackaging.exceptions.InvalidFormatException;
 import org.docx4j.openpackaging.parts.WordprocessingML.MainDocumentPart;
 import org.docx4j.wml.*;
 
@@ -87,6 +88,12 @@ public final class TocGenerator {
         SdtContentBlock sdtContentBlock = createSdtContentBlock();
         SdtBlock sdtBlock = getSdtBlockBuilder().withSdtPr(sdtPr).withSdtEndPr(ctSdtEndPr).withSdtContent(sdtContentBlock).getObject();
         mainDocumentPart.getContent().add(index, sdtBlock);
+        try {
+            WmlAdapter.updateSettings(mainDocumentPart);
+        } catch (InvalidFormatException e) {
+            // ignore
+        }
+        mainDocumentPart.getContent().add(index + 1, WmlAdapter.getPageBreak());
     }
 
     private SdtPr createSdtPr() {
