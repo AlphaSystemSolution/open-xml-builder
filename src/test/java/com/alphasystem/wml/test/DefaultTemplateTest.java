@@ -16,7 +16,7 @@ public class DefaultTemplateTest extends TemplateTest {
 
     @Override
     protected WordprocessingMLPackage loadWmlPackage() throws Docx4JException {
-        return new WmlPackageBuilder().getPackage();
+        return WmlPackageBuilder.createPackage().getPackage();
     }
 
 }

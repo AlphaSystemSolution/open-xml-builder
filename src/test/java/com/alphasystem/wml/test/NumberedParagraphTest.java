@@ -66,7 +66,7 @@ public class NumberedParagraphTest extends CommonTest {
     @BeforeClass
     public void setup() {
         try {
-            wmlPackage = new WmlPackageBuilder().getPackage();
+            wmlPackage = WmlPackageBuilder.createPackage().getPackage();
         } catch (Docx4JException e) {
             fail(e.getMessage(), e);
         }

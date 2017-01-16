@@ -16,7 +16,7 @@ public class DefaultTemplateWithNumberedHeadingTest extends TemplateTest {
 
     @Override
     protected WordprocessingMLPackage loadWmlPackage() throws Docx4JException {
-        return new WmlPackageBuilder().multiLevelHeading().getPackage();
+        return WmlPackageBuilder.createPackage().multiLevelHeading().getPackage();
     }
 
 //    @Test

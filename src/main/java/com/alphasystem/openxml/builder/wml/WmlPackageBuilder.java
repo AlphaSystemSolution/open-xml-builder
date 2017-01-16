@@ -1,7 +1,9 @@
 package com.alphasystem.openxml.builder.wml;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.docx4j.Docx4jProperties;
 import org.docx4j.jaxb.Context;
+import org.docx4j.model.structure.PageSizePaper;
 import org.docx4j.openpackaging.contenttype.CTOverride;
 import org.docx4j.openpackaging.contenttype.ContentTypeManager;
 import org.docx4j.openpackaging.exceptions.Docx4JException;
@@ -39,16 +41,38 @@ import static org.docx4j.openpackaging.contenttype.ContentTypes.WORDPROCESSINGML
  */
 public class WmlPackageBuilder {
 
+    private static final String DEFAULT_TEMPLATE_PATH = "META-INF/default.dotx";
+    private static final String DEFAULT_LANDSCAPE_TEMPLATE = "META-INF/default-landscape.dotx";
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private NumberingHelper numberingHelper;
     private WordprocessingMLPackage wmlPackage;
 
-    public WmlPackageBuilder() throws Docx4JException {
-        this("META-INF/default.dotx");
+    public static WmlPackageBuilder createPackage() throws Docx4JException {
+        return createPackage(null);
+    }
+
+    public static WmlPackageBuilder createPackage(boolean landscape) throws Docx4JException {
+        return new WmlPackageBuilder(landscape, true);
+    }
+
+    public static WmlPackageBuilder createPackage(String templatePath) throws Docx4JException {
+        return new WmlPackageBuilder(templatePath);
     }
 
     public WmlPackageBuilder(boolean loadDefaultStyles) throws Docx4JException {
-        wmlPackage = WordprocessingMLPackage.createPackage();
+        this(null, false, loadDefaultStyles);
+    }
+
+    public WmlPackageBuilder(PageSizePaper sz, boolean landscape, boolean loadDefaultStyles) throws Docx4JException {
+        if (sz == null) {
+            String paperSize = Docx4jProperties.getProperties().getProperty("docx4j.PageSize", "A4");
+            try {
+                sz = PageSizePaper.valueOf(paperSize);
+            } catch (IllegalArgumentException e) {
+                sz = PageSizePaper.A4;
+            }
+        }
+        wmlPackage = WordprocessingMLPackage.createPackage(sz, landscape);
         if (loadDefaultStyles) {
             wmlPackage.getMainDocumentPart().getStyleDefinitionsPart().setJaxbElement(WmlAdapter.loadStyles(null, "styles.xml"));
         }
@@ -56,8 +80,8 @@ public class WmlPackageBuilder {
         numberingHelper.populateDefaultNumbering();
     }
 
-    public WmlPackageBuilder(String templatePath) throws Docx4JException {
-        templatePath = isBlank(templatePath) ? "META-INF/default.dotx" : templatePath;
+    private WmlPackageBuilder(String templatePath) throws Docx4JException {
+        templatePath = isBlank(templatePath) ? DEFAULT_TEMPLATE_PATH : templatePath;
         URL url;
         final List<URL> urls;
         try {
@@ -78,6 +102,10 @@ public class WmlPackageBuilder {
         }
         numberingHelper = new NumberingHelper();
         numberingHelper.populateDefaultNumbering();
+    }
+
+    private WmlPackageBuilder(boolean landscape, @SuppressWarnings("unused") boolean dummy) throws Docx4JException {
+        this(landscape ? DEFAULT_LANDSCAPE_TEMPLATE : DEFAULT_TEMPLATE_PATH);
     }
 
     private void loadTemplate(String templatePath, URL url) throws Docx4JException, IOException, URISyntaxException {

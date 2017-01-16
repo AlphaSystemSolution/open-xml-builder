@@ -16,7 +16,7 @@ public class CustomTemplateTest extends TemplateTest {
 
     @Override
     protected WordprocessingMLPackage loadWmlPackage() throws Docx4JException {
-        return new WmlPackageBuilder("META-INF/Custom.dotx").getPackage();
+        return WmlPackageBuilder.createPackage("META-INF/Custom.dotx").getPackage();
     }
 
 }
