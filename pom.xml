@@ -48,6 +48,7 @@
                                 <srcClassName>org.docx4j.wml.Tr</srcClassName>
                                 <srcClassName>org.docx4j.wml.Tc</srcClassName>
                                 <srcClassName>org.docx4j.wml.R</srcClassName>
+                                <srcClassName>org.docx4j.wml.R$Tab</srcClassName>
                                 <srcClassName>org.docx4j.wml.Text</srcClassName>
                                 <srcClassName>org.docx4j.wml.CTTabStop</srcClassName>
                                 <srcClassName>org.docx4j.wml.Br</srcClassName>
@@ -63,6 +64,7 @@
                                 <srcClassName>org.docx4j.wml.SdtBlock</srcClassName>
                                 <srcClassName>org.docx4j.wml.CTSdtRow</srcClassName>
                                 <srcClassName>org.docx4j.wml.CTSdtDocPart</srcClassName>
+                                <srcClassName>org.docx4j.wml.CTHeight</srcClassName>
                             </srcClassNames>
                         </configuration>
                     </execution>
@@ -118,6 +120,11 @@
                     <groupId>log4j</groupId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.docx4j</groupId>
+            <artifactId>docx4j-export-fo</artifactId>
+            <version>3.3.4</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
