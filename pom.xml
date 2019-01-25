@@ -41,6 +41,7 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
+                            <basePackageName>com.alphasystem.openxml.builder</basePackageName>
                             <srcClassNames>
                                 <srcClassName>org.docx4j.wml.P</srcClassName>
                                 <srcClassName>org.docx4j.wml.P$Hyperlink</srcClassName>
