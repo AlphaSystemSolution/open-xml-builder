@@ -243,6 +243,12 @@ public class WmlAdapter {
                 .getObject();
     }
 
+    public static TcPrInner.TcBorders getDefaultBorders() {
+        return getTcPrBuilder().getTcBordersBuilder().withTop(getDefaultBorder()).withBottom(getDefaultBorder())
+                .withLeft(getDefaultBorder()).withRight(getDefaultBorder()).withInsideH(getDefaultBorder())
+                .withInsideV(getDefaultBorder()).getObject();
+    }
+
     /**
      * @param value
      * @param space
@@ -360,12 +366,21 @@ public class WmlAdapter {
         wordMLPackage.save(getFile(file, "docx"));
     }
 
+    public static void saveAsPdf(File file, WordprocessingMLPackage wordMLPackage) throws Exception {
+        saveAsPdf(file, wordMLPackage, null, false);
+    }
+
     public static void saveAsPdf(File file, WordprocessingMLPackage wordMLPackage, boolean saveFO) throws Exception {
+        saveAsPdf(file, wordMLPackage, null, saveFO);
+    }
+
+    public static void saveAsPdf(File file, WordprocessingMLPackage wordMLPackage, String fontName,
+                                 boolean saveFO) throws Exception {
         File pdfFile = getFile(file, "pdf");
 
-        PhysicalFonts.setRegex(null);
+        String regex = ".*(calibri|camb|cour|arial|times|comic|georgia|impact|LSANS|pala|tahoma|trebuc|verdana|symbol|webdings|wingding).*";
+        PhysicalFonts.setRegex(regex);
 
-        // Refresh the values of DOCPROPERTY fields
         FieldUpdater updater = new FieldUpdater(wordMLPackage);
         updater.update(true);
 
@@ -373,29 +388,12 @@ public class WmlAdapter {
         Mapper fontMapper = new IdentityPlusMapper();
         wordMLPackage.setFontMapper(fontMapper);
 
-        FOSettings foSettings = Docx4J.createFOSettings();
-        if (saveFO) {
-            foSettings.setFoDumpFile(getFile(file, "fo"));
-        }
-        foSettings.setWmlPackage(wordMLPackage);
-
-        try (OutputStream os = new java.io.FileOutputStream(pdfFile)) {
-            Docx4J.toFO(foSettings, os, Docx4J.FLAG_EXPORT_PREFER_XSL);
-        }
-    }
-
-    public static void saveAsPdf(File file, WordprocessingMLPackage wordMLPackage, String fontName,
-                                 boolean saveFO) throws Exception {
-        File pdfFile = getFile(file, "pdf");
-
-        // Set up font mapper (optional)
-        Mapper fontMapper = new IdentityPlusMapper();
-        wordMLPackage.setFontMapper(fontMapper);
-
-        PhysicalFont font = PhysicalFonts.get(fontName);
-        if (font != null) {
-            fontMapper.put("Times New Roman", font);
-            fontMapper.put("Arial", font);
+        if (fontName != null) {
+            PhysicalFont font = PhysicalFonts.get(fontName);
+            if (font != null) {
+                fontMapper.put("Times New Roman", font);
+                fontMapper.put("Arial", font);
+            }
         }
 
         FOSettings foSettings = Docx4J.createFOSettings();
@@ -408,5 +406,10 @@ public class WmlAdapter {
 
         // Don't care what type of exporter you use
         Docx4J.toFO(foSettings, os, Docx4J.FLAG_EXPORT_PREFER_XSL);
+
+        // Clean up, so any ObfuscatedFontPart temp files can be deleted
+        if (wordMLPackage.getMainDocumentPart().getFontTablePart() != null) {
+            wordMLPackage.getMainDocumentPart().getFontTablePart().deleteEmbeddedFontTempFiles();
+        }
     }
 }
