@@ -8,6 +8,7 @@ import org.docx4j.openpackaging.parts.WordprocessingML.MainDocumentPart;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
@@ -25,7 +26,6 @@ public abstract class CommonTest {
 
     static {
         docsPath = Paths.get(System.getProperty("docs.dir", AppUtil.USER_TEMP_DIR.getAbsolutePath()));
-        System.out.println(">>>>>>>>>>>> " + docsPath);
         if (!Files.exists(docsPath)) {
             try {
                 docsPath = Files.createDirectory(docsPath);
@@ -55,8 +55,10 @@ public abstract class CommonTest {
     @AfterClass
     public void tearDown() {
         try {
-            WmlAdapter.save(Paths.get(docsPath.toString(), getFileName()).toFile(), wmlPackage);
-        } catch (Docx4JException e) {
+            final File file = Paths.get(docsPath.toString(), getFileName()).toFile();
+            WmlAdapter.save(file, wmlPackage);
+            WmlAdapter.saveAsPdf(file, wmlPackage);
+        } catch (Exception e) {
             fail(e.getMessage(), e);
         }
     }
