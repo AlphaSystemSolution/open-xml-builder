@@ -1,7 +1,6 @@
 package com.alphasystem.wml.test;
 
 import com.alphasystem.openxml.builder.wml.WmlAdapter;
-import com.alphasystem.util.AppUtil;
 import org.docx4j.openpackaging.exceptions.Docx4JException;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
 import org.docx4j.openpackaging.parts.WordprocessingML.MainDocumentPart;
@@ -15,6 +14,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import static java.lang.System.getProperty;
 import static org.testng.Assert.fail;
 
 /**
@@ -22,10 +22,14 @@ import static org.testng.Assert.fail;
  */
 public abstract class CommonTest {
 
+    private static final String USER_DIR = getProperty("user.dir", ".");
+    private static final String USER_HOME = getProperty("user.home", USER_DIR);
+    private static final File USER_TEMP_DIR = new File(getProperty("java.io.tmpdir", USER_HOME));
+
     protected static Path docsPath;
 
     static {
-        docsPath = Paths.get(System.getProperty("docs.dir", AppUtil.USER_TEMP_DIR.getAbsolutePath()));
+        docsPath = Paths.get(System.getProperty("docs.dir", USER_TEMP_DIR.getAbsolutePath()));
         if (!Files.exists(docsPath)) {
             try {
                 docsPath = Files.createDirectory(docsPath);
