@@ -21,7 +21,10 @@ public class CustomTemplateCustomStyles extends CustomStylesTest {
 
     @Override
     protected WordprocessingMLPackage loadWmlPackage() throws Docx4JException {
-        return WmlPackageBuilder.createPackage("META-INF/Custom.dotx").styles("META-INF/custom-styles.xml").multiLevelHeading(EXAMPLE).getPackage();
+        return WmlPackageBuilder.createPackage("META-INF/Custom.dotx")
+                .styles("META-INF/custom-styles.xml")
+                .multiLevelHeading(EXAMPLE)
+                .getPackage();
     }
 
     @Test
