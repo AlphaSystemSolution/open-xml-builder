@@ -48,7 +48,7 @@ public final class TocGenerator {
     }
 
     public TocGenerator index(int index) {
-        this.index = (index < 0) ? 0 : index;
+        this.index = Math.max(index, 0);
         return this;
     }
 

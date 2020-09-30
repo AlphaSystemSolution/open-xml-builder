@@ -24,7 +24,6 @@ tasks.compileJava {
 }
 
 dependencies {
-    implementation 'com.alphasystem:commons:3.0.0-SNAPSHOT'
     implementation 'org.docx4j:docx4j-core:8.2.3'
     implementation 'org.docx4j:docx4j-JAXB-Internal:8.2.3'
     implementation 'org.docx4j:docx4j-export-fo:8.2.3'

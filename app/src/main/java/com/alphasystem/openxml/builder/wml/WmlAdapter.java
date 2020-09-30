@@ -400,7 +400,7 @@ public class WmlAdapter {
         if (saveFO) {
             foSettings.setFoDumpFile(getFile(pdfFile, "fo"));
         }
-        foSettings.setWmlPackage(wordMLPackage);
+        foSettings.setOpcPackage(wordMLPackage);
 
         OutputStream os = new java.io.FileOutputStream(pdfFile);
 

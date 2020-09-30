@@ -1,7 +1,6 @@
 package com.alphasystem.wml.test;
 
-import com.alphasystem.openxml.builder.wml.WmlAdapter;
-import org.docx4j.openpackaging.exceptions.Docx4JException;
+import com.alphasystem.openxml.builder.wml.TocGenerator;
 import org.testng.annotations.Test;
 
 import static com.alphasystem.openxml.builder.wml.WmlAdapter.*;
@@ -56,10 +55,6 @@ public abstract class TemplateTest extends CommonTest {
 
     @Test(dependsOnMethods = {"testHeading5"})
     public void addTableOfContent() {
-        try {
-            WmlAdapter.addTableOfContent(getMainDocumentPart(), 5);
-        } catch (Docx4JException e) {
-            e.printStackTrace();
-        }
+        new TocGenerator().mainDocumentPart(getMainDocumentPart()).level(5).generateToc();
     }
 }
