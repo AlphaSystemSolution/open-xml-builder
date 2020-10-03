@@ -24,11 +24,11 @@ tasks.compileJava {
 }
 
 dependencies {
-    implementation 'org.docx4j:docx4j-core:8.2.3'
-    implementation 'org.docx4j:docx4j-JAXB-Internal:8.2.3'
-    implementation 'org.docx4j:docx4j-export-fo:8.2.3'
-    implementation 'org.slf4j:slf4j-api:1.7.7'
-    implementation 'ch.qos.logback:logback-classic:1.1.2'
+    compile 'org.docx4j:docx4j-core:8.2.3'
+    compile 'org.docx4j:docx4j-JAXB-Internal:8.2.3'
+    compile 'org.docx4j:docx4j-export-fo:8.2.3'
+    compile 'org.slf4j:slf4j-api:1.7.7'
+    compile 'ch.qos.logback:logback-classic:1.1.2'
     testImplementation 'org.testng:testng:6.9.4'
     testImplementation 'com.google.inject:guice:4.0'
     testImplementation 'org.uncommons:reportng:1.1.4'
@@ -52,6 +52,10 @@ publishing {
 
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
+}
+
+tasks.withType(Test) {
+    systemProperty 'docs.dir', System.getProperty('java.io.tmpdir', '.')
 }
 
 test {

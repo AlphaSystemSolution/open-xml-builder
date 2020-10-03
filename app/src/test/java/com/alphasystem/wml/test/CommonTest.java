@@ -24,7 +24,7 @@ public abstract class CommonTest {
     protected static Path docsPath;
 
     static {
-        docsPath = Paths.get(System.getProperty("docs.dir", System.getProperty("java.io.tempdir")));
+        docsPath = Paths.get(System.getProperty("docs.dir"));
         if (!Files.exists(docsPath)) {
             try {
                 docsPath = Files.createDirectory(docsPath);
