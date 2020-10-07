@@ -1,0 +1,63 @@
+import com.alphasystem.openxml.gradleplugin.CodeGenerator
+
+plugins {
+    id 'java'
+    id 'maven-publish'
+}
+
+def generatedSrcDir = new File(buildDir, "generated/src/main/java")
+
+sourceSets {
+    main {
+        java {
+            srcDirs += generatedSrcDir
+        }
+    }
+}
+
+task generateCode {
+    CodeGenerator.wmlGenerator(generatedSrcDir)
+}
+
+tasks.compileJava {
+    dependsOn(generateCode)
+}
+
+dependencies {
+    compile 'org.docx4j:docx4j-core:8.2.3'
+    compile 'org.docx4j:docx4j-JAXB-Internal:8.2.3'
+    compile 'org.docx4j:docx4j-export-fo:8.2.3'
+    compile 'org.slf4j:slf4j-api:1.7.7'
+    compile 'ch.qos.logback:logback-classic:1.1.2'
+    testImplementation 'org.testng:testng:6.9.4'
+    testImplementation 'com.google.inject:guice:4.0'
+    testImplementation 'org.uncommons:reportng:1.1.4'
+}
+
+group = 'com.alphasystem.openxml'
+version = '3.0.0-SNAPSHOT'
+sourceCompatibility = '1.8'
+
+java {
+    withJavadocJar()
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from(components.java)
+        }
+    }
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+tasks.withType(Test) {
+    systemProperty 'docs.dir', System.getProperty('java.io.tmpdir', '.')
+}
+
+test {
+    useTestNG()
+}
