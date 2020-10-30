@@ -92,6 +92,7 @@ public final class TocGenerator {
             WmlAdapter.updateSettings(mainDocumentPart);
         } catch (InvalidFormatException e) {
             // ignore
+            e.printStackTrace();
         }
         mainDocumentPart.getContent().add(index + 1, WmlAdapter.getPageBreak());
     }
@@ -128,9 +129,7 @@ public final class TocGenerator {
         CTTabStop leftTab = getCTTabStopBuilder().withVal(LEFT).withPos(440L).getObject();
         CTTabStop rightTab = getCTTabStopBuilder().withVal(RIGHT).withPos(9350L).withLeader(DOT).getObject();
         Tabs tabs = getTabsBuilder().addTab(leftTab, rightTab).getObject();
-        RFonts rFonts = getRFontsBuilder().withEastAsiaTheme(MINOR_EAST_ASIA).getObject();
-        ParaRPr paraRPr = getParaRPrBuilder().withNoProof(true).withRFonts(rFonts).getObject();
-        PPrBuilder pPrBuilder = getPPrBuilder().withPStyle(tocStyle).withTabs(tabs).withRPr(paraRPr);
+        PPrBuilder pPrBuilder = getPPrBuilder().withPStyle(tocStyle).withTabs(tabs);
         return getPBuilder().withPPr(pPrBuilder.getObject()).addContent(getFieldBeginRun(), getInstructionRun(instruction),
                 getFieldSeparateRun()).getObject();
     }

@@ -313,17 +313,14 @@ public class WmlAdapter {
 
     static void updateSettings(MainDocumentPart mainDocumentPart) throws InvalidFormatException {
         //Adding Print View and Setting Update Field to true
-        DocumentSettingsPart dsp = mainDocumentPart.getDocumentSettingsPart();
-        if (dsp == null) {
-            CTSettings ct = new CTSettings();
-            dsp = new DocumentSettingsPart();
-            CTView ctView = Context.getWmlObjectFactory().createCTView();
-            ctView.setVal(STView.PRINT);
-            ct.setView(ctView);
-            ct.setUpdateFields(WmlBuilderFactory.BOOLEAN_DEFAULT_TRUE_TRUE);
-            dsp.setJaxbElement(ct);
-            mainDocumentPart.addTargetPart(dsp);
-        }
+        DocumentSettingsPart dsp = mainDocumentPart.getDocumentSettingsPart(true);
+        CTSettings ct = new CTSettings();
+        CTView ctView = Context.getWmlObjectFactory().createCTView();
+        ctView.setVal(STView.PRINT);
+        ct.setView(ctView);
+        ct.setUpdateFields(WmlBuilderFactory.BOOLEAN_DEFAULT_TRUE_TRUE);
+        dsp.setJaxbElement(ct);
+        mainDocumentPart.addTargetPart(dsp);
     }
 
     @Deprecated
