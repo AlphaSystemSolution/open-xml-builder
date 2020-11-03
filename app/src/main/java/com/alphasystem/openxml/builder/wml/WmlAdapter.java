@@ -162,19 +162,19 @@ public class WmlAdapter {
         return relationship.getId();
     }
 
-    public static P.Hyperlink addHyperlink(boolean external,
-                                           String href,
-                                           String linkText,
-                                           MainDocumentPart mainDocumentPart) {
+    public static P.Hyperlink addHyperlink(String href, String linkText) {
         final RPr rPr = getRPrBuilder().withRStyle("Hyperlink").getObject();
         final R run = getRBuilder().withRPr(rPr).addContent(getText(linkText)).getObject();
-        final PHyperlinkBuilder pHyperlinkBuilder = getPHyperlinkBuilder().withHistory(true).addContent(run);
-        if (external) {
-            pHyperlinkBuilder.withId(addExternalHyperlinkRelationship(href, mainDocumentPart));
-        } else {
-            pHyperlinkBuilder.withAnchor(href);
-        }
-        return pHyperlinkBuilder.getObject();
+        return getPHyperlinkBuilder().withHistory(true).withAnchor(href).addContent(run).getObject();
+    }
+
+    public static P.Hyperlink addExternalHyperlink(String href,
+                                                   String linkText,
+                                                   MainDocumentPart mainDocumentPart) {
+        final RPr rPr = getRPrBuilder().withRStyle("Hyperlink").getObject();
+        final R run = getRBuilder().withRPr(rPr).addContent(getText(linkText)).getObject();
+        return getPHyperlinkBuilder().withHistory(true).withId(addExternalHyperlinkRelationship(href, mainDocumentPart))
+                .addContent(run).getObject();
     }
 
     public static void addBookMark(PBuilder pBuilder, String name) {

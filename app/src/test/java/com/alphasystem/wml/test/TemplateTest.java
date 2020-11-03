@@ -54,7 +54,7 @@ public abstract class TemplateTest extends CommonTest {
         getMainDocumentPart().addObject(getPageBreak());
         getMainDocumentPart().addObject(getParagraphWithStyle("Heading1", "Another Heading Level 1"));
         getMainDocumentPart().addObject(getEmptyPara());
-        final P.Hyperlink hyperlink = addHyperlink(false, "contents", "Back to top", getMainDocumentPart());
+        final P.Hyperlink hyperlink = addHyperlink("contents", "Back to top");
         final P p = WmlBuilderFactory.getPBuilder().addContent(hyperlink).getObject();
         getMainDocumentPart().addObject(p);
     }
