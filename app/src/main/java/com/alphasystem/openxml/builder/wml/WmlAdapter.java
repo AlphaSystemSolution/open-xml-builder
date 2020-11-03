@@ -16,6 +16,8 @@ import org.docx4j.openpackaging.exceptions.InvalidFormatException;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
 import org.docx4j.openpackaging.parts.WordprocessingML.DocumentSettingsPart;
 import org.docx4j.openpackaging.parts.WordprocessingML.MainDocumentPart;
+import org.docx4j.relationships.ObjectFactory;
+import org.docx4j.relationships.Relationship;
 import org.docx4j.wml.*;
 import org.docx4j.wml.TcPrInner.GridSpan;
 import org.slf4j.Logger;
@@ -42,6 +44,7 @@ import static java.lang.Thread.currentThread;
 import static org.apache.commons.lang3.ArrayUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.docx4j.XmlUtils.unmarshal;
+import static org.docx4j.openpackaging.parts.relationships.Namespaces.HYPERLINK;
 import static org.docx4j.openpackaging.parts.relationships.Namespaces.NS_WORD12;
 import static org.docx4j.wml.STBorder.NIL;
 import static org.docx4j.wml.STBorder.SINGLE;
@@ -71,7 +74,7 @@ public class WmlAdapter {
                     return styles;
                 }
                 for (URL url : urls) {
-                    System.out.println(format("Reading style {%s}", url));
+                    System.out.printf("Reading style {%s}%n", url);
                     try (InputStream ins = url.openStream()) {
                         final Styles otherStyles = (Styles) unmarshal(ins);
                         if (styles == null) {
@@ -101,7 +104,7 @@ public class WmlAdapter {
                     return numbering;
                 }
                 for (URL url : urls) {
-                    System.out.println(format("Reading numbering {%s}", url));
+                    System.out.printf("Reading numbering {%s}%n", url);
                     try (InputStream ins = url.openStream()) {
                         final Numbering o = (Numbering) unmarshal(ins);
                         if (numbering == null) {
@@ -149,26 +152,47 @@ public class WmlAdapter {
         return urls;
     }
 
-    public static void addBookMark(PBuilder pBuilder, String id) {
-        if (isBlank(id)) {
+    public static String addExternalHyperlinkRelationship(String url, MainDocumentPart mainDocumentPart) {
+        final org.docx4j.relationships.ObjectFactory objectFactory = new ObjectFactory();
+        final Relationship relationship = objectFactory.createRelationship();
+        relationship.setType(HYPERLINK);
+        relationship.setTarget(url);
+        relationship.setTargetMode("External");
+        mainDocumentPart.getRelationshipsPart().addRelationship(relationship);
+        return relationship.getId();
+    }
+
+    public static P.Hyperlink addHyperlink(boolean external,
+                                           String href,
+                                           String linkText,
+                                           MainDocumentPart mainDocumentPart) {
+        final RPr rPr = getRPrBuilder().withRStyle("Hyperlink").getObject();
+        final R run = getRBuilder().withRPr(rPr).addContent(getText(linkText)).getObject();
+        final PHyperlinkBuilder pHyperlinkBuilder = getPHyperlinkBuilder().withHistory(true).addContent(run);
+        if (external) {
+            pHyperlinkBuilder.withId(addExternalHyperlinkRelationship(href, mainDocumentPart));
+        } else {
+            pHyperlinkBuilder.withAnchor(href);
+        }
+        return pHyperlinkBuilder.getObject();
+    }
+
+    public static void addBookMark(PBuilder pBuilder, String name) {
+        if (isBlank(name)) {
             return;
         }
-        final long value = bookmarkCount.longValue();
-        final CTBookmark bookmarkStart = getCTBookmarkBuilder().withId(value).withName(id).getObject();
-        final JAXBElement<CTMarkupRange> bookmarkEnd = createCTMarkupRange(getCTBookmarkRangeBuilder().withId(value).getObject());
+        final long id = bookmarkCount.longValue();
+        final CTBookmark bookmarkStart = getCTBookmarkBuilder().withId(id).withName(name).getObject();
+        final JAXBElement<CTMarkupRange> bookmarkEnd = createCTMarkupRange(getCTBookmarkRangeBuilder().withId(id).getObject());
         pBuilder.getObject().getContent().add(0, bookmarkStart);
         pBuilder.addContent(bookmarkEnd);
     }
 
-    public static void addBookMark(P p, String id) {
-        if (isBlank(id)) {
+    public static void addBookMark(P p, String name) {
+        if (isBlank(name)) {
             return;
         }
-        String bookmarkId = String.valueOf(bookmarkCount.incrementAndGet());
-        CTBookmark bookmarkStart = getCTBookmarkBuilder().withId(bookmarkId).withName(id).getObject();
-        JAXBElement<CTMarkupRange> bookmarkEnd = createCTMarkupRange(getCTBookmarkRangeBuilder().withId(bookmarkId).getObject());
-        p.getContent().add(0, bookmarkStart);
-        p.getContent().add(bookmarkEnd);
+        addBookMark(getPBuilder(p), name);
     }
 
     public static JAXBElement<CTBookmark> createBodyBookmarkStart(

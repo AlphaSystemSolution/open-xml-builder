@@ -1,6 +1,9 @@
 package com.alphasystem.wml.test;
 
 import com.alphasystem.openxml.builder.wml.TocGenerator;
+import com.alphasystem.openxml.builder.wml.WmlAdapter;
+import com.alphasystem.openxml.builder.wml.WmlBuilderFactory;
+import org.docx4j.wml.P;
 import org.testng.annotations.Test;
 
 import static com.alphasystem.openxml.builder.wml.WmlAdapter.*;
@@ -51,6 +54,9 @@ public abstract class TemplateTest extends CommonTest {
         getMainDocumentPart().addObject(getPageBreak());
         getMainDocumentPart().addObject(getParagraphWithStyle("Heading1", "Another Heading Level 1"));
         getMainDocumentPart().addObject(getEmptyPara());
+        final P.Hyperlink hyperlink = addHyperlink(false, "contents", "Back to top", getMainDocumentPart());
+        final P p = WmlBuilderFactory.getPBuilder().addContent(hyperlink).getObject();
+        getMainDocumentPart().addObject(p);
     }
 
     @Test(dependsOnMethods = {"testHeading5"})

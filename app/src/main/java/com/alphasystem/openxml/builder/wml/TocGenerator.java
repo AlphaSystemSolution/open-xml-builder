@@ -99,7 +99,8 @@ public final class TocGenerator {
 
     private SdtPr createSdtPr() {
         CTSdtDocPartBuilder ctSdtDocPartBuilder = WmlBuilderFactory.getCTSdtDocPartBuilder();
-        CTSdtDocPartBuilder.DocPartGalleryBuilder docPartGalleryBuilder = ctSdtDocPartBuilder.getDocPartGalleryBuilder().withVal("Table of Contents");
+        CTSdtDocPartBuilder.DocPartGalleryBuilder docPartGalleryBuilder = ctSdtDocPartBuilder.getDocPartGalleryBuilder()
+                .withVal("Table of Contents");
         ctSdtDocPartBuilder.withDocPartUnique(true).withDocPartGallery(docPartGalleryBuilder.getObject());
 
         JAXBElement<CTSdtDocPart> sdtdocpartWrapped = wmlObjectFactory.createSdtPrDocPartObj(ctSdtDocPartBuilder.getObject());
@@ -120,6 +121,7 @@ public final class TocGenerator {
 
     private SdtContentBlock createSdtContentBlock() {
         P headingP = WmlAdapter.getParagraphWithStyle(tocHeadingStyle, tocHeading);
+        WmlAdapter.addBookMark(headingP, tocHeading.replaceAll(" ", "_").toLowerCase());
         P contentP = getSdtContentP();
         P fldEndP = getFieldEndPara();
         return getSdtContentBlockBuilder().addContent(headingP, contentP, fldEndP).getObject();
