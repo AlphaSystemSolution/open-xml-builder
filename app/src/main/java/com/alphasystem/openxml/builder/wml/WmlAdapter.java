@@ -347,41 +347,6 @@ public class WmlAdapter {
         mainDocumentPart.addTargetPart(dsp);
     }
 
-    @Deprecated
-    public static void addTableOfContent(final MainDocumentPart mainDocumentPart, String tocTitle,
-                                         int level) throws Docx4JException {
-        int index = 0;
-        TocGenerator tocGenerator = new TocGenerator().index(index).level(level).tocHeading(tocTitle).mainDocumentPart(mainDocumentPart);
-        tocGenerator.generateToc();
-        updateSettings(mainDocumentPart);
-        mainDocumentPart.getContent().add(index + 1, getPageBreak());
-    }
-
-    @Deprecated
-    public static void addTableOfContent(final MainDocumentPart mainDocumentPart, String tocTitle, String instruction) throws Docx4JException {
-        int index = 0;
-        TocGenerator tocGenerator = new TocGenerator().index(index).tocHeading(tocTitle).instruction(instruction)
-                .mainDocumentPart(mainDocumentPart);
-        tocGenerator.generateToc();
-        updateSettings(mainDocumentPart);
-        mainDocumentPart.getContent().add(index + 1, getPageBreak());
-    }
-
-    @Deprecated
-    public static void addTableOfContent(final MainDocumentPart mainDocumentPart, String tocTitle) throws Docx4JException {
-        addTableOfContent(mainDocumentPart, tocTitle, 3);
-    }
-
-    @Deprecated
-    public static void addTableOfContent(final MainDocumentPart mainDocumentPart) throws Docx4JException {
-        addTableOfContent(mainDocumentPart, null);
-    }
-
-    @Deprecated
-    public static void addTableOfContent(final MainDocumentPart mainDocumentPart, int level) throws Docx4JException {
-        addTableOfContent(mainDocumentPart, null, level);
-    }
-
     public static void save(File file, WordprocessingMLPackage wordMLPackage)
             throws Docx4JException {
         wordMLPackage.save(getFile(file, "docx"));
