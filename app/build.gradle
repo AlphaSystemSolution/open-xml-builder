@@ -55,9 +55,11 @@ tasks.withType(JavaCompile) {
 }
 
 tasks.withType(Test) {
-    systemProperty 'docs.dir', System.getProperty('java.io.tmpdir', '.')
+    systemProperty 'docs.dir', "${buildDir}/test-files"
 }
 
 test {
-    useTestNG()
+    useTestNG() {
+        suites "testng/testng.xml"
+    }
 }

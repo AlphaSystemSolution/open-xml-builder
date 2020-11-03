@@ -1,5 +1,6 @@
 **/build/
 **/.gradle/*
+**/.DS_Store
 *.iml
 pom.xml.tag
 pom.xml.releaseBackup
