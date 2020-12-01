@@ -9,6 +9,6 @@ repositories {
 
 dependencies {
     compile 'com.sun.codemodel:codemodel:2.6'
-    compile 'org.docx4j:docx4j-core:8.2.3'
+    compile 'org.docx4j:docx4j-core:8.2.4'
     compile 'org.apache.commons:commons-lang3:3.8.1'
 }

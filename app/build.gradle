@@ -24,9 +24,9 @@ tasks.compileJava {
 }
 
 dependencies {
-    compile 'org.docx4j:docx4j-core:8.2.3'
-    compile 'org.docx4j:docx4j-JAXB-Internal:8.2.3'
-    compile 'org.docx4j:docx4j-export-fo:8.2.3'
+    compile "org.docx4j:docx4j-core:${docx4j_version}"
+    compile "org.docx4j:docx4j-JAXB-Internal:${docx4j_version}"
+    compile "org.docx4j:docx4j-export-fo:${docx4j_version}"
     compile 'org.slf4j:slf4j-api:1.7.7'
     compile 'ch.qos.logback:logback-classic:1.1.2'
     testImplementation 'org.testng:testng:6.9.4'
