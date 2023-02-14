@@ -3,14 +3,8 @@
  */
 package com.alphasystem.openxml.builder.wml;
 
-import org.docx4j.Docx4J;
-import org.docx4j.convert.out.FOSettings;
-import org.docx4j.fonts.IdentityPlusMapper;
-import org.docx4j.fonts.Mapper;
-import org.docx4j.fonts.PhysicalFont;
-import org.docx4j.fonts.PhysicalFonts;
+
 import org.docx4j.jaxb.Context;
-import org.docx4j.model.fields.FieldUpdater;
 import org.docx4j.openpackaging.exceptions.Docx4JException;
 import org.docx4j.openpackaging.exceptions.InvalidFormatException;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
@@ -23,8 +17,8 @@ import org.docx4j.wml.TcPrInner.GridSpan;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBElement;
+import jakarta.xml.bind.JAXBException;
 import javax.xml.namespace.QName;
 import java.io.*;
 import java.net.URL;
@@ -352,43 +346,93 @@ public class WmlAdapter {
         wordMLPackage.save(getFile(file, "docx"));
     }
 
-    public static void saveAsPdf(File file, WordprocessingMLPackage wordMLPackage) throws Exception {
+   /* public static void saveAsPdf(File file, WordprocessingMLPackage wordMLPackage) throws Exception {
         saveAsPdf(file, wordMLPackage, null, false);
-    }
+    }*/
 
-    public static void saveAsPdf(File file, WordprocessingMLPackage wordMLPackage, boolean saveFO) throws Exception {
+    /*public static void saveAsPdf(File file, WordprocessingMLPackage wordMLPackage, boolean saveFO) throws Exception {
         saveAsPdf(file, wordMLPackage, null, saveFO);
-    }
+    }*/
 
-    public static void saveAsPdf(File file, WordprocessingMLPackage wordMLPackage, String fontName,
+    /*public static void saveAsPdf(File file,
+                                 WordprocessingMLPackage wordMLPackage,
+                                 String fontName,
                                  boolean saveFO) throws Exception {
         File pdfFile = getFile(file, "pdf");
 
-        String regex = ".*(calibri|camb|cour|arial|times|comic|georgia|impact|LSANS|pala|tahoma|trebuc|verdana|symbol|webdings|wingding).*";
-        PhysicalFonts.setRegex(regex);
-
-        FieldUpdater updater = new FieldUpdater(wordMLPackage);
-        updater.update(true);
-
-        // Set up font mapper (optional)
-        Mapper fontMapper = new IdentityPlusMapper();
+        var fontMapper = new BestMatchingMapper();
         wordMLPackage.setFontMapper(fontMapper);
 
-        if (fontName != null) {
-            PhysicalFont font = PhysicalFonts.get(fontName);
-            if (font != null) {
-                fontMapper.put("Times New Roman", font);
-                fontMapper.put("Arial", font);
-            }
-        }
+        var regex = ".*(KFGQPC Uthman Taha Naskh|KFGQPC Uthman Taha Naskh Bold|Courier New|Helvetica|Comic Sans|Georgia|Impact|Lucida Console|Lucida Sans Unicode|Palatino Linotype|Tahoma|Trebuchet|Verdana|Symbol|Webdings|Wingdings|MS Sans Serif|MS Serif|Arial Unicode MS).*";
+        PhysicalFonts.setRegex(regex);
+
+        var font2 = PhysicalFonts.get("Arial Unicode MS");
+        // make sure this is in your regex (if any)!!!
+		if (font2!=null) {
+			fontMapper.put("Times New Roman", font2);
+			fontMapper.put("Arial", font2);
+		}
+
+        // TODO: configure this
+        final File parent = new File("/Users/sfali/Downloads/fonts");
+        PhysicalFonts.addPhysicalFont(new File(parent, "KFGQPC Uthman Taha Naskh Regular.ttf").toURI());
+        PhysicalFonts.addPhysicalFont(new File(parent, "KFGQPC Uthman Taha Naskh Bold.ttf").toURI());
+        PhysicalFonts.addPhysicalFont(new File(parent, "Calibri Bold Italic.ttf").toURI());
+        PhysicalFonts.addPhysicalFont(new File(parent, "Calibri Bold.ttf").toURI());
+        PhysicalFonts.addPhysicalFont(new File(parent, "Calibri Italic.ttf").toURI());
+        PhysicalFonts.addPhysicalFont(new File(parent, "Calibri Light Italic.ttf").toURI());
+        PhysicalFonts.addPhysicalFont(new File(parent, "Calibri Light.ttf").toURI());
+        PhysicalFonts.addPhysicalFont(new File(parent, "Calibri Regular.ttf").toURI());
+
+        fontMapper.put("KFGQPC Uthman Taha Naskh Regular", PhysicalFonts.get("KFGQPC Uthman Taha Naskh Regular"));
+        fontMapper.put("KFGQPC Uthman Taha Naskh Bold", PhysicalFonts.get("KFGQPC Uthman Taha Naskh Bold"));
+        fontMapper.put("Calibri Bold Italic", PhysicalFonts.get("Calibri Bold Italic"));
+        fontMapper.put("Calibri Bold", PhysicalFonts.get("Calibri Bold"));
+        fontMapper.put("Calibri Italic", PhysicalFonts.get("Calibri Italic"));
+        fontMapper.put("Calibri Light Italic", PhysicalFonts.get("Calibri Light Italic"));
+        fontMapper.put("Calibri Light", PhysicalFonts.get("Calibri Light"));
+        fontMapper.put("Calibri Regular", PhysicalFonts.get("Calibri Regular"));
+
 
         FOSettings foSettings = Docx4J.createFOSettings();
+        var renderer = new Fop.Renderers.Renderer();
+        renderer.setMime("application/pdf");
+
+        var fonts = new org.docx4j.convert.out.fopconf.Fonts();
+
+        var font = new Fonts.Font();
+        var fontTriplet = new Fonts.Font.FontTriplet();
+        fontTriplet.setName("KFGQPC Uthman Taha Naskh Regular");
+        fontTriplet.setStyle("normal");
+        fontTriplet.setWeight("normal");
+        font.getFontTriplet().add(fontTriplet);
+        font.setEmbedUrl("/Users/sfali/Downloads/fonts/KFGQPC Uthman Taha Naskh Regular.ttf");
+
+        font = new Fonts.Font();
+        fontTriplet = new Fonts.Font.FontTriplet();
+        fontTriplet.setName("KFGQPC Uthman Taha Naskh Bold");
+        fontTriplet.setStyle("normal");
+        fontTriplet.setWeight("bold");
+        font.getFontTriplet().add(fontTriplet);
+        font.setEmbedUrl("/Users/sfali/Downloads/fonts/KFGQPC Uthman Taha Naskh Bold.ttf");
+
+        fonts.getFont().add(font);
+
+        renderer.setFonts(fonts);
+        var renderers = new Fop.Renderers();
+        renderers.setRenderer(renderer);
+        var fopConfig = new Fop();
+        fopConfig.setRenderers(renderers);
+        foSettings.setFopConfig(fopConfig);
         if (saveFO) {
             foSettings.setFoDumpFile(getFile(pdfFile, "fo"));
         }
         foSettings.setOpcPackage(wordMLPackage);
 
-        OutputStream os = new java.io.FileOutputStream(pdfFile);
+        var fopFactory = FORendererApacheFOP.getFopFactoryBuilder(foSettings).build();
+        FORendererApacheFOP.getFOUserAgent(foSettings, fopFactory);
+
+        var os = new java.io.FileOutputStream(pdfFile);
 
         // Don't care what type of exporter you use
         Docx4J.toFO(foSettings, os, Docx4J.FLAG_EXPORT_PREFER_XSL);
@@ -397,5 +441,5 @@ public class WmlAdapter {
         if (wordMLPackage.getMainDocumentPart().getFontTablePart() != null) {
             wordMLPackage.getMainDocumentPart().getFontTablePart().deleteEmbeddedFontTempFiles();
         }
-    }
+    }*/
 }

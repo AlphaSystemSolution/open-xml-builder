@@ -56,8 +56,8 @@ public abstract class CommonTest {
         try {
             final File file = Paths.get(docsPath.toString(), getFileName()).toFile();
             WmlAdapter.save(file, wmlPackage);
-            WmlAdapter.saveAsPdf(file, wmlPackage);
-        } catch (Exception e) {
+            //WmlAdapter.saveAsPdf(file, wmlPackage);
+        } catch (Throwable e) {
             fail(e.getMessage(), e);
         }
     }
