@@ -2,7 +2,7 @@ package com.alphasystem.openxml.gradleplugin;
 
 import org.apache.commons.lang3.ArrayUtils;
 
-import javax.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.XmlTransient;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
