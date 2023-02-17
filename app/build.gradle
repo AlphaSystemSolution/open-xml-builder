@@ -37,7 +37,7 @@ dependencies {
 }
 
 group = 'com.alphasystem.openxml'
-version = '3.0.0-SNAPSHOT'
+version = '11.4.9.1'
 sourceCompatibility = '11'
 
 java {
