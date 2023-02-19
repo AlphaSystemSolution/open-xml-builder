@@ -64,13 +64,13 @@ public final class TableAdapter {
         tableStyle = isBlank(tableStyle) ? DEFAULT_TABLE_STYLE : tableStyle;
         TblWidth tblIndent = null;
         if (indentLevel >= 0) {
-            long indentValue = DEFAULT_INDENT_VALUE + (indentLevel * DEFAULT_INDENT_VALUE);
+            long indentValue = DEFAULT_INDENT_VALUE + ((long) indentLevel * DEFAULT_INDENT_VALUE);
             tblIndent = getTblWidthBuilder().withType(TYPE_DXA).withW(indentValue).getObject();
         }
         TblPr tblPr = getTblPrBuilder().withTblStyle(tableStyle).withTblW(tblWidth).withTblInd(tblIndent).withTblLook(cTTblLook).getObject();
         TblPrBuilder tblPrBuilder = new TblPrBuilder(tblPr, tableProperties);
 
-        tblBuilder.withTblGrid(tblGridBuilder.getObject()).withTblPr(tblPrBuilder.getObject()).getObject();
+        tblBuilder.withTblGrid(tblGridBuilder.getObject()).withTblPr(tblPrBuilder.getObject());
 
         return this;
     }
@@ -118,12 +118,17 @@ public final class TableAdapter {
         return tblBuilder.getObject();
     }
 
+
+    public long getTotalTableWidth() {
+        return columnAdapter == null ? 0L : columnAdapter.getTotalTableWidth().longValue();
+    }
+
     private static TcPr getColumnProperties(ColumnAdapter columnAdapter, Integer columnIndex, Integer gridSpanValue,
                                             VerticalMergeType verticalMergeType, TcPr columnProperties) throws ArrayIndexOutOfBoundsException {
         List<ColumnInfo> columns = columnAdapter.getColumns();
         checkColumnIndex(columns, columnIndex);
         final ColumnInfo columnInfo = columns.get(columnIndex);
-        BigDecimal columnWidth = new BigDecimal(columnInfo.getColumnWidth());
+        BigDecimal columnWidth = BigDecimal.valueOf(columnInfo.getColumnWidth());
         long gs = 1;
         if (gridSpanValue != null && gridSpanValue > 1) {
             // sanity check, make sure we are not going out of bound
@@ -131,7 +136,7 @@ public final class TableAdapter {
             // iterate through width and get the total width for the grid span
             for (int i = columnIndex + 1; i < columnIndex + gridSpanValue; i++) {
                 final ColumnInfo columnInfo1 = columns.get(i);
-                columnWidth = columnWidth.add(new BigDecimal(columnInfo1.getColumnWidth()));
+                columnWidth = columnWidth.add(BigDecimal.valueOf(columnInfo1.getColumnWidth()));
             }
             gs = gridSpanValue;
         }
