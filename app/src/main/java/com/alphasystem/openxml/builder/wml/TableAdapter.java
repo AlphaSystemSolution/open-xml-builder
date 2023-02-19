@@ -36,6 +36,7 @@ import static org.docx4j.sharedtypes.STOnOff.ONE;
  *
  * @author sali
  */
+@Deprecated
 public class TableAdapter {
 
     private static final String TYPE_PCT = "pct";
