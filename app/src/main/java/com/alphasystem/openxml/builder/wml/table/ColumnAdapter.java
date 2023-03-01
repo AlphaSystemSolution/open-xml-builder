@@ -18,7 +18,7 @@ public final class ColumnAdapter {
     private static final BigDecimal TOTAL_GRID_COL_WIDTH = BigDecimal.valueOf(9576);
     private static final BigDecimal TOTAL_TABLE_WIDTH = BigDecimal.valueOf(5000);
     private static final BigDecimal PERCENT = BigDecimal.valueOf(100.0);
-    private static final MathContext ROUNDING = new MathContext(4, RoundingMode.CEILING);
+    public static final MathContext ROUNDING = new MathContext(4, RoundingMode.CEILING);
 
     private final List<ColumnInfo> columns;
     private final BigDecimal totalTableWidth;

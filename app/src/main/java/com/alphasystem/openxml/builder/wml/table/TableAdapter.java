@@ -124,10 +124,11 @@ public final class TableAdapter {
     }
 
     private static TcPr getColumnProperties(ColumnAdapter columnAdapter, Integer columnIndex, Integer gridSpanValue,
-                                            VerticalMergeType verticalMergeType, TcPr columnProperties) throws ArrayIndexOutOfBoundsException {
+                                            VerticalMergeType verticalMergeType, TcPr columnProperties)
+            throws ArrayIndexOutOfBoundsException {
         List<ColumnInfo> columns = columnAdapter.getColumns();
         checkColumnIndex(columns, columnIndex);
-        final ColumnInfo columnInfo = columns.get(columnIndex);
+        final ColumnInfo columnInfo = columnAdapter.getColumn(columnIndex);
         BigDecimal columnWidth = BigDecimal.valueOf(columnInfo.getColumnWidth());
         long gs = 1;
         if (gridSpanValue != null && gridSpanValue > 1) {
@@ -147,7 +148,7 @@ public final class TableAdapter {
             vMerge = tcPrBuilder.getVMergeBuilder().withVal(verticalMergeType.getValue()).getObject();
         }
 
-        TblWidth tblWidth = getTblWidthBuilder().withType(TYPE_PCT).withW(columnWidth.longValue()).getObject();
+        TblWidth tblWidth = getTblWidthBuilder().withType(TYPE_PCT).withW( columnWidth.longValue()).getObject();
         tcPrBuilder.withGridSpan(gs).withTcW(tblWidth).withVMerge(vMerge);
 
         return new TcPrBuilder(tcPrBuilder.getObject(), columnProperties).getObject();
