@@ -8,8 +8,9 @@
             <class name="com.alphasystem.wml.test.CustomTemplateTest"/>
             <class name="com.alphasystem.wml.test.CustomTemplateWithNumberedHeadingTest"/>
             <class name="com.alphasystem.wml.test.DefaultTemplateCustomStyles"/>
-            <class name="com.alphasystem.wml.test.CustomTemplateCustomStyles"/>
+            <class name="com.alphasystem.wml.test.CustomTemplateCustomStylesTest"/>
             <class name="com.alphasystem.wml.test.LandscapeTest"/>
+            <class name="com.alphasystem.wml.test.TableAdapterTest"/>
             <!--<class name="com.alphasystem.wml.test.NumberedParagraphTest"/>-->
         </classes>
     </test>

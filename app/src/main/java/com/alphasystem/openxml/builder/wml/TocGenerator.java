@@ -5,7 +5,7 @@ import org.docx4j.openpackaging.exceptions.InvalidFormatException;
 import org.docx4j.openpackaging.parts.WordprocessingML.MainDocumentPart;
 import org.docx4j.wml.*;
 
-import javax.xml.bind.JAXBElement;
+import jakarta.xml.bind.JAXBElement;
 
 import static com.alphasystem.openxml.builder.wml.WmlBuilderFactory.*;
 import static java.lang.String.format;

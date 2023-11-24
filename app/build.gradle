@@ -1,7 +1,7 @@
 import com.alphasystem.openxml.gradleplugin.CodeGenerator
 
 plugins {
-    id 'java'
+    id 'java-library'
     id 'maven-publish'
 }
 
@@ -24,19 +24,22 @@ tasks.compileJava {
 }
 
 dependencies {
-    compile "org.docx4j:docx4j-core:${docx4j_version}"
-    compile "org.docx4j:docx4j-JAXB-Internal:${docx4j_version}"
-    compile "org.docx4j:docx4j-export-fo:${docx4j_version}"
-    compile 'org.slf4j:slf4j-api:1.7.7'
-    compile 'ch.qos.logback:logback-classic:1.1.2'
-    testImplementation 'org.testng:testng:6.9.4'
-    testImplementation 'com.google.inject:guice:4.0'
+    api "org.docx4j:docx4j-core:${docx4j_version}"
+    api "org.docx4j:docx4j-export-fo:${docx4j_version}"
+    api "org.docx4j:docx4j-JAXB-MOXy:${docx4j_version}"
+    api 'org.docx4j:docx4j-MOXy-JAXBContext:6.0.0'
+    api 'org.eclipse.persistence:org.eclipse.persistence.moxy:4.0.0'
+    api "org.docx4j:docx4j-JAXB-ReferenceImpl:${docx4j_version}"
+    api 'org.slf4j:slf4j-api:2.0.6'
+    api 'ch.qos.logback:logback-classic:1.4.5'
+    testImplementation 'org.testng:testng:7.7.1'
+    testImplementation 'com.google.inject:guice:5.1.0'
     testImplementation 'org.uncommons:reportng:1.1.4'
 }
 
 group = 'com.alphasystem.openxml'
-version = '3.0.0-SNAPSHOT'
-sourceCompatibility = '1.8'
+version = '11.4.9.1'
+sourceCompatibility = '11'
 
 java {
     withJavadocJar()
