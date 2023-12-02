@@ -4,6 +4,9 @@ import com.alphasystem.openxml.builder.wml.*;
 import org.docx4j.wml.*;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.alphasystem.openxml.builder.wml.WmlBuilderFactory.*;
@@ -18,15 +21,26 @@ import static org.docx4j.wml.TblWidth.TYPE_DXA;
  */
 public final class TableAdapter {
 
-    private static final String TYPE_PCT = "pct";
-    private static final int DEFAULT_INDENT_VALUE = 720;
+    public static final int DEFAULT_INDENT_VALUE = 720;
+    public static final BigDecimal PERCENT = BigDecimal.valueOf(100.0);
     public static final String DEFAULT_TABLE_STYLE = "TableGrid";
+    public static final MathContext ROUNDING = new MathContext(4, RoundingMode.CEILING);
 
+    private final TableType tableType;
     private ColumnAdapter columnAdapter;
     private TblBuilder tblBuilder;
     private TrBuilder trBuilder;
 
     public TableAdapter() {
+        this(TableType.PCT);
+    }
+
+    public TableAdapter(final TableType tableType) {
+        this.tableType = tableType;
+    }
+
+    public TableAdapter startTable(int numOfColumns) {
+        return startTable(getColumnWidths(numOfColumns).toArray(new Double[0]));
     }
 
     public TableAdapter startTable(Double... columnWidths) {
@@ -45,10 +59,19 @@ public final class TableAdapter {
         return startTable(null, tableStyle, -1, tableProperties, columnWidths);
     }
 
-    public TableAdapter startTable(Double totalTableWidthInPercent, String tableStyle, int indentLevel, TblPr tableProperties,
-                                   Double... columnWidths) {
-        columnAdapter = new ColumnAdapter(totalTableWidthInPercent, columnWidths);
+    private TableAdapter startTable(String tableStyle,
+                                    int numOfColumns,
+                                    int indentLevel,
+                                    Double totalTableWidthInPercent,
+                                    TblPr tableProperties,
+                                    Double... columnWidths) {
         tblBuilder = getTblBuilder();
+
+        if (tableType == TableType.PCT) {
+            columnAdapter = new ColumnAdapter(totalTableWidthInPercent, columnWidths);
+        } else {
+            columnAdapter = new ColumnAdapter(numOfColumns, indentLevel);
+        }
 
         TblGridBuilder tblGridBuilder = getTblGridBuilder();
         columnAdapter.getColumns().forEach(columnInfo -> {
@@ -56,9 +79,9 @@ public final class TableAdapter {
             tblGridBuilder.addGridCol(tblGridCol);
         });
 
-        TblWidth tblWidth = getTblWidthBuilder().withType(TYPE_PCT).withW(columnAdapter.getTotalTableWidth().toString()).getObject();
+        TblWidth tblWidth = getTblWidthBuilder().withType(tableType.getTableType()).withW(columnAdapter.getTotalTableWidth().longValue()).getObject();
 
-        CTTblLook cTTblLook = getCTTblLookBuilder().withFirstRow(ONE).withLastRow(ONE).withFirstColumn(ONE)
+        var cTTblLook = getCTTblLookBuilder().withFirstRow(ONE).withLastRow(ONE).withFirstColumn(ONE)
                 .withLastColumn(ONE).withNoVBand(ONE).withNoHBand(ONE).getObject();
 
         tableStyle = isBlank(tableStyle) ? DEFAULT_TABLE_STYLE : tableStyle;
@@ -71,8 +94,29 @@ public final class TableAdapter {
         TblPrBuilder tblPrBuilder = new TblPrBuilder(tblPr, tableProperties);
 
         tblBuilder.withTblGrid(tblGridBuilder.getObject()).withTblPr(tblPrBuilder.getObject());
-
         return this;
+    }
+
+    public TableAdapter startAutoTable(String tableStyle, int numOfColumns, int indentLevel, TblPr tableProperties) {
+        return startTable(tableStyle, numOfColumns, indentLevel, 0.0, tableProperties);
+    }
+
+
+    public TableAdapter startAutoTable(String tableStyle, int numOfColumns, int indentLevel) {
+        return startTable(tableStyle, numOfColumns, indentLevel, 0.0, null);
+    }
+
+    public TableAdapter startAutoTable(int numOfColumns, int indentLevel, TblPr tableProperties) {
+        return startTable(null, numOfColumns, indentLevel, 0.0, tableProperties);
+    }
+
+    public TableAdapter startAutoTable(int numOfColumns, int indentLevel) {
+        return startTable(null, numOfColumns, indentLevel, 0.0, null);
+    }
+
+    public TableAdapter startTable(Double totalTableWidthInPercent, String tableStyle, int indentLevel, TblPr tableProperties,
+                                   Double... columnWidths) {
+        return startTable(tableStyle, 0, indentLevel, totalTableWidthInPercent, tableProperties, columnWidths);
     }
 
     public TableAdapter startRow() {
@@ -108,8 +152,8 @@ public final class TableAdapter {
 
     public TableAdapter addColumn(Integer columnIndex, Integer gridSpanValue, VerticalMergeType verticalMergeType,
                                   TcPr columnProperties, Object... content) {
-        final Tc tc = getTcBuilder().withTcPr(getColumnProperties(columnAdapter, columnIndex, gridSpanValue, verticalMergeType,
-                columnProperties)).addContent(content).getObject();
+        final Tc tc = getTcBuilder().withTcPr(getColumnProperties(columnAdapter, tableType, columnIndex, gridSpanValue,
+                verticalMergeType, columnProperties)).addContent(content).getObject();
         trBuilder.addContent(tc);
         return this;
     }
@@ -123,8 +167,12 @@ public final class TableAdapter {
         return columnAdapter == null ? 0L : columnAdapter.getTotalTableWidth().longValue();
     }
 
-    private static TcPr getColumnProperties(ColumnAdapter columnAdapter, Integer columnIndex, Integer gridSpanValue,
-                                            VerticalMergeType verticalMergeType, TcPr columnProperties)
+    private static TcPr getColumnProperties(ColumnAdapter columnAdapter,
+                                            TableType tableType,
+                                            Integer columnIndex,
+                                            Integer gridSpanValue,
+                                            VerticalMergeType verticalMergeType,
+                                            TcPr columnProperties)
             throws ArrayIndexOutOfBoundsException {
         List<ColumnInfo> columns = columnAdapter.getColumns();
         checkColumnIndex(columns, columnIndex);
@@ -148,7 +196,7 @@ public final class TableAdapter {
             vMerge = tcPrBuilder.getVMergeBuilder().withVal(verticalMergeType.getValue()).getObject();
         }
 
-        TblWidth tblWidth = getTblWidthBuilder().withType(TYPE_PCT).withW( columnWidth.longValue()).getObject();
+        TblWidth tblWidth = getTblWidthBuilder().withType(tableType.getColumnType()).withW(columnWidth.longValue()).getObject();
         tcPrBuilder.withGridSpan(gs).withTcW(tblWidth).withVMerge(vMerge);
 
         return new TcPrBuilder(tcPrBuilder.getObject(), columnProperties).getObject();
@@ -171,6 +219,25 @@ public final class TableAdapter {
                     format("Invalid columnIndex {%s}, expected values are between %s and %s",
                             columnIndex, 0, (numOfColumns - 1)));
         }
+    }
+
+    private static List<Double> getColumnWidths(int numOfColumns) {
+        var singleColumnWidth = PERCENT.divide(BigDecimal.valueOf(numOfColumns), ROUNDING);
+        var columnWidths = new ArrayList<Double>(numOfColumns);
+        for (int i = 0; i < numOfColumns; i++) {
+            columnWidths.add(singleColumnWidth.doubleValue());
+        }
+
+        var sum = columnWidths.stream().reduce(0.0, Double::sum);
+        var diff = PERCENT.subtract(BigDecimal.valueOf(sum));
+        var index = 0;
+        while (diff.intValue() > 0) {
+            columnWidths.set(index, columnWidths.get(index) + 1);
+            index += 1;
+            diff = diff.subtract(BigDecimal.ONE);
+        }
+
+        return columnWidths;
     }
 
     public enum VerticalMergeType {

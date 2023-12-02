@@ -4,7 +4,6 @@ import org.apache.commons.lang3.ArrayUtils;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,11 +16,42 @@ public final class ColumnAdapter {
 
     private static final BigDecimal TOTAL_GRID_COL_WIDTH = BigDecimal.valueOf(9576);
     private static final BigDecimal TOTAL_TABLE_WIDTH = BigDecimal.valueOf(5000);
-    private static final BigDecimal PERCENT = BigDecimal.valueOf(100.0);
-    public static final MathContext ROUNDING = new MathContext(4, RoundingMode.CEILING);
+    private static final BigDecimal PERCENT = TableAdapter.PERCENT;
+    private static final MathContext ROUNDING = TableAdapter.ROUNDING;
 
     private final List<ColumnInfo> columns;
     private final BigDecimal totalTableWidth;
+
+    /**
+     * Constructor to create AUTO table.
+     *
+     * @param numOfColumns number of columns
+     * @param indentLevel  indent level
+     */
+    public ColumnAdapter(int numOfColumns, int indentLevel) {
+        totalTableWidth = BigDecimal.ZERO;
+        var totalIndent = indentLevel >= 0 ? TableAdapter.DEFAULT_INDENT_VALUE + indentLevel * TableAdapter.DEFAULT_INDENT_VALUE : 0;
+        var indentPerColumn = totalIndent / numOfColumns;
+        var individualColumnWidth = TOTAL_GRID_COL_WIDTH.divide(BigDecimal.valueOf(numOfColumns), ROUNDING);
+        var columnWidths = new ArrayList<Integer>();
+        for (int i = 0; i < numOfColumns; i++) {
+            columnWidths.add(individualColumnWidth.intValue());
+        }
+        var sum = columnWidths.stream().reduce(0, Integer::sum);
+        var diff = TOTAL_GRID_COL_WIDTH.subtract(BigDecimal.valueOf(sum));
+        var index = 0;
+        while (diff.intValue() > 0) {
+            columnWidths.set(index, columnWidths.get(index) + 1);
+            index += 1;
+            diff = diff.subtract(BigDecimal.ONE);
+        }
+
+        columns = new ArrayList<>(numOfColumns);
+        for (int i = 0; i < columnWidths.size(); i++) {
+            var columnWidth = columnWidths.get(i) - indentPerColumn;
+            columns.add(new ColumnInfo(i, columnWidth, columnWidth));
+        }
+    }
 
     public ColumnAdapter(int numOfColumns) {
         this(PERCENT.doubleValue(), numOfColumns);
