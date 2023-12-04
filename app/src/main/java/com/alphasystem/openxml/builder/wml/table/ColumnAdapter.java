@@ -14,13 +14,18 @@ import static org.apache.commons.lang3.ArrayUtils.isEmpty;
  */
 public final class ColumnAdapter {
 
-    private static final BigDecimal TOTAL_GRID_COL_WIDTH = BigDecimal.valueOf(9576);
-    private static final BigDecimal TOTAL_TABLE_WIDTH = BigDecimal.valueOf(5000);
+    private static final BigDecimal TOTAL_GRID_COL_WIDTH = TableAdapter.TOTAL_GRID_COL_WIDTH;
+    private static final BigDecimal TOTAL_TABLE_WIDTH = TableAdapter.TOTAL_TABLE_WIDTH;
     private static final BigDecimal PERCENT = TableAdapter.PERCENT;
     private static final MathContext ROUNDING = TableAdapter.ROUNDING;
 
-    private final List<ColumnInfo> columns;
     private final BigDecimal totalTableWidth;
+    private final List<ColumnInfo> columns;
+
+    public ColumnAdapter(BigDecimal totalTableWidth, List<ColumnInfo> columns) {
+        this.totalTableWidth = totalTableWidth;
+        this.columns = columns;
+    }
 
     /**
      * Constructor to create AUTO table.
@@ -108,5 +113,13 @@ public final class ColumnAdapter {
 
     public ColumnInfo getColumn(int index) {
         return getColumns().get(index);
+    }
+
+    @Override
+    public String toString() {
+        return "ColumnAdapter{" +
+                "totalTableWidth=" + totalTableWidth +
+                ", columns=" + columns +
+                '}';
     }
 }

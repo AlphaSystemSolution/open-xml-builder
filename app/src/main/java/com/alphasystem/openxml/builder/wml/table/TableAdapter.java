@@ -21,6 +21,8 @@ import static org.docx4j.wml.TblWidth.TYPE_DXA;
  */
 public final class TableAdapter {
 
+    public static final BigDecimal TOTAL_GRID_COL_WIDTH = BigDecimal.valueOf(9576);
+    public static final BigDecimal TOTAL_TABLE_WIDTH = BigDecimal.valueOf(5000);
     public static final int DEFAULT_INDENT_VALUE = 720;
     public static final BigDecimal PERCENT = BigDecimal.valueOf(100.0);
     public static final String DEFAULT_TABLE_STYLE = "TableGrid";
@@ -59,19 +61,12 @@ public final class TableAdapter {
         return startTable(null, tableStyle, -1, tableProperties, columnWidths);
     }
 
-    private TableAdapter startTable(String tableStyle,
-                                    int numOfColumns,
-                                    int indentLevel,
-                                    Double totalTableWidthInPercent,
-                                    TblPr tableProperties,
-                                    Double... columnWidths) {
+    public TableAdapter startTable(ColumnAdapter columnAdapter,
+                                   String tableStyle,
+                                   int indentLevel,
+                                   TblPr tableProperties) {
         tblBuilder = getTblBuilder();
-
-        if (tableType == TableType.PCT) {
-            columnAdapter = new ColumnAdapter(totalTableWidthInPercent, columnWidths);
-        } else {
-            columnAdapter = new ColumnAdapter(numOfColumns, indentLevel);
-        }
+        this.columnAdapter = columnAdapter;
 
         TblGridBuilder tblGridBuilder = getTblGridBuilder();
         columnAdapter.getColumns().forEach(columnInfo -> {
@@ -79,7 +74,8 @@ public final class TableAdapter {
             tblGridBuilder.addGridCol(tblGridCol);
         });
 
-        TblWidth tblWidth = getTblWidthBuilder().withType(tableType.getTableType()).withW(columnAdapter.getTotalTableWidth().longValue()).getObject();
+        TblWidth tblWidth = getTblWidthBuilder().withType(tableType.getTableType())
+                .withW(columnAdapter.getTotalTableWidth().longValue()).getObject();
 
         var cTTblLook = getCTTblLookBuilder().withFirstRow(ONE).withLastRow(ONE).withFirstColumn(ONE)
                 .withLastColumn(ONE).withNoVBand(ONE).withNoHBand(ONE).getObject();
@@ -90,11 +86,27 @@ public final class TableAdapter {
             long indentValue = DEFAULT_INDENT_VALUE + ((long) indentLevel * DEFAULT_INDENT_VALUE);
             tblIndent = getTblWidthBuilder().withType(TYPE_DXA).withW(indentValue).getObject();
         }
-        TblPr tblPr = getTblPrBuilder().withTblStyle(tableStyle).withTblW(tblWidth).withTblInd(tblIndent).withTblLook(cTTblLook).getObject();
+        TblPr tblPr = getTblPrBuilder().withTblStyle(tableStyle).withTblW(tblWidth).withTblInd(tblIndent)
+                .withTblLook(cTTblLook).getObject();
         TblPrBuilder tblPrBuilder = new TblPrBuilder(tblPr, tableProperties);
 
         tblBuilder.withTblGrid(tblGridBuilder.getObject()).withTblPr(tblPrBuilder.getObject());
         return this;
+    }
+
+    private TableAdapter startTable(String tableStyle,
+                                    int numOfColumns,
+                                    int indentLevel,
+                                    Double totalTableWidthInPercent,
+                                    TblPr tableProperties,
+                                    Double... columnWidths) {
+        ColumnAdapter columnAdapter;
+        if (tableType == TableType.PCT) {
+            columnAdapter = new ColumnAdapter(totalTableWidthInPercent, columnWidths);
+        } else {
+            columnAdapter = new ColumnAdapter(numOfColumns, indentLevel);
+        }
+        return startTable(columnAdapter, tableStyle,indentLevel, tableProperties);
     }
 
     public TableAdapter startAutoTable(String tableStyle, int numOfColumns, int indentLevel, TblPr tableProperties) {
