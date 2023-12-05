@@ -61,7 +61,7 @@ public final class TableAdapter {
         return startTable(null, tableStyle, -1, tableProperties, columnWidths);
     }
 
-    public TableAdapter startTable(ColumnAdapter columnAdapter,
+    private TableAdapter startTable(ColumnAdapter columnAdapter,
                                    String tableStyle,
                                    int indentLevel,
                                    TblPr tableProperties) {
