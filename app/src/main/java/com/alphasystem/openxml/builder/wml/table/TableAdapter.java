@@ -178,8 +178,8 @@ public final class TableAdapter {
         return tblBuilder.getObject();
     }
 
-    public ColumnAdapter getColumnAdapter() {
-        return columnAdapter;
+    public List<ColumnInfo> getColumns() {
+        return columnAdapter.getColumns();
     }
 
     public static TcPr getColumnProperties(TableType tableType,
