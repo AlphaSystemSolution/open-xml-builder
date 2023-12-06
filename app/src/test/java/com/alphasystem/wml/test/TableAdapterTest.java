@@ -3,6 +3,7 @@ package com.alphasystem.wml.test;
 import com.alphasystem.openxml.builder.wml.WmlAdapter;
 import com.alphasystem.openxml.builder.wml.WmlBuilderFactory;
 import com.alphasystem.openxml.builder.wml.WmlPackageBuilder;
+import com.alphasystem.openxml.builder.wml.table.ColumnData;
 import com.alphasystem.openxml.builder.wml.table.TableAdapter;
 import com.alphasystem.openxml.builder.wml.table.TableType;
 import org.docx4j.openpackaging.exceptions.Docx4JException;
@@ -33,18 +34,22 @@ public class TableAdapterTest extends CommonTest {
         var tableAdapter = new TableAdapter().withWidths(25.0, 8.0, 17.0, 17.0, 8.0, 25.0).startTable();
 
         tableAdapter.startRow()
-                .addColumn(0, 6, WmlAdapter.getParagraph("Column spans all grid spans."))
+                .addColumn(new ColumnData(0).withGridSpanValue(6)
+                        .withContent(WmlAdapter.getParagraph("Column spans all grid spans.")))
                 .endRow()
                 .startRow()
-                .addColumn(0, 1, WmlAdapter.getParagraph("1"))
-                .addColumn(1, 2, WmlAdapter.getParagraph("2"))
-                .addColumn(3, 2, WmlAdapter.getParagraph("3"))
-                .addColumn(5, 1, WmlAdapter.getParagraph("4"))
+                .addColumn(new ColumnData(0).withContent(WmlAdapter.getParagraph("1")))
+                .addColumn(new ColumnData(1).withGridSpanValue(2).withContent(WmlAdapter.getParagraph("2")))
+                .addColumn(new ColumnData(3).withGridSpanValue(2).withContent(WmlAdapter.getParagraph("3")))
+                .addColumn(new ColumnData(5).withContent(WmlAdapter.getParagraph("5")))
                 .endRow()
                 .startRow()
-                .addColumn(0, 2, WmlAdapter.getParagraph("Column 1 of row with 3 columns"))
-                .addColumn(2, 2, WmlAdapter.getParagraph("Column 2 of row with 3 columns"))
-                .addColumn(4, 2, WmlAdapter.getParagraph("Column 3 of row with 3 columns"))
+                .addColumn(new ColumnData(0).withGridSpanValue(2)
+                        .withContent(WmlAdapter.getParagraph("Column 1 of row with 3 columns")))
+                .addColumn(new ColumnData(2).withGridSpanValue(2)
+                        .withContent(WmlAdapter.getParagraph("Column 2 of row with 3 columns")))
+                .addColumn(new ColumnData(4).withGridSpanValue(2)
+                        .withContent(WmlAdapter.getParagraph("Column 3 of row with 3 columns")))
                 .endRow();
 
         mainDocumentPart.addObject(tableAdapter.getTable());
@@ -105,11 +110,11 @@ public class TableAdapterTest extends CommonTest {
 
     private void addColumns(TableAdapter tableAdapter) {
         tableAdapter.startRow()
-                .addColumn(0, 1, WmlAdapter.getParagraph("Row 1 Column 1"))
-                .addColumn(1, 1, WmlAdapter.getParagraph("Row 1 Column 2"))
-                .addColumn(2, 1, WmlAdapter.getParagraph("Row 1 Column 3"))
-                .addColumn(3, 1, WmlAdapter.getParagraph("Row 1 Column 4"))
-                .addColumn(4, 1, WmlAdapter.getParagraph("Row 1 Column 5"))
+                .addColumn(new ColumnData(0).withContent(WmlAdapter.getParagraph("Row 1 Column 1")))
+                .addColumn(new ColumnData(1).withContent(WmlAdapter.getParagraph("Row 1 Column 2")))
+                .addColumn(new ColumnData(2).withContent(WmlAdapter.getParagraph("Row 1 Column 3")))
+                .addColumn(new ColumnData(3).withContent(WmlAdapter.getParagraph("Row 1 Column 4")))
+                .addColumn(new ColumnData(4).withContent(WmlAdapter.getParagraph("Row 1 Column 5")))
                 .endRow();
     }
 }

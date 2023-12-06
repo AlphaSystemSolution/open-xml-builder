@@ -150,26 +150,10 @@ public final class TableAdapter {
         return this;
     }
 
-    public TableAdapter addColumn(Integer columnIndex, Object... content) {
-        return addColumn(columnIndex, null, null, content);
-    }
-
-    public TableAdapter addColumn(Integer columnIndex, TcPr columnProperties, Object... content) {
-        return addColumn(columnIndex, null, columnProperties, content);
-    }
-
-    public TableAdapter addColumn(Integer columnIndex, Integer gridSpanValue, Object... content) {
-        return addColumn(columnIndex, gridSpanValue, null, content);
-    }
-
-    public TableAdapter addColumn(Integer columnIndex, Integer gridSpanValue, TcPr columnProperties, Object... content) {
-        return addColumn(columnIndex, gridSpanValue, null, columnProperties, content);
-    }
-
-    public TableAdapter addColumn(Integer columnIndex, Integer gridSpanValue, VerticalMergeType verticalMergeType,
-                                  TcPr columnProperties, Object... content) {
-        final Tc tc = getTcBuilder().withTcPr(getColumnProperties(tableType, columnIndex, gridSpanValue,
-                verticalMergeType, columnProperties, columnAdapter.getColumns())).addContent(content).getObject();
+    public TableAdapter addColumn(ColumnData columnData) {
+        final var columnProperties = getColumnProperties(tableType, columnData.getColumnIndex(), columnData.getGridSpanValue(),
+                columnData.getVerticalMergeType(), columnData.getColumnProperties(), columnAdapter.getColumns());
+        final Tc tc = getTcBuilder().withTcPr(columnProperties).addContent(columnData.getContent()).getObject();
         trBuilder.addContent(tc);
         return this;
     }

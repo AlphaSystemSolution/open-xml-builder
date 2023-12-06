@@ -1,6 +1,7 @@
 package com.alphasystem.wml.test;
 
 import com.alphasystem.openxml.builder.wml.WmlPackageBuilder;
+import com.alphasystem.openxml.builder.wml.table.ColumnData;
 import com.alphasystem.openxml.builder.wml.table.TableAdapter;
 import org.docx4j.openpackaging.exceptions.Docx4JException;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
@@ -34,8 +35,8 @@ public class CustomTemplateCustomStylesTest extends CustomStylesTest {
                 .withWidths(10.0, 90.0)
                 .startTable()
                 .startRow()
-                .addColumn(0, getParagraph("Important"))
-                .addColumn(1, getParagraph("Some text"))
+                .addColumn(new ColumnData(0).withContent(getParagraph("Important")))
+                .addColumn(new ColumnData(1).withContent(getParagraph("Some text")))
                 .endRow()
                 .getTable();
         getMainDocumentPart().addObject(table);
@@ -49,8 +50,8 @@ public class CustomTemplateCustomStylesTest extends CustomStylesTest {
                 .withWidths(15.0, 85.0)
                 .startTable()
                 .startRow()
-                .addColumn(0, getParagraph("Some Long Title"))
-                .addColumn(1, getParagraph("Some text"))
+                .addColumn(new ColumnData(0).withContent(getParagraph("Some Long Title")))
+                .addColumn(new ColumnData(1).withContent(getParagraph("Some text")))
                 .endRow()
                 .getTable();
         getMainDocumentPart().addObject(table);
@@ -64,14 +65,14 @@ public class CustomTemplateCustomStylesTest extends CustomStylesTest {
                 .withWidths(33.3333, 33.3333, 33.3334)
                 .startTable()
                 .startRow()
-                .addColumn(0, getParagraph("Header 1"))
-                .addColumn(1, getParagraph("Header 2"))
-                .addColumn(2, getParagraph("Header 3"))
+                .addColumn(new ColumnData(0).withContent(getParagraph("Header 1")))
+                .addColumn(new ColumnData(1).withContent(getParagraph("Header 2")))
+                .addColumn(new ColumnData(2).withContent(getParagraph("Header 3")))
                 .endRow()
                 .startRow()
-                .addColumn(0, getParagraph("Column 1 Row 1"))
-                .addColumn(1, getParagraph("Column 2 Row 1"))
-                .addColumn(2, getParagraph("Column 3 Row 1"))
+                .addColumn(new ColumnData(0).withContent(getParagraph("Column 1 Row 1")))
+                .addColumn(new ColumnData(1).withContent(getParagraph("Column 2 Row 1")))
+                .addColumn(new ColumnData(2).withContent(getParagraph("Column 3 Row 1")))
                 .endRow()
                 .getTable();
         getMainDocumentPart().addObject(getParagraphWithStyle("DefaultTitle", "Table with Header Row"));
@@ -86,14 +87,14 @@ public class CustomTemplateCustomStylesTest extends CustomStylesTest {
                 .withWidths(33.3333, 33.3333, 33.3334)
                 .startTable()
                 .startRow()
-                .addColumn(0, getParagraph("Column 1 Row 1"))
-                .addColumn(1, getParagraph("Column 2 Row 1"))
-                .addColumn(2, getParagraph("Column 3 Row 1"))
+                .addColumn(new ColumnData(0).withContent(getParagraph("Column 1 Row 1")))
+                .addColumn(new ColumnData(1).withContent(getParagraph("Column 2 Row 1")))
+                .addColumn(new ColumnData(2).withContent(getParagraph("Column 3 Row 1")))
                 .endRow()
                 .startRow()
-                .addColumn(0, getParagraph("Footer 1"))
-                .addColumn(1, getParagraph("Footer 2"))
-                .addColumn(2, getParagraph("Footer 3"))
+                .addColumn(new ColumnData(0).withContent(getParagraph("Footer 1")))
+                .addColumn(new ColumnData(1).withContent(getParagraph("Footer 2")))
+                .addColumn(new ColumnData(2).withContent(getParagraph("Footer 3")))
                 .endRow()
                 .getTable();
         getMainDocumentPart().addObject(getParagraphWithStyle("DefaultTitle", "Table with Footer Row"));
@@ -108,18 +109,19 @@ public class CustomTemplateCustomStylesTest extends CustomStylesTest {
                 .withWidths(33.3333, 33.3333, 33.3334)
                 .startTable()
                 .startRow()
-                .addColumn(0, getParagraph("Header 1"))
-                .addColumn(1, getParagraph("Header 2"))
-                .addColumn(2, getParagraph("Header 3"))
+                .addColumn(new ColumnData(0).withContent(getParagraph("Header 1")))
+                .addColumn(new ColumnData(1).withContent(getParagraph("Header 2")))
+                .addColumn(new ColumnData(2).withContent(getParagraph("Header 3")))
                 .endRow()
                 .startRow()
-                .addColumn(0, getParagraph("Column 1 Row 1"))
-                .addColumn(1, getParagraph("Column 2 Row 1"))
-                .addColumn(2, getParagraph("Column 3 Row 1"))
+                .addColumn(new ColumnData(0).withContent(getParagraph("Column 1 Row 1")))
+                .addColumn(new ColumnData(1).withContent(getParagraph("Column 2 Row 1")))
+                .addColumn(new ColumnData(2).withContent(getParagraph("Column 3 Row 1")))
                 .endRow()
-                .startRow().addColumn(0, getParagraph("Footer 1"))
-                .addColumn(1, getParagraph("Footer 2"))
-                .addColumn(2, getParagraph("Footer 3"))
+                .startRow()
+                .addColumn(new ColumnData(0).withContent(getParagraph("Footer 1")))
+                .addColumn(new ColumnData(1).withContent(getParagraph("Footer 2")))
+                .addColumn(new ColumnData(2).withContent(getParagraph("Footer 3")))
                 .endRow()
                 .getTable();
         getMainDocumentPart().addObject(getParagraphWithStyle("DefaultTitle", "Table with Header & Footer Row"));
