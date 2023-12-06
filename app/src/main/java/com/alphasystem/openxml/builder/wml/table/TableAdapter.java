@@ -168,8 +168,8 @@ public final class TableAdapter {
 
     public TableAdapter addColumn(Integer columnIndex, Integer gridSpanValue, VerticalMergeType verticalMergeType,
                                   TcPr columnProperties, Object... content) {
-        final Tc tc = getTcBuilder().withTcPr(getColumnProperties(columnAdapter, tableType, columnIndex, gridSpanValue,
-                verticalMergeType, columnProperties)).addContent(content).getObject();
+        final Tc tc = getTcBuilder().withTcPr(getColumnProperties(tableType, columnIndex, gridSpanValue,
+                verticalMergeType, columnProperties, columnAdapter.getColumns())).addContent(content).getObject();
         trBuilder.addContent(tc);
         return this;
     }
@@ -182,16 +182,15 @@ public final class TableAdapter {
         return columnAdapter;
     }
 
-    private static TcPr getColumnProperties(ColumnAdapter columnAdapter,
-                                            TableType tableType,
-                                            Integer columnIndex,
-                                            Integer gridSpanValue,
-                                            VerticalMergeType verticalMergeType,
-                                            TcPr columnProperties)
+    public static TcPr getColumnProperties(TableType tableType,
+                                           Integer columnIndex,
+                                           Integer gridSpanValue,
+                                           VerticalMergeType verticalMergeType,
+                                           TcPr columnProperties,
+                                           List<ColumnInfo> columns)
             throws ArrayIndexOutOfBoundsException {
-        List<ColumnInfo> columns = columnAdapter.getColumns();
         checkColumnIndex(columns, columnIndex);
-        final ColumnInfo columnInfo = columnAdapter.getColumn(columnIndex);
+        final var columnInfo = columns.get(columnIndex);
         BigDecimal columnWidth = BigDecimal.valueOf(columnInfo.getColumnWidth());
         long gs = 1;
         if (gridSpanValue != null && gridSpanValue > 1) {
@@ -241,21 +240,6 @@ public final class TableAdapter {
         var msg = StringUtils.isBlank(message) ? prefix : String.format("%s: %s", prefix, message);
         if (!condition) {
             throw new IllegalArgumentException(msg);
-        }
-    }
-
-    public enum VerticalMergeType {
-
-        RESTART("restart"), CONTINUE(null);
-
-        private final String value;
-
-        VerticalMergeType(String value) {
-            this.value = value;
-        }
-
-        public String getValue() {
-            return value;
         }
     }
 }
