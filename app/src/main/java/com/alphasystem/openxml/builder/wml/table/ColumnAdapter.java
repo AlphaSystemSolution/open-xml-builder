@@ -1,9 +1,6 @@
 package com.alphasystem.openxml.builder.wml.table;
 
-import org.apache.commons.lang3.ArrayUtils;
-
 import java.math.BigDecimal;
-import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,57 +12,27 @@ import static org.apache.commons.lang3.ArrayUtils.isEmpty;
  */
 public final class ColumnAdapter {
 
-    private static final BigDecimal TOTAL_GRID_COL_WIDTH = BigDecimal.valueOf(9576);
-    private static final BigDecimal TOTAL_TABLE_WIDTH = BigDecimal.valueOf(5000);
-    private static final BigDecimal PERCENT = BigDecimal.valueOf(100.0);
-    public static final MathContext ROUNDING = new MathContext(4, RoundingMode.CEILING);
-
-    private final List<ColumnInfo> columns;
     private final BigDecimal totalTableWidth;
+    private final List<ColumnInfo> columns;
 
-    public ColumnAdapter(int numOfColumns) {
-        this(PERCENT.doubleValue(), numOfColumns);
-    }
+    public ColumnAdapter(TableType tableType, int indentLevel, ColumnInput... columnWidthsInPercentage) {
+        var columnInputs = isEmpty(columnWidthsInPercentage) ?
+                new ColumnInput[]{new ColumnInput("col_1", TableAdapter.PERCENT.doubleValue())}
+                : columnWidthsInPercentage;
 
-    public ColumnAdapter(Double tableWidthInPercent, int numOfColumns) {
-        this(tableWidthInPercent, getColumnsWidthAsPercentages(numOfColumns));
-    }
+        var numOfColumns = columnInputs.length;
+        columns = new ArrayList<>(numOfColumns);
 
-    public ColumnAdapter(Double... columnWidthPercentages) {
-        this(PERCENT.doubleValue(), columnWidthPercentages);
-    }
+        var totalIndent = indentLevel >= 0 ? TableAdapter.DEFAULT_INDENT_VALUE + indentLevel * TableAdapter.DEFAULT_INDENT_VALUE : 0;
+        // if there is indent then this would be subtracted from each column width
+        final var indentPerColumn = BigDecimal.valueOf(totalIndent).divide(BigDecimal.valueOf(numOfColumns), TableAdapter.ROUNDING);
 
-    public ColumnAdapter(Double totalTableWidthInPercent, Double... columnWidths) {
-        BigDecimal _w = BigDecimal.valueOf(((totalTableWidthInPercent == null) || (totalTableWidthInPercent <= 0.0)) ?
-                PERCENT.doubleValue() : totalTableWidthInPercent);
-        BigDecimal totalGridWidth = TOTAL_GRID_COL_WIDTH.multiply(_w).divide(PERCENT, ROUNDING);
-        totalTableWidth = TOTAL_TABLE_WIDTH.multiply(_w).divide(PERCENT, ROUNDING);
-
-        final int length = isEmpty(columnWidths) ? 1 : columnWidths.length;
-        columns = new ArrayList<>(length);
-
-        BigDecimal[] widths = new BigDecimal[length];
-        BigDecimal totalWidth = BigDecimal.valueOf(0.0);
-
-        for (int i = 0; i < length; i++) {
-            double columnWidth = columnWidths[i];
-            final BigDecimal width = new BigDecimal(columnWidth, ROUNDING);
-            widths[i] = width;
-            totalWidth = totalWidth.add(width, ROUNDING);
+        // populate actual columns info
+        for (int index = 0; index < numOfColumns; index++) {
+            columns.add(toColumnInfo(tableType, index, columnInputs[index], indentPerColumn.doubleValue()));
         }
 
-        for (int i = 0; i < length; i++) {
-            BigDecimal columnWidthInPercent = widths[i].multiply(PERCENT).divide(totalWidth, ROUNDING);
-            final double columnWidth = totalTableWidth.multiply(columnWidthInPercent).divide(PERCENT, ROUNDING).doubleValue();
-            final double gridWidth = totalGridWidth.multiply(columnWidthInPercent).divide(PERCENT, ROUNDING).doubleValue();
-            columns.add(new ColumnInfo(i, columnWidth, gridWidth));
-        }
-    }
-
-    private static Double[] getColumnsWidthAsPercentages(int numOfColumns) {
-        final BigDecimal width = PERCENT.divide(BigDecimal.valueOf(numOfColumns), ROUNDING);
-        Double[] columnWidthPercentages = new Double[numOfColumns];
-        return ArrayUtils.add(columnWidthPercentages, width.doubleValue());
+        totalTableWidth = TableType.AUTO == tableType ? BigDecimal.ZERO : TableAdapter.TOTAL_TABLE_WIDTH;
     }
 
     public List<ColumnInfo> getColumns() {
@@ -78,5 +45,27 @@ public final class ColumnAdapter {
 
     public ColumnInfo getColumn(int index) {
         return getColumns().get(index);
+    }
+
+    @Override
+    public String toString() {
+        return "ColumnAdapter{" +
+                "totalTableWidth=" + totalTableWidth +
+                ", columns=" + columns +
+                '}';
+    }
+
+    private static ColumnInfo toColumnInfo(TableType tableType, int index, ColumnInput input, double indentPerColumn) {
+        double width = input.getColumnWidth();
+        var totalWidth = TableType.AUTO == tableType ? TableAdapter.TOTAL_GRID_COL_WIDTH : TableAdapter.TOTAL_TABLE_WIDTH;
+        var columnWidth = totalWidth.multiply(BigDecimal.valueOf(width))
+                .divide(TableAdapter.PERCENT, TableAdapter.ROUNDING)
+                .setScale(0, RoundingMode.HALF_EVEN).doubleValue();
+        columnWidth -= indentPerColumn;
+        var gridWidth = TableAdapter.TOTAL_GRID_COL_WIDTH.multiply(BigDecimal.valueOf(width))
+                .divide(TableAdapter.PERCENT, TableAdapter.ROUNDING).setScale(0, RoundingMode.HALF_EVEN)
+                .doubleValue();
+        gridWidth = TableType.AUTO == tableType ? columnWidth : gridWidth;
+        return new ColumnInfo(index, input.getColumnName(), columnWidth, gridWidth);
     }
 }
