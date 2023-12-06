@@ -214,10 +214,6 @@ public class WmlAdapter {
         return pPrBuilder.withNumPr(numPr).withPStyle(style).getObject();
     }
 
-    /**
-     * @param value
-     * @return
-     */
     public static Color getColor(String value) {
         return getColorBuilder().withVal(value).getObject();
     }
@@ -235,10 +231,6 @@ public class WmlAdapter {
         return new File(folder, format("%s.%s", fileName, extension));
     }
 
-    /**
-     * @param value
-     * @return
-     */
     public static GridSpan getGridSpan(long value) {
         return getTcPrInnerBuilder().getGridSpanBuilder().withVal(value).getObject();
     }
@@ -267,11 +259,6 @@ public class WmlAdapter {
                 .withInsideV(getDefaultBorder()).getObject();
     }
 
-    /**
-     * @param value
-     * @param space
-     * @return
-     */
     public static Text getText(String value, String space) {
         return getTextBuilder().withValue(value).withSpace(space).getObject();
     }

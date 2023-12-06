@@ -1,6 +1,7 @@
 package com.alphasystem.wml.test;
 
 import com.alphasystem.openxml.builder.wml.WmlAdapter;
+import com.alphasystem.openxml.builder.wml.WmlBuilderFactory;
 import com.alphasystem.openxml.builder.wml.WmlPackageBuilder;
 import com.alphasystem.openxml.builder.wml.table.TableAdapter;
 import com.alphasystem.openxml.builder.wml.table.TableType;
@@ -29,20 +30,18 @@ public class TableAdapterTest extends CommonTest {
     public void testTableAdapter() {
         var mainDocumentPart = getMainDocumentPart();
         mainDocumentPart.addStyledParagraphOfText("ExampleTitle", "PCT Table");
-        var tableAdapter = new TableAdapter().startTable(25.0, 8.0, 17.0, 17.0, 8.0, 25.0);
+        var tableAdapter = new TableAdapter().withWidths(25.0, 8.0, 17.0, 17.0, 8.0, 25.0).startTable();
 
         tableAdapter.startRow()
                 .addColumn(0, 6, WmlAdapter.getParagraph("Column spans all grid spans."))
-                .endRow();
-
-        tableAdapter.startRow()
+                .endRow()
+                .startRow()
                 .addColumn(0, 1, WmlAdapter.getParagraph("1"))
                 .addColumn(1, 2, WmlAdapter.getParagraph("2"))
                 .addColumn(3, 2, WmlAdapter.getParagraph("3"))
                 .addColumn(5, 1, WmlAdapter.getParagraph("4"))
-                .endRow();
-
-        tableAdapter.startRow()
+                .endRow()
+                .startRow()
                 .addColumn(0, 2, WmlAdapter.getParagraph("Column 1 of row with 3 columns"))
                 .addColumn(2, 2, WmlAdapter.getParagraph("Column 2 of row with 3 columns"))
                 .addColumn(4, 2, WmlAdapter.getParagraph("Column 3 of row with 3 columns"))
@@ -52,13 +51,13 @@ public class TableAdapterTest extends CommonTest {
         mainDocumentPart.addObject(WmlAdapter.getEmptyPara());
 
         mainDocumentPart.addStyledParagraphOfText("ExampleTitle", "PCT table with five columns");
-        tableAdapter = new TableAdapter().startTable(5);
+        tableAdapter = new TableAdapter().withNumOfColumns(5).startTable();
         addColumns(tableAdapter);
         mainDocumentPart.addObject(tableAdapter.getTable());
         mainDocumentPart.addObject(WmlAdapter.getEmptyPara());
 
         mainDocumentPart.addStyledParagraphOfText("ExampleTitle", "Auto Table");
-        tableAdapter = new TableAdapter(TableType.AUTO).startAutoTable(5, -1);
+        tableAdapter = new TableAdapter().withTableType(TableType.AUTO).withNumOfColumns(5).startTable();
         addColumns(tableAdapter);
         mainDocumentPart.addObject(tableAdapter.getTable());
 
@@ -67,10 +66,35 @@ public class TableAdapterTest extends CommonTest {
 
         mainDocumentPart.addObject(createNumberedParagraph("List 1"));
 
-        tableAdapter = new TableAdapter(TableType.AUTO).startAutoTable(5, 0);
+        tableAdapter = new TableAdapter()
+                .withTableType(TableType.AUTO)
+                .withNumOfColumns(5)
+                .withIndentLevel(0)
+                .startTable();
         addColumns(tableAdapter);
         mainDocumentPart.addObject(tableAdapter.getTable());
         mainDocumentPart.addObject(createNumberedParagraph("List 2"));
+        var tblBorders = WmlBuilderFactory
+                .getTblBordersBuilder()
+                .withTop(WmlAdapter.getNilBorder())
+                .withBottom(WmlAdapter.getNilBorder())
+                .withLeft(WmlAdapter.getNilBorder())
+                .withRight(WmlAdapter.getNilBorder())
+                .withInsideH(WmlAdapter.getNilBorder())
+                .withInsideV(WmlAdapter.getNilBorder())
+                .getObject();
+        var tblPr = WmlBuilderFactory
+                .getTblPrBuilder()
+                .withTblBorders(tblBorders)
+                .getObject();
+        tableAdapter = new TableAdapter()
+                .withTableType(TableType.AUTO)
+                .withIndentLevel(0)
+                .withWidths(32.0, 17.0, 17.0, 17.0, 17.0)
+                .withTableProperties(tblPr)
+                .startTable();
+        addColumns(tableAdapter);
+        mainDocumentPart.addObject(tableAdapter.getTable());
     }
 
     private P createNumberedParagraph(String text) {
