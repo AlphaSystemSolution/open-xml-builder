@@ -4,28 +4,24 @@ import com.alphasystem.openxml.builder.wml.*;
 import org.docx4j.openpackaging.exceptions.Docx4JException;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
 import org.docx4j.openpackaging.parts.WordprocessingML.MainDocumentPart;
-import org.docx4j.openpackaging.parts.WordprocessingML.NumberingDefinitionsPart;
 import org.docx4j.wml.P;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import java.io.File;
+import java.util.Arrays;
 
-import static com.alphasystem.openxml.builder.wml.WmlAdapter.*;
+import static com.alphasystem.openxml.builder.wml.WmlAdapter.getEmptyPara;
+import static com.alphasystem.openxml.builder.wml.WmlAdapter.getText;
 import static com.alphasystem.openxml.builder.wml.WmlBuilderFactory.getPBuilder;
 import static com.alphasystem.openxml.builder.wml.WmlBuilderFactory.getRBuilder;
 import static com.alphasystem.util.IdGenerator.nextId;
 import static java.lang.String.format;
-import static java.nio.file.Paths.get;
-import static org.testng.Assert.fail;
 
 /**
  * @author sali
  */
 public class NumberedParagraphTest extends CommonTest {
 
-    private static final String PARENT_PATH = "build";
+    private final NumberingHelper numberingHelper = NumberingHelper.getInstance();
 
     /**
      * Create something like:
@@ -45,70 +41,41 @@ public class NumberedParagraphTest extends CommonTest {
      *
      * @return p
      */
-    private static P createNumberedParagraph(long listId, long level, String paragraphText, boolean applyNumbering) {
-        final RBuilder rBuilder = getRBuilder().addContent(getText(paragraphText));
-        return getPBuilder().withPPr(WmlAdapter.getListParagraphProperties(listId, level, applyNumbering))
-                .addContent(rBuilder.getObject()).getObject();
+    private static P createNumberedParagraph(ListItem<?> listItem, long level, String paragraphText, boolean applyNumbering) {
+        final var r = getRBuilder().addContent(getText(paragraphText)).getObject();
+        final var pPr = WmlAdapter.getListParagraphProperties(listItem, level, applyNumbering);
+        return getPBuilder().withPPr(pPr).addContent(r).getObject();
     }
-
-    private WordprocessingMLPackage wmlPackage;
 
     @Override
     protected String getFileName() {
-        return null;
+        return "numbered-paragraph.docx";
     }
 
     @Override
     protected WordprocessingMLPackage loadWmlPackage() throws Docx4JException {
-        return null;
-    }
-
-    @BeforeClass
-    public void setup() {
-        try {
-            wmlPackage = WmlPackageBuilder.createPackage().getPackage();
-        } catch (Docx4JException e) {
-            fail(e.getMessage(), e);
-        }
-    }
-
-    @AfterClass
-    public void tearDown() {
-        try {
-            final File file = get(PARENT_PATH, "test.docx").toFile();
-            save(file, wmlPackage);
-        } catch (Docx4JException e) {
-            fail(e.getMessage(), e);
-        }
+        return WmlPackageBuilder
+                .createPackage("META-INF/Custom.dotx")
+                .styles("META-INF/example-caption/styles.xml")
+                .multiLevelHeading(new ExampleHeading()).getPackage();
     }
 
     @Test
     public void createListParagraphs() {
         final MainDocumentPart mainDocumentPart = wmlPackage.getMainDocumentPart();
-        final NumberingDefinitionsPart ndp = mainDocumentPart.getNumberingDefinitionsPart();
 
         long level = 0;
-        int start = 1;
-        int end = 5;
-        mainDocumentPart.addParagraphOfText("Numbered Lists");
+        mainDocumentPart.addObject(WmlAdapter.getParagraphWithStyle("Heading1", "Numbered Lists"));
         mainDocumentPart.addObject(getEmptyPara());
-        for (int i = start; i <= end; i++) {
-            addList(mainDocumentPart, i, level);
-        }
+        Arrays.stream(OrderedList.values()).forEach(listItem -> addList(mainDocumentPart, listItem, level));
 
-        start = 6;
-        end = 10;
-        mainDocumentPart.addParagraphOfText("Unordered Lists");
+        mainDocumentPart.addObject(WmlAdapter.getParagraphWithStyle("Heading1", "Unordered Lists"));
         mainDocumentPart.addObject(getEmptyPara());
-        for (int i = start; i <= end; i++) {
-            addList(mainDocumentPart, i, level);
-        }
+        Arrays.stream(UnorderedList.values()).forEach(listItem -> addList(mainDocumentPart, listItem, level));
 
-        start = 1;
-        end = 10;
-        for (int i = start; i <= end; i++) {
-            addMultiLevelList(mainDocumentPart, ndp.restart(i, 0, 1), i);
-        }
+        mainDocumentPart.addObject(WmlAdapter.getParagraphWithStyle("Heading1", "Multi-Level lists"));
+        mainDocumentPart.addObject(getEmptyPara());
+        Arrays.stream(OrderedList.values()).forEach(listItem -> addMultiLevelList(mainDocumentPart, listItem));
     }
 
     @Test(dependsOnMethods = "createListParagraphs")
@@ -116,18 +83,19 @@ public class NumberedParagraphTest extends CommonTest {
         final MainDocumentPart mainDocumentPart = wmlPackage.getMainDocumentPart();
         mainDocumentPart.addObject(getEmptyPara());
 
-        String styleName = "upperroman";
-        mainDocumentPart.addParagraphOfText(format("Creating list by style name \"%s\".", styleName));
+        mainDocumentPart.addObject(WmlAdapter.getParagraphWithStyle("Heading1", "Creating list by style name"));
         mainDocumentPart.addObject(getEmptyPara());
-        OrderedList orderedListItem = OrderedList.getByStyleName(styleName);
-        addList(mainDocumentPart, orderedListItem.getNumberId(), 0L);
+
+        String styleName = "upperroman";
+        var listItem = numberingHelper.getListItem(styleName);
+        listItem.setNumberId(restartNumbering(mainDocumentPart, listItem));
+        addList(mainDocumentPart, listItem, 0L);
 
         mainDocumentPart.addObject(getEmptyPara());
         styleName = "diamond";
-        mainDocumentPart.addParagraphOfText(format("Creating list by style name \"%s\".", styleName));
-        mainDocumentPart.addObject(getEmptyPara());
-        UnorderedList unorderedListItem = UnorderedList.getByStyleName(styleName);
-        addList(mainDocumentPart, unorderedListItem.getNumberId(), 0L);
+        listItem = numberingHelper.getListItem(styleName);
+        listItem.setNumberId(restartNumbering(mainDocumentPart, listItem));
+        addList(mainDocumentPart, listItem, 0L);
     }
 
     @Test(dependsOnMethods = "createListByStyleName")
@@ -135,23 +103,34 @@ public class NumberedParagraphTest extends CommonTest {
         final MainDocumentPart mainDocumentPart = wmlPackage.getMainDocumentPart();
         mainDocumentPart.addObject(getEmptyPara());
         mainDocumentPart.addStyledParagraphOfText("ExampleTitle", "Example");
+        mainDocumentPart.addObject(WmlAdapter.getParagraph("Some text"));
         mainDocumentPart.addObject(getEmptyPara());
         mainDocumentPart.addStyledParagraphOfText("ExampleTitle", "Example 2");
-    }
-
-    private void addList(final MainDocumentPart mainDocumentPart, long numId, long ilvl) {
-        mainDocumentPart.addParagraphOfText(format("List of type: %s", numId));
-        mainDocumentPart.addObject(createNumberedParagraph(numId, ilvl, nextId(), true));
-        mainDocumentPart.addObject(createNumberedParagraph(numId, ilvl, nextId(), false));
-        mainDocumentPart.addObject(createNumberedParagraph(numId, ilvl, nextId(), true));
+        mainDocumentPart.addObject(WmlAdapter.getParagraph("Some more text"));
         mainDocumentPart.addObject(getEmptyPara());
     }
 
-    private void addMultiLevelList(final MainDocumentPart mainDocumentPart, long numId, long actualNumId) {
-        mainDocumentPart.addParagraphOfText(format("Multi-Level List of type: %s", actualNumId));
+    private void addList(final MainDocumentPart mainDocumentPart, ListItem<?> listItem, long level) {
+        mainDocumentPart.addObject(WmlAdapter.getParagraphWithStyle("Heading2", format("List of type: %s", listItem.getStyleName())));
+        mainDocumentPart.addObject(getEmptyPara());
+        mainDocumentPart.addObject(createNumberedParagraph(listItem, level, nextId(), true));
+        mainDocumentPart.addObject(createNumberedParagraph(listItem, level, nextId(), false));
+        mainDocumentPart.addObject(createNumberedParagraph(listItem, level, nextId(), true));
+        mainDocumentPart.addObject(getEmptyPara());
+    }
+
+    private void addMultiLevelList(final MainDocumentPart mainDocumentPart, ListItem<?> listItem) {
+        listItem.setNumberId(restartNumbering(mainDocumentPart, listItem));
+
+        mainDocumentPart.addObject(WmlAdapter.getParagraphWithStyle("Heading2", format("List of type: %s", listItem.getStyleName())));
         for (int level = 0; level < 5; level++) {
-            mainDocumentPart.addObject(createNumberedParagraph(numId, level, nextId(), true));
+            mainDocumentPart.addObject(createNumberedParagraph(listItem, level, nextId(), true));
         }
         mainDocumentPart.addObject(getEmptyPara());
+    }
+
+    private long restartNumbering(final MainDocumentPart mainDocumentPart, ListItem<?> listItem) {
+        final var ndp = mainDocumentPart.getNumberingDefinitionsPart();
+        return ndp.restart(listItem.getNumberId(), 0, 1);
     }
 }

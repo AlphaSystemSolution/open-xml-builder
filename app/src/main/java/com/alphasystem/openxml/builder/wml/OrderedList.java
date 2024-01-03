@@ -21,7 +21,7 @@ public class OrderedList extends AbstractListItem<OrderedList> {
 
     private static final int LEFT_INDENT_VALUE = 720;
     private static final int HANGING_VALUE = 360;
-    private static Map<String, OrderedList> valuesMap = new LinkedHashMap<>();
+    private static final Map<String, OrderedList> valuesMap = new LinkedHashMap<>();
 
     static {
         for (OrderedList item : values()) {
@@ -49,7 +49,7 @@ public class OrderedList extends AbstractListItem<OrderedList> {
 
     @Override
     public long getLeftIndent(int level) {
-        return LEFT_INDENT_VALUE + (LEFT_INDENT_VALUE * level);
+        return LEFT_INDENT_VALUE + ((long) LEFT_INDENT_VALUE * level);
     }
 
     @Override

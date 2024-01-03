@@ -31,14 +31,14 @@ public interface ListItem<T> {
      *
      * @param numberId current number Id
      */
-    void setNumberId(int numberId);
+    void setNumberId(long numberId);
 
     /**
      * ID of the list.
      *
      * @return list id
      */
-    int getNumberId();
+    long getNumberId();
 
     /**
      * Name of the style.

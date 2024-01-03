@@ -3,7 +3,7 @@ package com.alphasystem.openxml.builder.wml;
 /**
  * @author sali
  */
-public class HeadingList<T extends HeadingList> extends AbstractListItem<T> {
+public class HeadingList<T extends HeadingList<T>> extends AbstractListItem<T> {
 
     private static final int LEFT_INDENT_VALUE = 432;
     private static final int INCREMENT_VALUE = 144;
@@ -32,7 +32,7 @@ public class HeadingList<T extends HeadingList> extends AbstractListItem<T> {
 
     @Override
     public long getLeftIndent(int level) {
-        return LEFT_INDENT_VALUE + (INCREMENT_VALUE * level);
+        return LEFT_INDENT_VALUE + ((long) INCREMENT_VALUE * level);
     }
 
     @Override

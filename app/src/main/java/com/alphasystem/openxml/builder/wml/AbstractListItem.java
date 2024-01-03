@@ -10,7 +10,7 @@ import static org.docx4j.wml.NumberFormat.DECIMAL;
  */
 public abstract class AbstractListItem<T> implements ListItem<T> {
 
-    private int numberId;
+    private long numberId;
     private String name;
     private final String styleName;
     private final NumberFormat numberFormat;
@@ -32,12 +32,12 @@ public abstract class AbstractListItem<T> implements ListItem<T> {
     }
 
     @Override
-    public void setNumberId(int numberId) {
+    public void setNumberId(long numberId) {
         this.numberId = numberId;
     }
 
     @Override
-    public int getNumberId() {
+    public long getNumberId() {
         return numberId;
     }
 

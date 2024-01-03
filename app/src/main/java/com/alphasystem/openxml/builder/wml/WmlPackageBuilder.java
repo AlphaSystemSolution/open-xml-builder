@@ -44,7 +44,7 @@ public class WmlPackageBuilder {
     private static final String DEFAULT_TEMPLATE_PATH = "META-INF/default.dotx";
     private static final String DEFAULT_LANDSCAPE_TEMPLATE = "META-INF/default-landscape.dotx";
     private final Logger logger = LoggerFactory.getLogger(getClass());
-    private NumberingHelper numberingHelper;
+    private final NumberingHelper numberingHelper;
     private WordprocessingMLPackage wmlPackage;
 
     public static WmlPackageBuilder createPackage() throws Docx4JException {
@@ -76,8 +76,7 @@ public class WmlPackageBuilder {
         if (loadDefaultStyles) {
             wmlPackage.getMainDocumentPart().getStyleDefinitionsPart().setJaxbElement(WmlAdapter.loadStyles(null, "styles.xml"));
         }
-        numberingHelper = new NumberingHelper();
-        numberingHelper.populateDefaultNumbering();
+        numberingHelper = NumberingHelper.getInstance();
     }
 
     private WmlPackageBuilder(String templatePath) throws Docx4JException {
@@ -100,8 +99,7 @@ public class WmlPackageBuilder {
         } catch (URISyntaxException e) {
             throw new RuntimeException(e.getMessage(), e);
         }
-        numberingHelper = new NumberingHelper();
-        numberingHelper.populateDefaultNumbering();
+        numberingHelper = NumberingHelper.getInstance();
     }
 
     private WmlPackageBuilder(boolean landscape, @SuppressWarnings("unused") boolean dummy) throws Docx4JException {
@@ -141,7 +139,7 @@ public class WmlPackageBuilder {
 
     @SafeVarargs
     public final <T extends HeadingList<T>> WmlPackageBuilder multiLevelHeading(T... items) {
-        final int numberId = numberingHelper.populate(items);
+        final var numberId = numberingHelper.populate(items);
         for (int i = 0; i < items.length; i++) {
             final T currentItem = items[i];
             final String styleName = currentItem.getStyleName();
@@ -155,7 +153,7 @@ public class WmlPackageBuilder {
             boolean setPPr = pPr == null;
             PPrBuilder pPrBuilder = new PPrBuilder(pPr);
             Long level = i <= 0 ? null : (long) i;
-            final PPrBase.NumPr numPr = pPrBuilder.getNumPrBuilder().withNumId(Long.valueOf(numberId))
+            final PPrBase.NumPr numPr = pPrBuilder.getNumPrBuilder().withNumId(numberId)
                     .withIlvl(level).getObject();
             pPrBuilder.withNumPr(numPr);
             if (setPPr) {
