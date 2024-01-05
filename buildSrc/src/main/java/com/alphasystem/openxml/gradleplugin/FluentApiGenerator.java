@@ -160,6 +160,7 @@ public class FluentApiGenerator {
         final JType c = parseType(codeModel, "C");
         method.param(parseClass(codeModel, List.class).narrow(c), SRC_PARA_NAME);
         method.varParam(c, CONTENT_PARA_NAME);
+        method.annotate(SafeVarargs.class);
         final JBlock methodBody = method.body();
         final JBlock ifBlock = methodBody._if(openXmlBuilderClass.staticInvoke(HAS_CONTENT_MEHOD_NAME)
                 .arg(CONTENT_TYPE_REF))._then();
@@ -171,6 +172,7 @@ public class FluentApiGenerator {
         final JMethod method = addMethod(PROTECTED | STATIC, parseClass(codeModel, Boolean.class), HAS_CONTENT_MEHOD_NAME,
                 openXmlBuilderClass);
         method.generify("C");
+        method.annotate(SafeVarargs.class);
         method.varParam(parseType(codeModel, "C"), CONTENT_PARA_NAME);
         final JBlock methodBody = method.body();
         methodBody._return(CONTENT_TYPE_REF.ne(_null()).cand(CONTENT_TYPE_REF.ref("length").gt(JExpr.lit(0))));
