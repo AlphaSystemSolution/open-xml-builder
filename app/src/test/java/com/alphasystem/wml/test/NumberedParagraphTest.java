@@ -130,7 +130,6 @@ public class NumberedParagraphTest extends CommonTest {
     }
 
     private long restartNumbering(final MainDocumentPart mainDocumentPart, ListItem<?> listItem) {
-        final var ndp = mainDocumentPart.getNumberingDefinitionsPart();
-        return ndp.restart(listItem.getNumberId(), 0, 1);
+        return mainDocumentPart.getNumberingDefinitionsPart().restart(listItem.getNumberId(), 0, 1);
     }
 }

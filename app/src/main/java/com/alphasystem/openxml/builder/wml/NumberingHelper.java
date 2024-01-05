@@ -7,6 +7,7 @@ import org.docx4j.wml.Numbering.AbstractNum;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -118,10 +119,19 @@ public class NumberingHelper {
         var numberId = this.numberId.addAndGet(1);
         firstItem.setNumberId(numberId);
         long abstractNumId = numberId - 1;
+        System.out.printf("Populating: %s with id %s (%s)%n", firstItem.getStyleName(), firstItem.getNumberId(), abstractNumId);
         numberingBuilder.addAbstractNum(getAbstractNum(abstractNumId, IdGenerator.nextId(), IdGenerator.nextId(),
                 firstItem.getMultiLevelType(), getLevels(asList(items)))).addNum(getNum(numberId));
         listItemsMap.put(firstItem.getStyleName(), firstItem);
         return numberId;
+    }
+
+    public void update(String styleName, long numId) {
+        final var listItem = listItemsMap.get(styleName);
+        if (!Objects.isNull(listItem)) {
+            listItem.setNumberId(numId);
+            listItemsMap.put(styleName, listItem);
+        }
     }
 
 }
