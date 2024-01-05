@@ -1,5 +1,6 @@
 package com.alphasystem.openxml.builder.wml;
 
+import jakarta.xml.bind.JAXBException;
 import org.apache.commons.lang3.ArrayUtils;
 import org.docx4j.Docx4jProperties;
 import org.docx4j.jaxb.Context;
@@ -10,7 +11,6 @@ import org.docx4j.openpackaging.exceptions.Docx4JException;
 import org.docx4j.openpackaging.exceptions.InvalidFormatException;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
 import org.docx4j.openpackaging.parts.WordprocessingML.DocumentSettingsPart;
-import org.docx4j.openpackaging.parts.WordprocessingML.MainDocumentPart;
 import org.docx4j.openpackaging.parts.WordprocessingML.NumberingDefinitionsPart;
 import org.docx4j.openpackaging.parts.WordprocessingML.StyleDefinitionsPart;
 import org.docx4j.openpackaging.parts.relationships.Namespaces;
@@ -214,7 +214,7 @@ public class WmlPackageBuilder {
     }
 
     public WordprocessingMLPackage getPackage() throws InvalidFormatException {
-        final MainDocumentPart mainDocumentPart = wmlPackage.getMainDocumentPart();
+        final var mainDocumentPart = wmlPackage.getMainDocumentPart();
         mainDocumentPart.getContent().clear();
         NumberingDefinitionsPart ndp = new NumberingDefinitionsPart();
         ndp.setJaxbElement(numberingHelper.getNumbering());
