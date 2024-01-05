@@ -6,6 +6,7 @@ import com.alphasystem.openxml.builder.wml.WmlPackageBuilder;
 import com.alphasystem.openxml.builder.wml.table.ColumnData;
 import com.alphasystem.openxml.builder.wml.table.TableAdapter;
 import com.alphasystem.openxml.builder.wml.table.TableType;
+import com.alphasystem.openxml.builder.wml.table.VerticalMergeType;
 import org.docx4j.openpackaging.exceptions.Docx4JException;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
 import org.docx4j.wml.P;
@@ -99,6 +100,40 @@ public class TableAdapterTest extends CommonTest {
                 .withTableProperties(tblPr)
                 .startTable();
         addColumns(tableAdapter);
+        mainDocumentPart.addObject(tableAdapter.getTable());
+    }
+
+    @Test(dependsOnMethods = {"testTableAdapter"})
+    public void testRowSpan() {
+        var mainDocumentPart = getMainDocumentPart();
+        mainDocumentPart.addObject(WmlAdapter.getEmptyPara());
+        var tableAdapter = new TableAdapter().withNumOfColumns(4).startTable()
+                .startRow()
+                .addColumn(new ColumnData(0).withVerticalMergeType(VerticalMergeType.RESTART)
+                        .withContent(WmlAdapter.getParagraph("Row 1 & 2 Column1")))
+                .addColumn(new ColumnData(1).withVerticalMergeType(VerticalMergeType.RESTART)
+                        .withContent(WmlAdapter.getParagraph("Row 1, 2, & 3 Column 2")))
+                .addColumn(new ColumnData(2).withContent(WmlAdapter.getParagraph("Row 1 Column 3")))
+                .addColumn(new ColumnData(3).withContent(WmlAdapter.getParagraph("Row1 Column 4")))
+                .endRow()
+                .startRow()
+                .addColumn(new ColumnData(0).withVerticalMergeType(VerticalMergeType.CONTINUE)
+                        .withContent(WmlAdapter.getEmptyPara()))
+                .addColumn(new ColumnData(1).withVerticalMergeType(VerticalMergeType.CONTINUE)
+                        .withContent(WmlAdapter.getEmptyPara()))
+                .addColumn(new ColumnData(2).withVerticalMergeType(VerticalMergeType.RESTART)
+                        .withContent(WmlAdapter.getParagraph("Row 2 & 3 Column 3")))
+                .addColumn(new ColumnData(3).withContent(WmlAdapter.getParagraph("Row 2 Column 4")))
+                .endRow()
+                .startRow()
+                .addColumn(new ColumnData(0).withContent(WmlAdapter.getParagraph("Row 3 Column 1")))
+                .addColumn(new ColumnData(1).withVerticalMergeType(VerticalMergeType.CONTINUE)
+                        .withContent(WmlAdapter.getEmptyPara()))
+                .addColumn(new ColumnData(2).withVerticalMergeType(VerticalMergeType.CONTINUE)
+                        .withContent(WmlAdapter.getEmptyPara()))
+                .addColumn(new ColumnData(3).withContent(WmlAdapter.getParagraph("Row 3 Column 4")))
+                .endRow();
+
         mainDocumentPart.addObject(tableAdapter.getTable());
     }
 
