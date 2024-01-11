@@ -119,7 +119,6 @@ public class NumberingHelper {
         var numberId = this.numberId.addAndGet(1);
         firstItem.setNumberId(numberId);
         long abstractNumId = numberId - 1;
-        System.out.printf("Populating: %s with id %s (%s)%n", firstItem.getStyleName(), firstItem.getNumberId(), abstractNumId);
         numberingBuilder.addAbstractNum(getAbstractNum(abstractNumId, IdGenerator.nextId(), IdGenerator.nextId(),
                 firstItem.getMultiLevelType(), getLevels(asList(items)))).addNum(getNum(numberId));
         listItemsMap.put(firstItem.getStyleName(), firstItem);
