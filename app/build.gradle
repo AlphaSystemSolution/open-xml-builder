@@ -5,6 +5,10 @@ plugins {
     id 'maven-publish'
 }
 
+repositories {
+    mavenLocal()
+}
+
 def generatedSrcDir = new File(buildDir, "generated/src/main/java")
 
 sourceSets {

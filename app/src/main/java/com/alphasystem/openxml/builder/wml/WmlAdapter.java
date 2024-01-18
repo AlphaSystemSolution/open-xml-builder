@@ -33,7 +33,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.alphasystem.openxml.builder.wml.WmlBuilderFactory.*;
 import static com.alphasystem.openxml.builder.wml.WmlBuilderFactory.getPPrBuilder;
-import static com.alphasystem.util.IdGenerator.nextId;
+import static com.alphasystem.commons.util.IdGenerator.nextId;
 import static java.lang.String.format;
 import static java.lang.Thread.currentThread;
 import static org.apache.commons.lang3.ArrayUtils.isEmpty;

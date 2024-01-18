@@ -8,7 +8,7 @@ import org.testng.annotations.Test;
 import static com.alphasystem.openxml.builder.wml.WmlAdapter.getBorder;
 import static com.alphasystem.openxml.builder.wml.WmlAdapter.getNilBorder;
 import static com.alphasystem.openxml.builder.wml.WmlBuilderFactory.*;
-import static com.alphasystem.util.IdGenerator.nextId;
+import static com.alphasystem.commons.util.IdGenerator.nextId;
 import static org.docx4j.XmlUtils.marshaltoString;
 import static org.docx4j.wml.STBorder.SINGLE;
 import static org.docx4j.wml.STLineSpacingRule.AUTO;
