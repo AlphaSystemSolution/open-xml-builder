@@ -24,6 +24,7 @@ tasks.compileJava {
 }
 
 dependencies {
+    api "io.github.sfali23:commons:${as_commons_version}"
     api "org.docx4j:docx4j-core:${docx4j_version}"
     api "org.docx4j:docx4j-export-fo:${docx4j_version}"
     api "org.docx4j:docx4j-JAXB-MOXy:${docx4j_version}"
@@ -37,9 +38,9 @@ dependencies {
     testImplementation 'org.uncommons:reportng:1.1.4'
 }
 
-group = 'com.alphasystem.openxml'
-version = '11.4.9.1'
-sourceCompatibility = '11'
+group = 'io.github.sfali23.openxml'
+sourceCompatibility = JavaVersion.VERSION_17
+targetCompatibility = JavaVersion.VERSION_17
 
 java {
     withJavadocJar()
