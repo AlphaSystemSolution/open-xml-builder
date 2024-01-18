@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.alphasystem.openxml.builder.wml.WmlBuilderFactory.*;
+import static com.alphasystem.openxml.builder.wml.WmlBuilderFactory.getPPrBuilder;
 import static com.alphasystem.util.IdGenerator.nextId;
 import static java.lang.String.format;
 import static java.lang.Thread.currentThread;
@@ -212,6 +213,16 @@ public class WmlAdapter {
         final PPrBuilder pPrBuilder = getPPrBuilder();
         PPrBase.NumPr numPr = applyNumbering ? getNumPr(listId, level) : null;
         return pPrBuilder.withNumPr(numPr).withPStyle(style).getObject();
+    }
+
+    public static PPr getListParagraphProperties(ListItem<?> listItem, long level, boolean applyNumbering) {
+        return getListParagraphProperties(listItem, level, null, applyNumbering);
+    }
+
+    public static PPr getListParagraphProperties(ListItem<?> listItem, long level, String style, boolean applyNumbering) {
+        final var sanitizeStyle = isBlank(style) ? "ListParagraph" : style;
+        final var numPr = applyNumbering ? getNumPr(listItem.getNumberId(), level) : null;
+        return getPPrBuilder().withPStyle(sanitizeStyle).withNumPr(numPr).getObject();
     }
 
     public static Color getColor(String value) {

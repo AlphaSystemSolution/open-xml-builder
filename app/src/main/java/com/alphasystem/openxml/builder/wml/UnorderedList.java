@@ -24,7 +24,7 @@ public class UnorderedList extends AbstractListItem<UnorderedList> {
     private static final int LEFT_INDENT_VALUE = 720;
     private static final int HANGING_VALUE = 360;
 
-    private static Map<String, UnorderedList> valuesMap = new LinkedHashMap<>();
+    private static final Map<String, UnorderedList> valuesMap = new LinkedHashMap<>();
 
     static {
         for (UnorderedList item : values()) {

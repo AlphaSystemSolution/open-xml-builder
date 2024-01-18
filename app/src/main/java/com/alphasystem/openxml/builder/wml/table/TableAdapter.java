@@ -151,10 +151,7 @@ public final class TableAdapter {
     }
 
     public TableAdapter addColumn(ColumnData columnData) {
-        final var columnProperties = getColumnProperties(tableType, columnData.getColumnIndex(), columnData.getGridSpanValue(),
-                columnData.getVerticalMergeType(), columnData.getColumnProperties(), columnAdapter.getColumns());
-        final Tc tc = getTcBuilder().withTcPr(columnProperties).addContent(columnData.getContent()).getObject();
-        trBuilder.addContent(tc);
+        trBuilder.addContent(createColumn(tableType, columnData, getColumns()));
         return this;
     }
 
@@ -164,6 +161,12 @@ public final class TableAdapter {
 
     public List<ColumnInfo> getColumns() {
         return columnAdapter.getColumns();
+    }
+
+    public static Tc createColumn(TableType tableType, ColumnData columnData, List<ColumnInfo> columnInfos) {
+        final var columnProperties = getColumnProperties(tableType, columnData.getColumnIndex(), columnData.getGridSpanValue(),
+                columnData.getVerticalMergeType(), columnData.getColumnProperties(), columnInfos);
+        return getTcBuilder().withTcPr(columnProperties).addContent(columnData.getContent()).getObject();
     }
 
     public static TcPr getColumnProperties(TableType tableType,
@@ -189,13 +192,14 @@ public final class TableAdapter {
         }
 
         TcPrBuilder tcPrBuilder = getTcPrBuilder();
-        TcPrInner.VMerge vMerge = null;
-        if (verticalMergeType != null) {
-            vMerge = tcPrBuilder.getVMergeBuilder().withVal(verticalMergeType.getValue()).getObject();
-        }
 
-        TblWidth tblWidth = getTblWidthBuilder().withType(tableType.getColumnType()).withW(columnWidth.longValue()).getObject();
-        tcPrBuilder.withGridSpan(gs).withTcW(tblWidth).withVMerge(vMerge);
+        final var tblWidth = getTblWidthBuilder().withType(tableType.getColumnType()).withW(columnWidth.longValue()).getObject();
+        tcPrBuilder.withGridSpan(gs).withTcW(tblWidth);
+
+        if (verticalMergeType != null && !VerticalMergeType.NONE.equals(verticalMergeType)) {
+            final var vMerge = tcPrBuilder.getVMergeBuilder().withVal(verticalMergeType.getValue()).getObject();
+            tcPrBuilder.withVMerge(vMerge);
+        }
 
         return new TcPrBuilder(tcPrBuilder.getObject(), columnProperties).getObject();
     }

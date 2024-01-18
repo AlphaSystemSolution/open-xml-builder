@@ -2,7 +2,7 @@ package com.alphasystem.openxml.builder.wml.table;
 
 public enum VerticalMergeType {
 
-    RESTART("restart"), CONTINUE(null);
+    RESTART("restart"), CONTINUE(null), NONE(null);
 
     private final String value;
 

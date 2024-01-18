@@ -4,8 +4,12 @@ import com.alphasystem.util.IdGenerator;
 import org.docx4j.wml.*;
 import org.docx4j.wml.Numbering.AbstractNum;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 import static com.alphasystem.openxml.builder.wml.OrderedList.*;
 import static com.alphasystem.openxml.builder.wml.UnorderedList.*;
@@ -17,6 +21,8 @@ import static org.apache.commons.lang3.ArrayUtils.add;
  * @author sali
  */
 public class NumberingHelper {
+
+    private final Map<String, ListItem<?>> listItemsMap = new HashMap<>();
 
     private static Numbering.Num getNum(long numId) {
         return getNum(numId, numId - 1);
@@ -68,14 +74,32 @@ public class NumberingHelper {
                 .withMultiLevelType(multiLevel).addLvl(lvls).getObject();
     }
 
+    private static final NumberingHelper instance;
+
+    static {
+        instance = new NumberingHelper();
+        instance.populateDefaultNumbering();
+    }
+
+    public static NumberingHelper getInstance() {
+        return instance;
+    }
+
     private final NumberingBuilder numberingBuilder = getNumberingBuilder();
-    private AtomicInteger numberId = new AtomicInteger(0);
+    private final AtomicLong numberId = new AtomicLong(0);
+
+    private NumberingHelper(){
+    }
 
     public Numbering getNumbering() {
         return numberingBuilder.getObject();
     }
 
-    public void populateDefaultNumbering() {
+    public ListItem<?> getListItem(String styleName) {
+        return listItemsMap.get(styleName);
+    }
+
+    private void populateDefaultNumbering() {
         populate(ARABIC, LOWER_ALPHA, LOWER_ROMAN, UPPER_ALPHA, UPPER_ROMAN);
         populate(LOWER_ALPHA, LOWER_ROMAN, UPPER_ALPHA, UPPER_ROMAN, ARABIC);
         populate(LOWER_ROMAN, UPPER_ALPHA, UPPER_ROMAN, ARABIC, LOWER_ALPHA);
@@ -90,14 +114,23 @@ public class NumberingHelper {
     }
 
     @SafeVarargs
-    public final <T extends ListItem<T>> int populate(T... items) {
+    public final <T extends ListItem<T>> long populate(T... items) {
         T firstItem = items[0];
-        int numberId = this.numberId.addAndGet(1);
+        var numberId = this.numberId.addAndGet(1);
         firstItem.setNumberId(numberId);
         long abstractNumId = numberId - 1;
         numberingBuilder.addAbstractNum(getAbstractNum(abstractNumId, IdGenerator.nextId(), IdGenerator.nextId(),
                 firstItem.getMultiLevelType(), getLevels(asList(items)))).addNum(getNum(numberId));
+        listItemsMap.put(firstItem.getStyleName(), firstItem);
         return numberId;
+    }
+
+    public void update(String styleName, long numId) {
+        final var listItem = listItemsMap.get(styleName);
+        if (!Objects.isNull(listItem)) {
+            listItem.setNumberId(numId);
+            listItemsMap.put(styleName, listItem);
+        }
     }
 
 }

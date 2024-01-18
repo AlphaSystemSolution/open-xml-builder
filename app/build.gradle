@@ -58,7 +58,7 @@ tasks.withType(JavaCompile) {
 }
 
 tasks.withType(Test) {
-    systemProperty 'docs.dir', "${buildDir}/test-files"
+    systemProperty 'docs.dir', "/Users/sfali/Library/Group Containers/UBF8T346G9.Office/SFA"
 }
 
 test {

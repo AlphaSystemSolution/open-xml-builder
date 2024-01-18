@@ -7,7 +7,6 @@ import org.docx4j.openpackaging.parts.WordprocessingML.MainDocumentPart;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
@@ -54,9 +53,8 @@ public abstract class CommonTest {
     @AfterClass
     public void tearDown() {
         try {
-            final File file = Paths.get(docsPath.toString(), getFileName()).toFile();
+            final var file = Paths.get(docsPath.toString(), getFileName()).toFile();
             WmlAdapter.save(file, wmlPackage);
-            //WmlAdapter.saveAsPdf(file, wmlPackage);
         } catch (Throwable e) {
             fail(e.getMessage(), e);
         }
