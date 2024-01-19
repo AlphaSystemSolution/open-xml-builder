@@ -4,7 +4,6 @@ import com.alphasystem.commons.SystemException;
 import com.alphasystem.openxml.builder.wml.WmlPackageBuilder;
 import com.alphasystem.openxml.builder.wml.table.ColumnData;
 import com.alphasystem.openxml.builder.wml.table.TableAdapter;
-import org.docx4j.openpackaging.exceptions.InvalidFormatException;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
 import org.testng.annotations.Test;
 
@@ -23,14 +22,11 @@ public class CustomTemplateCustomStylesTest extends CustomStylesTest {
 
     @Override
     protected WordprocessingMLPackage loadWmlPackage() throws SystemException {
-        try {
-            return WmlPackageBuilder.createPackage("META-INF/Custom.dotx")
-                    .styles("META-INF/custom-styles.xml")
-                    .multiLevelHeading(EXAMPLE)
-                    .getPackage();
-        } catch (InvalidFormatException e) {
-            throw new SystemException(e.getMessage(), e);
-        }
+        final var inputs = new WmlPackageBuilder.WmlPackageInputs().withTemplatePath("META-INF/Custom.dotx");
+        return new WmlPackageBuilder(inputs)
+                .styles("META-INF/custom-styles.xml")
+                .multiLevelHeading(EXAMPLE)
+                .getPackage();
     }
 
     @Test

@@ -4,6 +4,7 @@ import com.alphasystem.commons.SystemException;
 import com.alphasystem.commons.util.AppUtil;
 import jakarta.xml.bind.JAXBException;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.docx4j.Docx4jProperties;
 import org.docx4j.XmlUtils;
 import org.docx4j.jaxb.Context;
@@ -23,20 +24,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.UncheckedIOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.List;
 import java.util.Objects;
 
 import static com.alphasystem.openxml.builder.wml.WmlBuilderFactory.BOOLEAN_DEFAULT_TRUE_TRUE;
 import static com.alphasystem.openxml.builder.wml.WmlBuilderFactory.getCTRelBuilder;
 import static java.lang.String.format;
-import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.docx4j.openpackaging.contenttype.ContentTypes.WORDPROCESSINGML_DOCUMENT;
 import static org.docx4j.openpackaging.contenttype.ContentTypes.WORDPROCESSINGML_DOCUMENT_MACROENABLED;
 
@@ -50,103 +45,51 @@ public class WmlPackageBuilder {
     private static final String DEFAULT_TEMPLATE_PATH = "META-INF/default.dotx";
     private static final String DEFAULT_LANDSCAPE_TEMPLATE = "META-INF/default-landscape.dotx";
     private final Logger logger = LoggerFactory.getLogger(getClass());
-    private final NumberingHelper numberingHelper;
+    private final NumberingHelper numberingHelper = NumberingHelper.getInstance();
+    ;
     private WordprocessingMLPackage wmlPackage;
 
-    public static WmlPackageBuilder createPackage() throws SystemException {
-        return createPackage(null);
+    public WmlPackageBuilder() throws SystemException {
+        this(new WmlPackageInputs());
     }
 
-    public static WmlPackageBuilder createPackage(boolean landscape) throws SystemException {
-        return new WmlPackageBuilder(landscape, true);
+    public WmlPackageBuilder(WmlPackageInputs inputs) throws SystemException {
+        initPackage(inputs);
     }
 
-    public static WmlPackageBuilder createPackage(String templatePath) throws SystemException {
-        return new WmlPackageBuilder(templatePath);
-    }
-
-    public WmlPackageBuilder(boolean loadDefaultStyles) throws SystemException {
-        this(null, false, loadDefaultStyles);
-    }
-
-    public WmlPackageBuilder(PageSizePaper sz, boolean landscape, boolean loadDefaultStyles) throws SystemException {
-        if (sz == null) {
-            String paperSize = Docx4jProperties.getProperties().getProperty("docx4j.PageSize", "A4");
+    private void initPackage(WmlPackageInputs inputs) throws SystemException {
+        final var pageSizePaper = inputs.getPageSizePaper();
+        final var landscape = inputs.isLandscape();
+        final var templatePath = inputs.getTemplatePath();
+        final var loadDefaultStyles = inputs.isLoadDefaultStyles();
+        if (Objects.nonNull(pageSizePaper)) {
             try {
-                sz = PageSizePaper.valueOf(paperSize);
-            } catch (IllegalArgumentException ex) {
-                sz = PageSizePaper.A4;
+                wmlPackage = WordprocessingMLPackage.createPackage(pageSizePaper, landscape);
+            } catch (InvalidFormatException e) {
+                logger.warn("Unable to load package from page zie: {}", pageSizePaper.value());
             }
         }
-        try {
-            wmlPackage = WordprocessingMLPackage.createPackage(sz, landscape);
-        } catch (InvalidFormatException ex) {
-            throw new SystemException("Unable to create package", ex);
+        if (Objects.nonNull(templatePath)) {
+            try {
+                wmlPackage = new TemplateLoader(templatePath).getPackage();
+            } catch (SystemException e) {
+                logger.warn("Unable to load package from template: {}", templatePath);
+            }
+        }
+        if (Objects.isNull(wmlPackage)) {
+            try {
+                wmlPackage = WordprocessingMLPackage.createPackage();
+            } catch (InvalidFormatException e) {
+                throw new SystemException("Unable to create default package", e);
+            }
         }
         if (loadDefaultStyles) {
             try {
-                final var styles = new StyleLoader(null, "META-INF/styles.xml").getStyles();
+                Styles styles = new StyleLoader(null, "META-INF/styles.xml").getStyles();
                 wmlPackage.getMainDocumentPart().getStyleDefinitionsPart().setJaxbElement(styles);
-            } catch (SystemException ex) {
-                logger.error("Unable to load default style", ex);
+            } catch (Exception ex) {
+                logger.warn("Unable to load default styles", ex);
             }
-        }
-        numberingHelper = NumberingHelper.getInstance();
-    }
-
-    private WmlPackageBuilder(String templatePath) throws SystemException {
-        templatePath = isBlank(templatePath) ? DEFAULT_TEMPLATE_PATH : templatePath;
-        URL url;
-        final List<URL> urls;
-        try {
-            urls = WmlAdapter.readResources(templatePath);
-            url = urls.get(0);
-        } catch (IOException e) {
-            throw new UncheckedIOException(e.getMessage(), e);
-        }
-        if (url == null) {
-            throw new RuntimeException(format("Unable to open template \"%s\".", templatePath));
-        }
-        try {
-            loadTemplate(templatePath, url);
-        } catch (IOException | URISyntaxException | Docx4JException e) {
-            throw new SystemException(e.getMessage(), e);
-        }
-        numberingHelper = NumberingHelper.getInstance();
-    }
-
-    private WmlPackageBuilder(boolean landscape, @SuppressWarnings("unused") boolean dummy) throws SystemException {
-        this(landscape ? DEFAULT_LANDSCAPE_TEMPLATE : DEFAULT_TEMPLATE_PATH);
-    }
-
-    private void loadTemplate(String templatePath, URL url) throws Docx4JException, IOException, URISyntaxException {
-        try (InputStream is = url.openStream()) {
-            wmlPackage = WordprocessingMLPackage.load(is);
-
-            // Replace dotx content type with docx
-            ContentTypeManager ctm = wmlPackage.getContentTypeManager();
-
-            // Get <Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.template.main+xml"/>
-            CTOverride override = ctm.getOverrideContentType().get(new URI("/word/document.xml")); // note this assumption
-
-            String contentType = templatePath.endsWith("dotm") /* macro enabled? */ ? WORDPROCESSINGML_DOCUMENT_MACROENABLED : WORDPROCESSINGML_DOCUMENT;
-            override.setContentType(contentType);
-
-            // Create settings part, and init content
-            DocumentSettingsPart dsp = new DocumentSettingsPart();
-            CTSettings settings = Context.getWmlObjectFactory().createCTSettings();
-            dsp.setJaxbElement(settings);
-            wmlPackage.getMainDocumentPart().addTargetPart(dsp);
-
-            // Create external rel
-            RelationshipsPart rp = RelationshipsPart.createRelationshipsPartForPart(dsp);
-            org.docx4j.relationships.Relationship rel = new org.docx4j.relationships.ObjectFactory().createRelationship();
-            rel.setType(Namespaces.ATTACHED_TEMPLATE);
-            rel.setTarget(url.toExternalForm());
-            rel.setTargetMode("External");
-            rp.addRelationship(rel); // addRelationship sets the rel's @Id
-
-            settings.setAttachedTemplate(getCTRelBuilder().withId(rel.getId()).getObject());
         }
     }
 
@@ -212,7 +155,7 @@ public class WmlPackageBuilder {
         return this;
     }
 
-    public WmlPackageBuilder styles(Styles... styles) {
+    public WmlPackageBuilder styles(Styles... styles) throws SystemException {
         if (ArrayUtils.isEmpty(styles)) {
             return this;
         }
@@ -222,19 +165,79 @@ public class WmlPackageBuilder {
                 styleDefinitionsPart.getContents().getStyle().addAll(style.getStyle());
             }
         } catch (Docx4JException e) {
-            e.printStackTrace();
+            throw new SystemException(e);
         }
         return this;
     }
 
-    public WordprocessingMLPackage getPackage() throws InvalidFormatException {
+    public WordprocessingMLPackage getPackage() throws SystemException {
         final var mainDocumentPart = wmlPackage.getMainDocumentPart();
         mainDocumentPart.getContent().clear();
-        NumberingDefinitionsPart ndp = new NumberingDefinitionsPart();
-        ndp.setJaxbElement(numberingHelper.getNumbering());
-        mainDocumentPart.addTargetPart(ndp);
-
+        try {
+            final var ndp = new NumberingDefinitionsPart();
+            ndp.setJaxbElement(numberingHelper.getNumbering());
+            mainDocumentPart.addTargetPart(ndp);
+        } catch (InvalidFormatException e) {
+            throw new SystemException(e);
+        }
         return wmlPackage;
+    }
+
+    private static class TemplateLoader {
+
+        private WordprocessingMLPackage wmlPackage;
+        private final String contentType;
+
+        TemplateLoader(String templatePath) throws SystemException {
+            templatePath = StringUtils.isBlank(templatePath) ? DEFAULT_TEMPLATE_PATH : templatePath;
+            contentType = templatePath.endsWith("dotm") /* macro enabled? */ ? WORDPROCESSINGML_DOCUMENT_MACROENABLED
+                    : WORDPROCESSINGML_DOCUMENT;
+            loadTemplate(templatePath);
+        }
+
+        public WordprocessingMLPackage getPackage() {
+            return wmlPackage;
+        }
+
+        private void loadTemplate(String templatePath) throws SystemException {
+            final var wmlPackages = AppUtil.processResource(templatePath, this::loadTemplate);
+            if (wmlPackages.isEmpty()) {
+                return;
+            }
+            wmlPackage = wmlPackages.get(0);
+        }
+
+        private WordprocessingMLPackage loadTemplate(URL url) {
+            try (final var is = url.openStream()) {
+                final var wmlPackage = WordprocessingMLPackage.load(is);
+                // Replace dotx content type with docx
+                ContentTypeManager ctm = wmlPackage.getContentTypeManager();
+
+                // Get <Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.template.main+xml"/>
+                CTOverride override = ctm.getOverrideContentType().get(new URI("/word/document.xml")); // note this assumption
+
+                override.setContentType(contentType);
+
+                // Create settings part, and init content
+                final var dsp = new DocumentSettingsPart();
+                CTSettings settings = Context.getWmlObjectFactory().createCTSettings();
+                dsp.setJaxbElement(settings);
+                wmlPackage.getMainDocumentPart().addTargetPart(dsp);
+
+                // Create external rel
+                RelationshipsPart rp = RelationshipsPart.createRelationshipsPartForPart(dsp);
+                org.docx4j.relationships.Relationship rel = new org.docx4j.relationships.ObjectFactory().createRelationship();
+                rel.setType(Namespaces.ATTACHED_TEMPLATE);
+                rel.setTarget(url.toExternalForm());
+                rel.setTargetMode("External");
+                rp.addRelationship(rel); // addRelationship sets the rel's @Id
+
+                settings.setAttachedTemplate(getCTRelBuilder().withId(rel.getId()).getObject());
+                return wmlPackage;
+            } catch (IOException | Docx4JException | URISyntaxException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
     private static class StyleLoader {
@@ -266,12 +269,75 @@ public class WmlPackageBuilder {
             }
         }
 
-        private static Styles unmarshal(Path path) {
-            try (final var is = Files.newInputStream(path)) {
+        private static Styles unmarshal(URL url) {
+            try (final var is = url.openStream()) {
                 return (Styles) XmlUtils.unmarshal(is);
             } catch (IOException | JAXBException e) {
                 throw new RuntimeException(e);
             }
+        }
+    }
+
+    public static class WmlPackageInputs {
+
+        private String templatePath;
+        private  boolean loadDefaultStyles;
+        private boolean landscape;
+        private PageSizePaper pageSizePaper;
+
+        public WmlPackageInputs() {
+        }
+
+        public String getTemplatePath() {
+            return templatePath;
+        }
+
+        public boolean isLoadDefaultStyles() {
+            return loadDefaultStyles;
+        }
+
+        public boolean isLandscape() {
+            return landscape;
+        }
+
+        public PageSizePaper getPageSizePaper() {
+            return pageSizePaper;
+        }
+
+        public WmlPackageInputs withTemplatePath(String templatePath) {
+            this.templatePath = templatePath;
+            return this;
+        }
+
+        public WmlPackageInputs useDefaultTemplate() {
+            this.templatePath = DEFAULT_TEMPLATE_PATH;
+            return this;
+        }
+
+        public WmlPackageInputs useDefaultStyles() {
+            this.loadDefaultStyles = true;
+            return this;
+        }
+
+        public WmlPackageInputs useLandscape() {
+            this.templatePath = DEFAULT_LANDSCAPE_TEMPLATE;
+            this.landscape = true;
+            return this;
+        }
+
+        public WmlPackageInputs withPageSizePaper(PageSizePaper pageSizePaper) {
+            this.pageSizePaper = pageSizePaper;
+            return this;
+        }
+
+        public WmlPackageInputs withPageSizePaper(String value) {
+            final var paperSize = Docx4jProperties.getProperties().getProperty("docx4j.PageSize", value);
+            try {
+                pageSizePaper = PageSizePaper.valueOf(paperSize);
+            } catch (IllegalArgumentException ex) {
+                System.err.printf("Invalid page size value: %s%n", value);
+            }
+            return this;
         }
     }
 }

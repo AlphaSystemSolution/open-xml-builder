@@ -8,7 +8,6 @@ import com.alphasystem.openxml.builder.wml.table.ColumnData;
 import com.alphasystem.openxml.builder.wml.table.TableAdapter;
 import com.alphasystem.openxml.builder.wml.table.TableType;
 import com.alphasystem.openxml.builder.wml.table.VerticalMergeType;
-import org.docx4j.openpackaging.exceptions.InvalidFormatException;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
 import org.docx4j.wml.P;
 import org.testng.annotations.Test;
@@ -26,11 +25,7 @@ public class TableAdapterTest extends CommonTest {
 
     @Override
     protected WordprocessingMLPackage loadWmlPackage() throws SystemException {
-        try {
-            return WmlPackageBuilder.createPackage().styles("META-INF/custom-styles.xml").getPackage();
-        } catch (InvalidFormatException e) {
-            throw new SystemException(e.getMessage(), e);
-        }
+        return new WmlPackageBuilder().styles("META-INF/custom-styles.xml").getPackage();
     }
 
     @Test

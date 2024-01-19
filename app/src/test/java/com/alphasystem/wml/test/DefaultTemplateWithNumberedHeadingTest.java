@@ -2,7 +2,6 @@ package com.alphasystem.wml.test;
 
 import com.alphasystem.commons.SystemException;
 import com.alphasystem.openxml.builder.wml.WmlPackageBuilder;
-import org.docx4j.openpackaging.exceptions.InvalidFormatException;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
 
 /**
@@ -17,11 +16,8 @@ public class DefaultTemplateWithNumberedHeadingTest extends TemplateTest {
 
     @Override
     protected WordprocessingMLPackage loadWmlPackage() throws SystemException {
-        try {
-            return WmlPackageBuilder.createPackage().multiLevelHeading().getPackage();
-        } catch (InvalidFormatException e) {
-            throw new SystemException(e.getMessage(), e);
-        }
+        final var inputs = new WmlPackageBuilder.WmlPackageInputs().useDefaultTemplate();
+        return new WmlPackageBuilder(inputs).multiLevelHeading().getPackage();
     }
 
 //    @Test
