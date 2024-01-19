@@ -1,7 +1,8 @@
 package com.alphasystem.wml.test;
 
+import com.alphasystem.commons.SystemException;
 import com.alphasystem.openxml.builder.wml.WmlPackageBuilder;
-import org.docx4j.openpackaging.exceptions.Docx4JException;
+import org.docx4j.openpackaging.exceptions.InvalidFormatException;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
 
 /**
@@ -15,8 +16,12 @@ public class DefaultTemplateCustomStyles extends CustomStylesTest {
     }
 
     @Override
-    protected WordprocessingMLPackage loadWmlPackage() throws Docx4JException {
-        return WmlPackageBuilder.createPackage().styles("META-INF/custom-styles.xml").getPackage();
+    protected WordprocessingMLPackage loadWmlPackage() throws SystemException {
+        try {
+            return WmlPackageBuilder.createPackage().styles("META-INF/custom-styles.xml").getPackage();
+        } catch (InvalidFormatException e) {
+            throw new SystemException(e.getMessage(), e);
+        }
     }
 
 }

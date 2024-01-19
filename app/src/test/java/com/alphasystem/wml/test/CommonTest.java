@@ -1,7 +1,7 @@
 package com.alphasystem.wml.test;
 
+import com.alphasystem.commons.SystemException;
 import com.alphasystem.openxml.builder.wml.WmlAdapter;
-import org.docx4j.openpackaging.exceptions.Docx4JException;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
 import org.docx4j.openpackaging.parts.WordprocessingML.MainDocumentPart;
 import org.testng.annotations.AfterClass;
@@ -38,14 +38,14 @@ public abstract class CommonTest {
 
     protected abstract String getFileName();
 
-    protected abstract WordprocessingMLPackage loadWmlPackage() throws Docx4JException;
+    protected abstract WordprocessingMLPackage loadWmlPackage() throws SystemException;
 
     @BeforeClass
     public void setup() {
         try {
             wmlPackage = loadWmlPackage();
             mainDocumentPart = wmlPackage.getMainDocumentPart();
-        } catch (Docx4JException e) {
+        } catch (SystemException e) {
             fail(e.getMessage(), e);
         }
     }

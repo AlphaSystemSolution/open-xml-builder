@@ -1,8 +1,11 @@
 package com.alphasystem.openxml.builder.wml;
 
+import com.alphasystem.commons.SystemException;
+import com.alphasystem.commons.util.AppUtil;
 import jakarta.xml.bind.JAXBException;
 import org.apache.commons.lang3.ArrayUtils;
 import org.docx4j.Docx4jProperties;
+import org.docx4j.XmlUtils;
 import org.docx4j.jaxb.Context;
 import org.docx4j.model.structure.PageSizePaper;
 import org.docx4j.openpackaging.contenttype.CTOverride;
@@ -25,7 +28,10 @@ import java.io.UncheckedIOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
+import java.util.Objects;
 
 import static com.alphasystem.openxml.builder.wml.WmlBuilderFactory.BOOLEAN_DEFAULT_TRUE_TRUE;
 import static com.alphasystem.openxml.builder.wml.WmlBuilderFactory.getCTRelBuilder;
@@ -47,39 +53,48 @@ public class WmlPackageBuilder {
     private final NumberingHelper numberingHelper;
     private WordprocessingMLPackage wmlPackage;
 
-    public static WmlPackageBuilder createPackage() throws Docx4JException {
+    public static WmlPackageBuilder createPackage() throws SystemException {
         return createPackage(null);
     }
 
-    public static WmlPackageBuilder createPackage(boolean landscape) throws Docx4JException {
+    public static WmlPackageBuilder createPackage(boolean landscape) throws SystemException {
         return new WmlPackageBuilder(landscape, true);
     }
 
-    public static WmlPackageBuilder createPackage(String templatePath) throws Docx4JException {
+    public static WmlPackageBuilder createPackage(String templatePath) throws SystemException {
         return new WmlPackageBuilder(templatePath);
     }
 
-    public WmlPackageBuilder(boolean loadDefaultStyles) throws Docx4JException {
+    public WmlPackageBuilder(boolean loadDefaultStyles) throws SystemException {
         this(null, false, loadDefaultStyles);
     }
 
-    public WmlPackageBuilder(PageSizePaper sz, boolean landscape, boolean loadDefaultStyles) throws Docx4JException {
+    public WmlPackageBuilder(PageSizePaper sz, boolean landscape, boolean loadDefaultStyles) throws SystemException {
         if (sz == null) {
             String paperSize = Docx4jProperties.getProperties().getProperty("docx4j.PageSize", "A4");
             try {
                 sz = PageSizePaper.valueOf(paperSize);
-            } catch (IllegalArgumentException e) {
+            } catch (IllegalArgumentException ex) {
                 sz = PageSizePaper.A4;
             }
         }
-        wmlPackage = WordprocessingMLPackage.createPackage(sz, landscape);
+        try {
+            wmlPackage = WordprocessingMLPackage.createPackage(sz, landscape);
+        } catch (InvalidFormatException ex) {
+            throw new SystemException("Unable to create package", ex);
+        }
         if (loadDefaultStyles) {
-            wmlPackage.getMainDocumentPart().getStyleDefinitionsPart().setJaxbElement(WmlAdapter.loadStyles(null, "styles.xml"));
+            try {
+                final var styles = new StyleLoader(null, "META-INF/styles.xml").getStyles();
+                wmlPackage.getMainDocumentPart().getStyleDefinitionsPart().setJaxbElement(styles);
+            } catch (SystemException ex) {
+                logger.error("Unable to load default style", ex);
+            }
         }
         numberingHelper = NumberingHelper.getInstance();
     }
 
-    private WmlPackageBuilder(String templatePath) throws Docx4JException {
+    private WmlPackageBuilder(String templatePath) throws SystemException {
         templatePath = isBlank(templatePath) ? DEFAULT_TEMPLATE_PATH : templatePath;
         URL url;
         final List<URL> urls;
@@ -94,15 +109,13 @@ public class WmlPackageBuilder {
         }
         try {
             loadTemplate(templatePath, url);
-        } catch (IOException e) {
-            throw new UncheckedIOException(e.getMessage(), e);
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(e.getMessage(), e);
+        } catch (IOException | URISyntaxException | Docx4JException e) {
+            throw new SystemException(e.getMessage(), e);
         }
         numberingHelper = NumberingHelper.getInstance();
     }
 
-    private WmlPackageBuilder(boolean landscape, @SuppressWarnings("unused") boolean dummy) throws Docx4JException {
+    private WmlPackageBuilder(boolean landscape, @SuppressWarnings("unused") boolean dummy) throws SystemException {
         this(landscape ? DEFAULT_LANDSCAPE_TEMPLATE : DEFAULT_TEMPLATE_PATH);
     }
 
@@ -187,14 +200,15 @@ public class WmlPackageBuilder {
         return multiLevelHeading(Headings.HEADING1, Headings.HEADING2, Headings.HEADING3, Headings.HEADING4, Headings.HEADING5);
     }
 
-    public WmlPackageBuilder styles(String... paths) {
+    public WmlPackageBuilder styles(String... paths) throws SystemException {
+        final StyleDefinitionsPart styleDefinitionsPart = wmlPackage.getMainDocumentPart().getStyleDefinitionsPart();
+        final Styles styles;
         try {
-            final StyleDefinitionsPart styleDefinitionsPart = wmlPackage.getMainDocumentPart().getStyleDefinitionsPart();
-            Styles styles = WmlAdapter.loadStyles(styleDefinitionsPart.getContents(), paths);
-            styleDefinitionsPart.setJaxbElement(styles);
+            styles = new StyleLoader(styleDefinitionsPart.getContents(), paths).getStyles();
         } catch (Docx4JException e) {
-            e.printStackTrace();
+            throw new SystemException(e.getMessage(), e);
         }
+        styleDefinitionsPart.setJaxbElement(styles);
         return this;
     }
 
@@ -221,5 +235,43 @@ public class WmlPackageBuilder {
         mainDocumentPart.addTargetPart(ndp);
 
         return wmlPackage;
+    }
+
+    private static class StyleLoader {
+
+        private Styles styles;
+
+        StyleLoader(Styles styles, String... paths) throws SystemException {
+            this.styles = styles;
+            loadStyles(paths);
+        }
+
+        public Styles getStyles() {
+            return styles;
+        }
+
+        private void loadStyles(String... paths) throws SystemException {
+            if (Objects.isNull(paths)) {
+                return;
+            }
+            for (String path : paths) {
+                final var newStyles = AppUtil.processResource(path, StyleLoader::unmarshal);
+                newStyles.forEach(otherStyles -> {
+                    if (Objects.isNull(styles)) {
+                        styles = otherStyles;
+                    } else {
+                        styles.getStyle().addAll(otherStyles.getStyle());
+                    }
+                });
+            }
+        }
+
+        private static Styles unmarshal(Path path) {
+            try (final var is = Files.newInputStream(path)) {
+                return (Styles) XmlUtils.unmarshal(is);
+            } catch (IOException | JAXBException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 }

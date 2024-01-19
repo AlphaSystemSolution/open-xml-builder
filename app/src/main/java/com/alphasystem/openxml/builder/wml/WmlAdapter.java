@@ -25,10 +25,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.alphasystem.openxml.builder.wml.WmlBuilderFactory.*;
@@ -57,36 +54,6 @@ public class WmlAdapter {
     private static final ClassLoader CLASS_LOADER = currentThread().getContextClassLoader();
 
     private static final AtomicInteger bookmarkCount = new AtomicInteger(0);
-
-    static Styles loadStyles(Styles styles, String... paths) {
-        if (isEmpty(paths)) {
-            return styles;
-        }
-        for (String p : paths) {
-            try {
-                final List<URL> urls = readResources(p);
-                if (urls.isEmpty()) {
-                    return styles;
-                }
-                for (URL url : urls) {
-                    System.out.printf("Reading style {%s}%n", url);
-                    try (InputStream ins = url.openStream()) {
-                        final Styles otherStyles = (Styles) unmarshal(ins);
-                        if (styles == null) {
-                            styles = otherStyles;
-                        } else {
-                            styles.getStyle().addAll(otherStyles.getStyle());
-                        }
-                    } catch (JAXBException e) {
-                        e.printStackTrace();
-                    }
-                }
-            } catch (IOException e) {
-                throw new UncheckedIOException(e.getMessage(), e);
-            }
-        } // end of for
-        return styles;
-    }
 
     static Numbering loadNumbering(Numbering numbering, String... paths) {
         if (isEmpty(paths)) {
