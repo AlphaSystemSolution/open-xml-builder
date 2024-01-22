@@ -2,22 +2,21 @@ buildscript {
     repositories {
         mavenLocal()
         mavenCentral()
-        jcenter()
         maven {
             url = uri('https://repo.maven.apache.org/maven2')
         }
     }
 }
 
+plugins {
+    id("io.github.gradle-nexus.publish-plugin") version "2.0.0-rc-1"
+}
+
 allprojects {
     repositories {
         mavenLocal()
-        jcenter()
         maven {
             url = uri('https://repo.maven.apache.org/maven2')
-        }
-        maven {
-            url = uri("https://repository.jboss.org/nexus/content/repositories/thirdparty-releases/")
         }
     }
 }

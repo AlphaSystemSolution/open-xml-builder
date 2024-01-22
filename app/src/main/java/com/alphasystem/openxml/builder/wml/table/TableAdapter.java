@@ -13,7 +13,7 @@ import java.util.Objects;
 import java.util.stream.IntStream;
 
 import static com.alphasystem.openxml.builder.wml.WmlBuilderFactory.*;
-import static com.alphasystem.util.IdGenerator.nextId;
+import static com.alphasystem.commons.util.IdGenerator.nextId;
 import static java.lang.String.format;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.docx4j.sharedtypes.STOnOff.ONE;

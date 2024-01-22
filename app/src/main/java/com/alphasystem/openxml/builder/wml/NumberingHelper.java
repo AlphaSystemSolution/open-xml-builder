@@ -1,6 +1,6 @@
 package com.alphasystem.openxml.builder.wml;
 
-import com.alphasystem.util.IdGenerator;
+import com.alphasystem.commons.util.IdGenerator;
 import org.docx4j.wml.*;
 import org.docx4j.wml.Numbering.AbstractNum;
 
@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 import static com.alphasystem.openxml.builder.wml.OrderedList.*;

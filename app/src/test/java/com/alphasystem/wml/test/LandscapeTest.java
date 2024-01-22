@@ -1,7 +1,7 @@
 package com.alphasystem.wml.test;
 
+import com.alphasystem.commons.SystemException;
 import com.alphasystem.openxml.builder.wml.WmlPackageBuilder;
-import org.docx4j.openpackaging.exceptions.Docx4JException;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
 
 /**
@@ -15,7 +15,8 @@ public class LandscapeTest extends TemplateTest  {
     }
 
     @Override
-    protected WordprocessingMLPackage loadWmlPackage() throws Docx4JException {
-        return WmlPackageBuilder.createPackage(true).getPackage();
+    protected WordprocessingMLPackage loadWmlPackage() throws SystemException {
+        final var inputs = new WmlPackageBuilder.WmlPackageInputs().useLandscape();
+        return new WmlPackageBuilder(inputs).getPackage();
     }
 }

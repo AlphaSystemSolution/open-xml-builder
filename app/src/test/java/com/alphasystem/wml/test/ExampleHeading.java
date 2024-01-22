@@ -1,7 +1,7 @@
 package com.alphasystem.wml.test;
 
+import com.alphasystem.commons.util.IdGenerator;
 import com.alphasystem.openxml.builder.wml.HeadingList;
-import com.alphasystem.util.IdGenerator;
 
 public class ExampleHeading extends HeadingList<ExampleHeading> {
 

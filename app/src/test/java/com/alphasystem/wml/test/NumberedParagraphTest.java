@@ -1,7 +1,7 @@
 package com.alphasystem.wml.test;
 
+import com.alphasystem.commons.SystemException;
 import com.alphasystem.openxml.builder.wml.*;
-import org.docx4j.openpackaging.exceptions.Docx4JException;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
 import org.docx4j.openpackaging.parts.WordprocessingML.MainDocumentPart;
 import org.docx4j.wml.P;
@@ -9,11 +9,11 @@ import org.testng.annotations.Test;
 
 import java.util.Arrays;
 
+import static com.alphasystem.commons.util.IdGenerator.nextId;
 import static com.alphasystem.openxml.builder.wml.WmlAdapter.getEmptyPara;
 import static com.alphasystem.openxml.builder.wml.WmlAdapter.getText;
 import static com.alphasystem.openxml.builder.wml.WmlBuilderFactory.getPBuilder;
 import static com.alphasystem.openxml.builder.wml.WmlBuilderFactory.getRBuilder;
-import static com.alphasystem.util.IdGenerator.nextId;
 import static java.lang.String.format;
 
 /**
@@ -53,9 +53,9 @@ public class NumberedParagraphTest extends CommonTest {
     }
 
     @Override
-    protected WordprocessingMLPackage loadWmlPackage() throws Docx4JException {
-        return WmlPackageBuilder
-                .createPackage("META-INF/Custom.dotx")
+    protected WordprocessingMLPackage loadWmlPackage() throws SystemException {
+        final var inputs = new WmlPackageBuilder.WmlPackageInputs().withTemplatePath("META-INF/Custom.dotx");
+        return new WmlPackageBuilder(inputs)
                 .styles("META-INF/example-caption/styles.xml")
                 .multiLevelHeading(new ExampleHeading()).getPackage();
     }
