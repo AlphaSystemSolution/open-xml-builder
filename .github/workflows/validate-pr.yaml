@@ -1,5 +1,8 @@
 name: Validate on PRs
-on: branch
+on:
+  push:
+    branches
+      - "**"
 jobs:
   gradle:
     strategy:
