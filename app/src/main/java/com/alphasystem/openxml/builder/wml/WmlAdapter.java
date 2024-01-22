@@ -4,6 +4,9 @@
 package com.alphasystem.openxml.builder.wml;
 
 
+import com.alphasystem.docx4j.builder.wml.PBuilder;
+import com.alphasystem.docx4j.builder.wml.PPrBaseBuilder;
+import com.alphasystem.docx4j.builder.wml.WmlBuilderFactory;
 import jakarta.xml.bind.JAXBElement;
 import org.docx4j.jaxb.Context;
 import org.docx4j.openpackaging.exceptions.Docx4JException;
@@ -21,7 +24,7 @@ import java.io.File;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.alphasystem.commons.util.IdGenerator.nextId;
-import static com.alphasystem.openxml.builder.wml.WmlBuilderFactory.*;
+import static com.alphasystem.docx4j.builder.wml.WmlBuilderFactory.*;
 import static java.lang.String.format;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.docx4j.openpackaging.parts.relationships.Namespaces.HYPERLINK;
@@ -102,7 +105,7 @@ public class WmlAdapter {
 
     public static PPr getListParagraphProperties(long listId, long level, String style, boolean applyNumbering) {
         style = isBlank(style) ? "ListParagraph" : style;
-        final PPrBuilder pPrBuilder = getPPrBuilder();
+        final var pPrBuilder = getPPrBuilder();
         PPrBase.NumPr numPr = applyNumbering ? getNumPr(listId, level) : null;
         return pPrBuilder.withNumPr(numPr).withPStyle(style).getObject();
     }

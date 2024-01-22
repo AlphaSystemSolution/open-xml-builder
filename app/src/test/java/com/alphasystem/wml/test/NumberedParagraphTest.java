@@ -10,10 +10,10 @@ import org.testng.annotations.Test;
 import java.util.Arrays;
 
 import static com.alphasystem.commons.util.IdGenerator.nextId;
+import static com.alphasystem.docx4j.builder.wml.WmlBuilderFactory.getPBuilder;
+import static com.alphasystem.docx4j.builder.wml.WmlBuilderFactory.getRBuilder;
 import static com.alphasystem.openxml.builder.wml.WmlAdapter.getEmptyPara;
 import static com.alphasystem.openxml.builder.wml.WmlAdapter.getText;
-import static com.alphasystem.openxml.builder.wml.WmlBuilderFactory.getPBuilder;
-import static com.alphasystem.openxml.builder.wml.WmlBuilderFactory.getRBuilder;
 import static java.lang.String.format;
 
 /**

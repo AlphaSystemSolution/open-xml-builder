@@ -1,6 +1,7 @@
 package com.alphasystem.openxml.builder.wml;
 
 import com.alphasystem.commons.util.IdGenerator;
+import com.alphasystem.docx4j.builder.wml.NumberingBuilder;
 import org.docx4j.wml.*;
 import org.docx4j.wml.Numbering.AbstractNum;
 
@@ -10,9 +11,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicLong;
 
+import static com.alphasystem.docx4j.builder.wml.WmlBuilderFactory.*;
 import static com.alphasystem.openxml.builder.wml.OrderedList.*;
 import static com.alphasystem.openxml.builder.wml.UnorderedList.*;
-import static com.alphasystem.openxml.builder.wml.WmlBuilderFactory.*;
 import static java.util.Arrays.asList;
 import static org.apache.commons.lang3.ArrayUtils.add;
 
@@ -56,14 +57,14 @@ public class NumberingHelper {
 
     private static Lvl getLevel(long ilvl, String tplc, Boolean tentative, long startValue, NumberFormat numFmtValue,
                                 String lvlTextValue, String styleName, Jc jc, PPr pPr, RPr rPr) {
-        final LvlBuilder lvlBuilder = getLvlBuilder();
+        final var lvlBuilder = getLvlBuilder();
         NumFmt numFmt = getNumFmtBuilder().withVal(numFmtValue).getObject();
         return lvlBuilder.withIlvl(ilvl).withTplc(tplc).withTentative(tentative).withStart(startValue).withNumFmt(numFmt)
                 .withLvlText(lvlTextValue, null).withPStyle(styleName).withLvlJc(jc).withPPr(pPr).withRPr(rPr).getObject();
     }
 
     private static PPr getPPr(long leftValue, long hangingValue) {
-        final PPrBuilder pPrBuilder = getPPrBuilder();
+        final var pPrBuilder = getPPrBuilder();
         PPrBase.Ind ind = pPrBuilder.getIndBuilder().withLeft(leftValue).withHanging(hangingValue).getObject();
         return pPrBuilder.withInd(ind).getObject();
     }
