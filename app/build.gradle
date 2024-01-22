@@ -107,5 +107,3 @@ test {
         suites "testng/testng.xml"
     }
 }
-
-afterReleaseBuild.dependsOn publish
