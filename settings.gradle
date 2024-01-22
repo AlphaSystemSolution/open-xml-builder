@@ -3,4 +3,4 @@
  */
 
 include ':app'
-project(':app').name = 'openxml-builder'
+project(':app').name = 'docx4j-builder'
