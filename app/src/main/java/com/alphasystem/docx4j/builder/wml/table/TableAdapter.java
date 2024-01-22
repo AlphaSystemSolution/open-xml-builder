@@ -1,4 +1,4 @@
-package com.alphasystem.openxml.builder.wml.table;
+package com.alphasystem.docx4j.builder.wml.table;
 
 import com.alphasystem.docx4j.builder.wml.*;
 import org.apache.commons.lang3.StringUtils;

@@ -1,4 +1,4 @@
-package com.alphasystem.openxml.builder.wml;
+package com.alphasystem.docx4j.builder.wml;
 
 import org.docx4j.wml.NumberFormat;
 import org.docx4j.wml.RFonts;

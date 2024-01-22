@@ -1,6 +1,6 @@
 package com.alphasystem.wml.test;
 
-import com.alphasystem.openxml.builder.wml.WmlAdapter;
+import com.alphasystem.docx4j.builder.wml.WmlAdapter;
 import org.testng.annotations.Test;
 
 /**

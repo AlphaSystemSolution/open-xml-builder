@@ -1,13 +1,13 @@
 package com.alphasystem.wml.test;
 
 import com.alphasystem.commons.SystemException;
-import com.alphasystem.openxml.builder.wml.WmlPackageBuilder;
-import com.alphasystem.openxml.builder.wml.table.ColumnData;
-import com.alphasystem.openxml.builder.wml.table.TableAdapter;
+import com.alphasystem.docx4j.builder.wml.WmlPackageBuilder;
+import com.alphasystem.docx4j.builder.wml.table.ColumnData;
+import com.alphasystem.docx4j.builder.wml.table.TableAdapter;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
 import org.testng.annotations.Test;
 
-import static com.alphasystem.openxml.builder.wml.WmlAdapter.*;
+import static com.alphasystem.docx4j.builder.wml.WmlAdapter.*;
 import static com.alphasystem.wml.test.DocumentCaption.EXAMPLE;
 
 /**

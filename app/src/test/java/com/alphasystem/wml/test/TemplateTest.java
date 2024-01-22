@@ -1,11 +1,11 @@
 package com.alphasystem.wml.test;
 
-import com.alphasystem.openxml.builder.wml.TocGenerator;
+import com.alphasystem.docx4j.builder.wml.TocGenerator;
 import com.alphasystem.docx4j.builder.wml.WmlBuilderFactory;
 import org.docx4j.wml.P;
 import org.testng.annotations.Test;
 
-import static com.alphasystem.openxml.builder.wml.WmlAdapter.*;
+import static com.alphasystem.docx4j.builder.wml.WmlAdapter.*;
 
 /**
  * @author sali

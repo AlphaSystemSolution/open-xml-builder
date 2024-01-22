@@ -1,7 +1,7 @@
 package com.alphasystem.wml.test;
 
 import com.alphasystem.commons.SystemException;
-import com.alphasystem.openxml.builder.wml.*;
+import com.alphasystem.docx4j.builder.wml.*;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
 import org.docx4j.openpackaging.parts.WordprocessingML.MainDocumentPart;
 import org.docx4j.wml.P;
@@ -12,8 +12,8 @@ import java.util.Arrays;
 import static com.alphasystem.commons.util.IdGenerator.nextId;
 import static com.alphasystem.docx4j.builder.wml.WmlBuilderFactory.getPBuilder;
 import static com.alphasystem.docx4j.builder.wml.WmlBuilderFactory.getRBuilder;
-import static com.alphasystem.openxml.builder.wml.WmlAdapter.getEmptyPara;
-import static com.alphasystem.openxml.builder.wml.WmlAdapter.getText;
+import static com.alphasystem.docx4j.builder.wml.WmlAdapter.getEmptyPara;
+import static com.alphasystem.docx4j.builder.wml.WmlAdapter.getText;
 import static java.lang.String.format;
 
 /**

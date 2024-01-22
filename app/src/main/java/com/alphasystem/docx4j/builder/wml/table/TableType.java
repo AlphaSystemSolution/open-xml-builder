@@ -1,4 +1,4 @@
-package com.alphasystem.openxml.builder.wml.table;
+package com.alphasystem.docx4j.builder.wml.table;
 
 public enum TableType {
     AUTO("auto", "dxa"), PCT("pct", "pct");

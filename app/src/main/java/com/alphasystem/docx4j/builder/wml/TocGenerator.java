@@ -1,7 +1,5 @@
-package com.alphasystem.openxml.builder.wml;
+package com.alphasystem.docx4j.builder.wml;
 
-import com.alphasystem.docx4j.builder.wml.CTSdtDocPartBuilder;
-import com.alphasystem.docx4j.builder.wml.WmlBuilderFactory;
 import jakarta.xml.bind.JAXBElement;
 import org.docx4j.jaxb.Context;
 import org.docx4j.openpackaging.exceptions.InvalidFormatException;

@@ -1,7 +1,7 @@
 package com.alphasystem.wml.test;
 
 import com.alphasystem.commons.SystemException;
-import com.alphasystem.openxml.builder.wml.WmlPackageBuilder;
+import com.alphasystem.docx4j.builder.wml.WmlPackageBuilder;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
 
 /**

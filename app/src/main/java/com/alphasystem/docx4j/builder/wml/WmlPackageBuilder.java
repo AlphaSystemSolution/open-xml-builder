@@ -1,9 +1,7 @@
-package com.alphasystem.openxml.builder.wml;
+package com.alphasystem.docx4j.builder.wml;
 
 import com.alphasystem.commons.SystemException;
 import com.alphasystem.commons.util.AppUtil;
-import com.alphasystem.docx4j.builder.wml.PPrBuilder;
-import com.alphasystem.docx4j.builder.wml.StyleBuilder;
 import jakarta.xml.bind.JAXBException;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;

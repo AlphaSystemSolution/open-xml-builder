@@ -1,18 +1,18 @@
 package com.alphasystem.wml.test;
 
 import com.alphasystem.commons.SystemException;
-import com.alphasystem.openxml.builder.wml.WmlAdapter;
+import com.alphasystem.docx4j.builder.wml.WmlAdapter;
 import com.alphasystem.docx4j.builder.wml.WmlBuilderFactory;
-import com.alphasystem.openxml.builder.wml.WmlPackageBuilder;
-import com.alphasystem.openxml.builder.wml.table.ColumnData;
-import com.alphasystem.openxml.builder.wml.table.TableAdapter;
-import com.alphasystem.openxml.builder.wml.table.TableType;
-import com.alphasystem.openxml.builder.wml.table.VerticalMergeType;
+import com.alphasystem.docx4j.builder.wml.WmlPackageBuilder;
+import com.alphasystem.docx4j.builder.wml.table.ColumnData;
+import com.alphasystem.docx4j.builder.wml.table.TableAdapter;
+import com.alphasystem.docx4j.builder.wml.table.TableType;
+import com.alphasystem.docx4j.builder.wml.table.VerticalMergeType;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
 import org.docx4j.wml.P;
 import org.testng.annotations.Test;
 
-import static com.alphasystem.openxml.builder.wml.WmlAdapter.getText;
+import static com.alphasystem.docx4j.builder.wml.WmlAdapter.getText;
 
 public class TableAdapterTest extends CommonTest {
 

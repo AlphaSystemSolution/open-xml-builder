@@ -1,7 +1,6 @@
-package com.alphasystem.openxml.builder.wml;
+package com.alphasystem.docx4j.builder.wml;
 
 import com.alphasystem.commons.util.IdGenerator;
-import com.alphasystem.docx4j.builder.wml.NumberingBuilder;
 import org.docx4j.wml.*;
 import org.docx4j.wml.Numbering.AbstractNum;
 
@@ -12,8 +11,8 @@ import java.util.Objects;
 import java.util.concurrent.atomic.AtomicLong;
 
 import static com.alphasystem.docx4j.builder.wml.WmlBuilderFactory.*;
-import static com.alphasystem.openxml.builder.wml.OrderedList.*;
-import static com.alphasystem.openxml.builder.wml.UnorderedList.*;
+import static com.alphasystem.docx4j.builder.wml.OrderedList.*;
+import static com.alphasystem.docx4j.builder.wml.UnorderedList.*;
 import static java.util.Arrays.asList;
 import static org.apache.commons.lang3.ArrayUtils.add;
 

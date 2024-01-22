@@ -1,7 +1,7 @@
 package com.alphasystem.wml.test;
 
 import com.alphasystem.commons.SystemException;
-import com.alphasystem.openxml.builder.wml.WmlAdapter;
+import com.alphasystem.docx4j.builder.wml.WmlAdapter;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
 import org.docx4j.openpackaging.parts.WordprocessingML.MainDocumentPart;
 import org.testng.annotations.AfterClass;

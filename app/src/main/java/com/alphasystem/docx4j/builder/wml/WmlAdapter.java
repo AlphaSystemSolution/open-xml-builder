@@ -1,12 +1,9 @@
 /**
  *
  */
-package com.alphasystem.openxml.builder.wml;
+package com.alphasystem.docx4j.builder.wml;
 
 
-import com.alphasystem.docx4j.builder.wml.PBuilder;
-import com.alphasystem.docx4j.builder.wml.PPrBaseBuilder;
-import com.alphasystem.docx4j.builder.wml.WmlBuilderFactory;
 import jakarta.xml.bind.JAXBElement;
 import org.docx4j.jaxb.Context;
 import org.docx4j.openpackaging.exceptions.Docx4JException;
