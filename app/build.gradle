@@ -4,7 +4,6 @@ plugins {
     id 'java-library'
     id 'maven-publish'
     id 'signing'
-    id("net.researchgate.release") version "3.0.2"
 }
 
 repositories {
@@ -107,4 +106,3 @@ test {
         suites "testng/testng.xml"
     }
 }
-
