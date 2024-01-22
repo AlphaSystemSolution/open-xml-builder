@@ -108,4 +108,3 @@ test {
     }
 }
 
-afterReleaseBuild.dependsOn publish
