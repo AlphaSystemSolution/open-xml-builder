@@ -20,7 +20,7 @@ import static org.docx4j.wml.STVerticalJc.CENTER;
 /**
  * @author sali
  */
-public class CreateCustomStyle {
+public class CreateCustomStyleTest {
 
     @Test
     public void createAdmonitionTableStyle() {
