@@ -2,6 +2,8 @@
 **/.gradle/*
 **/.DS_Store
 *.iml
+**/.idea/
+app/src/main/resources/org/
 pom.xml.tag
 pom.xml.releaseBackup
 pom.xml.versionsBackup
