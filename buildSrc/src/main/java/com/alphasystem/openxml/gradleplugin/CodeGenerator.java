@@ -8,7 +8,7 @@ import java.io.IOException;
 public final class CodeGenerator {
 
     public static void wmlGenerator(File destPath) {
-        FluentApiGenerator apiGenerator = new FluentApiGenerator("com.alphasystem.openxml.builder",
+        FluentApiGenerator apiGenerator = new FluentApiGenerator(FluentApiGenerator.BASE_PACKAGE_NAME,
                 "wml", "WmlBuilderFactory", P.class, P.Hyperlink.class, Tbl.class,
                 Tr.class, Tc.class, R.class, R.Tab.class, Text.class, CTTabStop.class, Br.class, FldChar.class,
                 SectPr.class, TblGridCol.class, CTBookmarkRange.class, CTBookmark.class, BooleanDefaultFalse.class,

@@ -1,4 +1,4 @@
-package com.alphasystem.openxml.builder.wml;
+package com.alphasystem.docx4j.builder.wml;
 
 import org.docx4j.wml.RFonts;
 import org.docx4j.wml.RPr;
@@ -6,7 +6,7 @@ import org.docx4j.wml.RPr;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import static com.alphasystem.openxml.builder.wml.WmlBuilderFactory.getRPrBuilder;
+import static com.alphasystem.docx4j.builder.wml.WmlBuilderFactory.getRPrBuilder;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.docx4j.wml.NumberFormat.BULLET;
 

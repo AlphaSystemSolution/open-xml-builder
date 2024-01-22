@@ -1,20 +1,18 @@
 package com.alphasystem.wml.test;
 
 import com.alphasystem.commons.SystemException;
-import com.alphasystem.openxml.builder.wml.WmlAdapter;
-import com.alphasystem.openxml.builder.wml.WmlBuilderFactory;
-import com.alphasystem.openxml.builder.wml.WmlPackageBuilder;
-import com.alphasystem.openxml.builder.wml.table.ColumnData;
-import com.alphasystem.openxml.builder.wml.table.TableAdapter;
-import com.alphasystem.openxml.builder.wml.table.TableType;
-import com.alphasystem.openxml.builder.wml.table.VerticalMergeType;
+import com.alphasystem.docx4j.builder.wml.WmlAdapter;
+import com.alphasystem.docx4j.builder.wml.WmlBuilderFactory;
+import com.alphasystem.docx4j.builder.wml.WmlPackageBuilder;
+import com.alphasystem.docx4j.builder.wml.table.ColumnData;
+import com.alphasystem.docx4j.builder.wml.table.TableAdapter;
+import com.alphasystem.docx4j.builder.wml.table.TableType;
+import com.alphasystem.docx4j.builder.wml.table.VerticalMergeType;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
 import org.docx4j.wml.P;
 import org.testng.annotations.Test;
 
-import static com.alphasystem.openxml.builder.wml.WmlAdapter.getText;
-import static com.alphasystem.openxml.builder.wml.WmlBuilderFactory.getPBuilder;
-import static com.alphasystem.openxml.builder.wml.WmlBuilderFactory.getRBuilder;
+import static com.alphasystem.docx4j.builder.wml.WmlAdapter.getText;
 
 public class TableAdapterTest extends CommonTest {
 
@@ -80,8 +78,7 @@ public class TableAdapterTest extends CommonTest {
         addColumns(tableAdapter);
         mainDocumentPart.addObject(tableAdapter.getTable());
         mainDocumentPart.addObject(createNumberedParagraph("List 2"));
-        var tblBorders = WmlBuilderFactory
-                .getTblBordersBuilder()
+        var tblBorders = WmlBuilderFactory.getTblBordersBuilder()
                 .withTop(WmlAdapter.getNilBorder())
                 .withBottom(WmlAdapter.getNilBorder())
                 .withLeft(WmlAdapter.getNilBorder())
@@ -152,8 +149,8 @@ public class TableAdapterTest extends CommonTest {
 
     private P createNumberedParagraph(String text) {
         var ppr = WmlAdapter.getListParagraphProperties(1L, 0L, true);
-        var run = getRBuilder().addContent(getText(text)).getObject();
-        return getPBuilder().withPPr(ppr).addContent(run).getObject();
+        var run = WmlBuilderFactory.getRBuilder().addContent(getText(text)).getObject();
+        return WmlBuilderFactory.getPBuilder().withPPr(ppr).addContent(run).getObject();
     }
 
     private void addColumns(TableAdapter tableAdapter) {

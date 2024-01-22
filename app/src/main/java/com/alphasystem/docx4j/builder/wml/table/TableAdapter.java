@@ -1,6 +1,6 @@
-package com.alphasystem.openxml.builder.wml.table;
+package com.alphasystem.docx4j.builder.wml.table;
 
-import com.alphasystem.openxml.builder.wml.*;
+import com.alphasystem.docx4j.builder.wml.*;
 import org.apache.commons.lang3.StringUtils;
 import org.docx4j.wml.*;
 
@@ -12,8 +12,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.IntStream;
 
-import static com.alphasystem.openxml.builder.wml.WmlBuilderFactory.*;
 import static com.alphasystem.commons.util.IdGenerator.nextId;
+import static com.alphasystem.docx4j.builder.wml.WmlBuilderFactory.*;
 import static java.lang.String.format;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.docx4j.sharedtypes.STOnOff.ONE;
@@ -129,7 +129,7 @@ public final class TableAdapter {
         }
         TblPr tblPr = getTblPrBuilder().withTblStyle(tableStyle).withTblW(tblWidth).withTblInd(tblIndent)
                 .withTblLook(cTTblLook).getObject();
-        TblPrBuilder tblPrBuilder = new TblPrBuilder(tblPr, tableProperties);
+        final var tblPrBuilder = new TblPrBuilder(tblPr, tableProperties);
 
         tblBuilder.withTblGrid(tblGridBuilder.getObject()).withTblPr(tblPrBuilder.getObject());
         return this;
@@ -191,7 +191,7 @@ public final class TableAdapter {
             gs = gridSpanValue;
         }
 
-        TcPrBuilder tcPrBuilder = getTcPrBuilder();
+        final var tcPrBuilder = getTcPrBuilder();
 
         final var tblWidth = getTblWidthBuilder().withType(tableType.getColumnType()).withW(columnWidth.longValue()).getObject();
         tcPrBuilder.withGridSpan(gs).withTcW(tblWidth);

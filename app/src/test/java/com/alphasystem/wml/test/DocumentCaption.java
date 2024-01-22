@@ -1,6 +1,6 @@
 package com.alphasystem.wml.test;
 
-import com.alphasystem.openxml.builder.wml.HeadingList;
+import com.alphasystem.docx4j.builder.wml.HeadingList;
 
 import static java.lang.String.format;
 

@@ -1,10 +1,10 @@
-package com.alphasystem.openxml.builder.wml;
+package com.alphasystem.docx4j.builder.wml;
 
 import org.docx4j.wml.NumberFormat;
 import org.docx4j.wml.RFonts;
 import org.docx4j.wml.RPr;
 
-import static com.alphasystem.openxml.builder.wml.WmlBuilderFactory.getRFontsBuilder;
+import static com.alphasystem.docx4j.builder.wml.WmlBuilderFactory.getRFontsBuilder;
 import static org.docx4j.wml.STHint.DEFAULT;
 
 /**

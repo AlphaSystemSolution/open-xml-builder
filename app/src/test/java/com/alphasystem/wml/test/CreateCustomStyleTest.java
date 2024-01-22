@@ -1,14 +1,14 @@
 package com.alphasystem.wml.test;
 
-import com.alphasystem.openxml.builder.wml.*;
+import com.alphasystem.docx4j.builder.wml.*;
 import org.docx4j.wml.*;
 import org.docx4j.wml.PPrBase.Spacing;
 import org.testng.annotations.Test;
 
-import static com.alphasystem.openxml.builder.wml.WmlAdapter.getBorder;
-import static com.alphasystem.openxml.builder.wml.WmlAdapter.getNilBorder;
-import static com.alphasystem.openxml.builder.wml.WmlBuilderFactory.*;
 import static com.alphasystem.commons.util.IdGenerator.nextId;
+import static com.alphasystem.docx4j.builder.wml.WmlBuilderFactory.*;
+import static com.alphasystem.docx4j.builder.wml.WmlAdapter.getBorder;
+import static com.alphasystem.docx4j.builder.wml.WmlAdapter.getNilBorder;
 import static org.docx4j.XmlUtils.marshaltoString;
 import static org.docx4j.wml.STBorder.SINGLE;
 import static org.docx4j.wml.STLineSpacingRule.AUTO;
@@ -20,11 +20,11 @@ import static org.docx4j.wml.STVerticalJc.CENTER;
 /**
  * @author sali
  */
-public class CreateCustomStyle {
+public class CreateCustomStyleTest {
 
     @Test
     public void createAdmonitionTableStyle() {
-        final CTTblPrBaseBuilder ctTblPrBaseBuilder = new CTTblPrBaseBuilder();
+        final var ctTblPrBaseBuilder = new CTTblPrBaseBuilder();
         TblBorders tblBorders = new TblBordersBuilder().withTop(getNilBorder()).withLeft(getNilBorder())
                 .withBottom(getNilBorder()).withRight(getNilBorder()).withInsideH(getNilBorder()).withInsideV(getNilBorder())
                 .getObject();
@@ -48,11 +48,11 @@ public class CreateCustomStyle {
         tcPr = tcPrBuilder.withTcBorders(tcBorders).withShd(shade).getObject();
         ctTblStylePrs[1] = new CTTblStylePrBuilder().withType(LAST_COL).withTcPr(tcPr).getObject();
 
-        final PPrBuilder pPrBuilder = new PPrBuilder();
+        final var pPrBuilder = new PPrBuilder();
         Spacing spacing = pPrBuilder.getSpacingBuilder().withAfter(0L).withLine(240L).withLineRule(AUTO).getObject();
         PPr pPr = pPrBuilder.withSpacing(spacing).getObject();
 
-        StyleBuilder styleBuilder = getStyleBuilder().withType("table").withCustomStyle(true).withStyleId("AdmonitionTable")
+        final var styleBuilder = getStyleBuilder().withType("table").withCustomStyle(true).withStyleId("AdmonitionTable")
                 .withName("Admonition Table").withBasedOn("TableNormal").withUiPriority(47L).withRsid(nextId())
                 .withPPr(pPr).withTblPr(tblPr).addTblStylePr(ctTblStylePrs);
 

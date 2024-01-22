@@ -1,4 +1,4 @@
-package com.alphasystem.openxml.builder.wml.table;
+package com.alphasystem.docx4j.builder.wml.table;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

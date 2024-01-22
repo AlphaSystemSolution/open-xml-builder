@@ -1,20 +1,20 @@
-package com.alphasystem.openxml.builder.wml;
+package com.alphasystem.docx4j.builder.wml;
 
+import jakarta.xml.bind.JAXBElement;
 import org.docx4j.jaxb.Context;
 import org.docx4j.openpackaging.exceptions.InvalidFormatException;
 import org.docx4j.openpackaging.parts.WordprocessingML.MainDocumentPart;
 import org.docx4j.wml.*;
 
-import jakarta.xml.bind.JAXBElement;
-
-import static com.alphasystem.openxml.builder.wml.WmlBuilderFactory.*;
+import static com.alphasystem.docx4j.builder.wml.WmlBuilderFactory.*;
 import static java.lang.String.format;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.docx4j.wml.STFldCharType.*;
 import static org.docx4j.wml.STTabJc.LEFT;
 import static org.docx4j.wml.STTabJc.RIGHT;
 import static org.docx4j.wml.STTabTlc.DOT;
-import static org.docx4j.wml.STTheme.*;
+import static org.docx4j.wml.STTheme.MINOR_BIDI;
+import static org.docx4j.wml.STTheme.MINOR_H_ANSI;
 
 /**
  * @author sali
@@ -98,23 +98,23 @@ public final class TocGenerator {
     }
 
     private SdtPr createSdtPr() {
-        CTSdtDocPartBuilder ctSdtDocPartBuilder = WmlBuilderFactory.getCTSdtDocPartBuilder();
+        final var ctSdtDocPartBuilder = WmlBuilderFactory.getCTSdtDocPartBuilder();
         CTSdtDocPartBuilder.DocPartGalleryBuilder docPartGalleryBuilder = ctSdtDocPartBuilder.getDocPartGalleryBuilder()
                 .withVal("Table of Contents");
         ctSdtDocPartBuilder.withDocPartUnique(true).withDocPartGallery(docPartGalleryBuilder.getObject());
 
         JAXBElement<CTSdtDocPart> sdtdocpartWrapped = wmlObjectFactory.createSdtPrDocPartObj(ctSdtDocPartBuilder.getObject());
 
-        SdtPrBuilder sdtPrBuilder = WmlBuilderFactory.getSdtPrBuilder().addRPrOrAliasOrLock(sdtdocpartWrapped);
+        final var sdtPrBuilder = WmlBuilderFactory.getSdtPrBuilder().addRPrOrAliasOrLock(sdtdocpartWrapped);
         SdtPr sdtPr = sdtPrBuilder.getObject();
         sdtPr.setId();
         return sdtPr;
     }
 
     private CTSdtEndPr createCtSdtEndPr() {
-        RFontsBuilder rFontsBuilder = getRFontsBuilder().withAsciiTheme(MINOR_H_ANSI).withEastAsiaTheme(MINOR_H_ANSI)
+        final var rFontsBuilder = getRFontsBuilder().withAsciiTheme(MINOR_H_ANSI).withEastAsiaTheme(MINOR_H_ANSI)
                 .withHAnsiTheme(MINOR_H_ANSI).withCstheme(MINOR_BIDI);
-        RPrBuilder rPrBuilder = getRPrBuilder().withRFonts(rFontsBuilder.getObject()).withB(true).withBCs(true)
+        final var rPrBuilder = getRPrBuilder().withRFonts(rFontsBuilder.getObject()).withB(true).withBCs(true)
                 .withNoProof(true).withSz(22L).withSzCs(22L);
         return getCTSdtEndPrBuilder().addRPr(rPrBuilder.getObject()).getObject();
     }
@@ -131,7 +131,7 @@ public final class TocGenerator {
         CTTabStop leftTab = getCTTabStopBuilder().withVal(LEFT).withPos(440L).getObject();
         CTTabStop rightTab = getCTTabStopBuilder().withVal(RIGHT).withPos(9350L).withLeader(DOT).getObject();
         Tabs tabs = getTabsBuilder().addTab(leftTab, rightTab).getObject();
-        PPrBuilder pPrBuilder = getPPrBuilder().withPStyle(tocStyle).withTabs(tabs);
+        final var pPrBuilder = getPPrBuilder().withPStyle(tocStyle).withTabs(tabs);
         return getPBuilder().withPPr(pPrBuilder.getObject()).addContent(getFieldBeginRun(), getInstructionRun(instruction),
                 getFieldSeparateRun()).getObject();
     }

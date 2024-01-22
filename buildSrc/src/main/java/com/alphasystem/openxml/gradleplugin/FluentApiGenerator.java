@@ -45,6 +45,9 @@ public class FluentApiGenerator {
     static final String CLONE_BOOLEAN_METHOD_NAME = "cloneBoolean";
     static final String CLONE_OBJECT_METHOD_NAME = "cloneObject";
 
+    static final String BASE_PACKAGE_NAME = "com.alphasystem.docx4j.builder";
+    static final String DEFAULT_PACKAGE_NAME = BASE_PACKAGE_NAME + ".wml";
+
     static String getBuilderClassFqn(Class<?> srcClass, String builderPackageName) {
         return format("%s.%sBuilder", builderPackageName, getClassName(srcClass));
     }
@@ -274,7 +277,7 @@ public class FluentApiGenerator {
         final JBlock ifBlock = body._if(objectClass.invoke("getPackage").invoke("getName").invoke("equals").arg(lit("org.docx4j.wml")))._then();
         final JVar builderClass = ifBlock.decl(classType, "builderClass", _null());
         final JClass stringType = parseClass(codeModel, String.class);
-        final JVar builderPackageName = ifBlock.decl(FINAL, stringType, "builderPackageName", lit("com.alphasystem.openxml.builder.wml"));
+        final JVar builderPackageName = ifBlock.decl(FINAL, stringType, "builderPackageName", lit(DEFAULT_PACKAGE_NAME));
         final JVar builderFqn = ifBlock.decl(stringType, "builderFqn", stringType.staticInvoke("format")
                 .arg(lit("%s.%sBuilder")).arg(builderPackageName).arg(objectClass.invoke("getSimpleName")));
 

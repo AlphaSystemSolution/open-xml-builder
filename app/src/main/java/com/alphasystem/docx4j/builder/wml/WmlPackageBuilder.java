@@ -1,4 +1,4 @@
-package com.alphasystem.openxml.builder.wml;
+package com.alphasystem.docx4j.builder.wml;
 
 import com.alphasystem.commons.SystemException;
 import com.alphasystem.commons.util.AppUtil;
@@ -29,8 +29,8 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Objects;
 
-import static com.alphasystem.openxml.builder.wml.WmlBuilderFactory.BOOLEAN_DEFAULT_TRUE_TRUE;
-import static com.alphasystem.openxml.builder.wml.WmlBuilderFactory.getCTRelBuilder;
+import static com.alphasystem.docx4j.builder.wml.WmlBuilderFactory.BOOLEAN_DEFAULT_TRUE_TRUE;
+import static com.alphasystem.docx4j.builder.wml.WmlBuilderFactory.getCTRelBuilder;
 import static java.lang.String.format;
 import static org.docx4j.openpackaging.contenttype.ContentTypes.WORDPROCESSINGML_DOCUMENT;
 import static org.docx4j.openpackaging.contenttype.ContentTypes.WORDPROCESSINGML_DOCUMENT_MACROENABLED;
@@ -104,10 +104,10 @@ public class WmlPackageBuilder {
             if (style == null) {
                 throw new RuntimeException(format("No style found with id \"%s\"", styleName));
             }
-            StyleBuilder styleBuilder = new StyleBuilder(style);
+            final var styleBuilder = new StyleBuilder(style);
             final PPr pPr = styleBuilder.getObject().getPPr();
             boolean setPPr = pPr == null;
-            PPrBuilder pPrBuilder = new PPrBuilder(pPr);
+            final var pPrBuilder = new PPrBuilder(pPr);
             Long level = i <= 0 ? null : (long) i;
             final PPrBase.NumPr numPr = pPrBuilder.getNumPrBuilder().withNumId(numberId)
                     .withIlvl(level).getObject();
@@ -132,7 +132,8 @@ public class WmlPackageBuilder {
             StyleBuilder styleBuilder = new StyleBuilder(style, null);
             styleName = format("_%s", styleName);
             styleBuilder.withStyleId(styleName).withName(format("_%s", Headings.HEADING1.getName()))
-                    .withUnhideWhenUsed((BooleanDefaultTrue) null).withSemiHidden((BooleanDefaultTrue) null).withHidden(BOOLEAN_DEFAULT_TRUE_TRUE);
+                    .withUnhideWhenUsed((BooleanDefaultTrue) null).withSemiHidden((BooleanDefaultTrue) null)
+                    .withHidden(BOOLEAN_DEFAULT_TRUE_TRUE);
             try {
                 styleDefinitionsPart.getContents().getStyle().add(styleBuilder.getObject());
                 new StyleBuilder(tocHeading).withBasedOn(styleName);
