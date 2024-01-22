@@ -3,6 +3,8 @@ import com.alphasystem.openxml.gradleplugin.CodeGenerator
 plugins {
     id 'java-library'
     id 'maven-publish'
+    id 'signing'
+    id("net.researchgate.release") version "3.0.2"
 }
 
 repositories {
@@ -19,7 +21,7 @@ sourceSets {
     }
 }
 
-task generateCode {
+tasks.register('generateCode') {
     CodeGenerator.wmlGenerator(generatedSrcDir)
 }
 
@@ -28,41 +30,75 @@ tasks.compileJava {
 }
 
 dependencies {
-    api "io.github.sfali23:commons:${as_commons_version}"
-    api "org.docx4j:docx4j-core:${docx4j_version}"
-    api "org.docx4j:docx4j-export-fo:${docx4j_version}"
-    api "org.docx4j:docx4j-JAXB-MOXy:${docx4j_version}"
-    api 'org.docx4j:docx4j-MOXy-JAXBContext:6.0.0'
-    api 'org.eclipse.persistence:org.eclipse.persistence.moxy:4.0.0'
-    api "org.docx4j:docx4j-JAXB-ReferenceImpl:${docx4j_version}"
-    api 'org.slf4j:slf4j-api:2.0.6'
-    api 'ch.qos.logback:logback-classic:1.4.5'
-    testImplementation 'org.testng:testng:7.7.1'
-    testImplementation 'com.google.inject:guice:5.1.0'
-    testImplementation 'org.uncommons:reportng:1.1.4'
+    api "io.github.sfali23:commons:${asCommonsVersion}"
+    api "org.docx4j:docx4j-core:${docx4jVersion}"
+    api "org.docx4j:docx4j-export-fo:${docx4jVersion}"
+    api "org.docx4j:docx4j-JAXB-MOXy:${docx4jVersion}"
+    api "org.docx4j:docx4j-MOXy-JAXBContext:${moxyVersion}"
+    api "org.eclipse.persistence:org.eclipse.persistence.moxy:${eclipseMoxyVersion}"
+    api "org.docx4j:docx4j-JAXB-ReferenceImpl:${docx4jVersion}"
+    api "org.slf4j:slf4j-api:${slf4jApiVersion}"
+    api "ch.qos.logback:logback-classic:${logbackClassicVersion}"
+    testImplementation "org.testng:testng:${testngVersion}"
+    testImplementation "com.google.inject:guice:${guiceVersion}"
+    testImplementation "org.uncommons:reportng:${reportngVersion}"
+
+    // remove vulnerabilities
+    api "commons-codec:commons-codec:${commonsCodecVersion}"
+    api "org.apache.xmlgraphics:batik-bridge:${batikVersion}"
+    api "org.apache.xmlgraphics:batik-script:${batikVersion}"
+    api "org.apache.xmlgraphics:batik-transcoder:${batikVersion}"
+    testImplementation "com.google.guava:guava:${guavaVersion}"
 }
 
-group = 'io.github.sfali23.openxml'
+group = 'io.github.sfali23.docx4j'
 sourceCompatibility = JavaVersion.VERSION_17
 targetCompatibility = JavaVersion.VERSION_17
 
+apply from: "${rootDir}/scripts/publish-root.gradle"
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
+
 java {
     withJavadocJar()
+    withSourcesJar()
 }
 
 publishing {
     publications {
         maven(MavenPublication) {
             from(components.java)
+            pom {
+                name = "AlphaSystemCommons"
+                description = "Alpha system commons library"
+                url = "https://github.com/AlphaSystemSolution/open-xml-builder"
+                licenses {
+                    license {
+                        name = 'The Apache License, Version 2.0'
+                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'sfali23'
+                        name = 'Farhan Syed Ali'
+                        email = 'f.syed.ali@gmail.com'
+                    }
+                }
+                scm {
+                    connection = 'scm:git:git://github.com/AlphaSystemSolution/open-xml-builder.git'
+                    developerConnection = 'scm:git:ssh//github.com:AlphaSystemSolution/open-xml-builder.git'
+                    url = 'https://github.com/AlphaSystemSolution/open-xml-builder'
+                }
+            }
         }
     }
 }
 
-tasks.withType(JavaCompile) {
-    options.encoding = 'UTF-8'
-}
 
-tasks.withType(Test) {
+tasks.withType(Test).configureEach {
     systemProperty 'docs.dir', "/Users/sfali/Library/Group Containers/UBF8T346G9.Office/SFA"
 }
 
@@ -71,3 +107,5 @@ test {
         suites "testng/testng.xml"
     }
 }
+
+afterReleaseBuild.dependsOn publish
