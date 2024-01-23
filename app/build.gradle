@@ -62,7 +62,41 @@ java {
     withSourcesJar()
 }
 
-apply from: "${rootDir}/scripts/publishing.gradle"
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from(components.java)
+            pom {
+                name = "AlphaSystemCommons"
+                description = "Alpha system commons library"
+                url = "https://github.com/AlphaSystemSolution/open-xml-builder"
+                licenses {
+                    license {
+                        name = 'The Apache License, Version 2.0'
+                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'sfali23'
+                        name = 'Farhan Syed Ali'
+                        email = 'f.syed.ali@gmail.com'
+                    }
+                }
+                scm {
+                    connection = 'scm:git:git://github.com/AlphaSystemSolution/open-xml-builder.git'
+                    developerConnection = 'scm:git:ssh//github.com:AlphaSystemSolution/open-xml-builder.git'
+                    url = 'https://github.com/AlphaSystemSolution/open-xml-builder'
+                }
+            }
+        }
+    }
+}
+
+signing {
+    useInMemoryPgpKeys(signingKeyId, signingKey as String, signingPassword)
+    sign publishing.publications
+}
 
 tasks.withType(Test).configureEach {
     systemProperty 'docs.dir', "/Users/sfali/Library/Group Containers/UBF8T346G9.Office/SFA"
