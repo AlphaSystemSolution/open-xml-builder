@@ -65,6 +65,7 @@ java {
 publishing {
     publications {
         maven(MavenPublication) {
+            groupId = "io.github.sfali23"
             from(components.java)
             pom {
                 name = "AlphaSystemCommons"
