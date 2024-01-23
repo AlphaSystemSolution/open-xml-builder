@@ -2,30 +2,11 @@ import com.alphasystem.openxml.gradleplugin.CodeGenerator
 
 plugins {
     id 'java-library'
-    id 'maven-publish'
-    id 'signing'
 }
 
 repositories {
     mavenLocal()
-}
-
-def generatedSrcDir = new File(buildDir, "generated/src/main/java")
-
-sourceSets {
-    main {
-        java {
-            srcDirs += generatedSrcDir
-        }
-    }
-}
-
-tasks.register('generateCode') {
-    CodeGenerator.wmlGenerator(generatedSrcDir)
-}
-
-tasks.compileJava {
-    dependsOn(generateCode)
+    mavenCentral()
 }
 
 dependencies {
@@ -54,7 +35,23 @@ group = 'io.github.sfali23'
 sourceCompatibility = JavaVersion.VERSION_17
 targetCompatibility = JavaVersion.VERSION_17
 
-apply from: "${rootDir}/scripts/publish-root.gradle"
+def generatedSrcDir = new File(buildDir, "generated/src/main/java")
+
+sourceSets {
+    main {
+        java {
+            srcDirs += generatedSrcDir
+        }
+    }
+}
+
+tasks.register('generateCode') {
+    CodeGenerator.wmlGenerator(generatedSrcDir)
+}
+
+tasks.compileJava {
+    dependsOn(generateCode)
+}
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
@@ -65,37 +62,7 @@ java {
     withSourcesJar()
 }
 
-publishing {
-    publications {
-        maven(MavenPublication) {
-            from(components.java)
-            pom {
-                name = "AlphaSystemCommons"
-                description = "Alpha system commons library"
-                url = "https://github.com/AlphaSystemSolution/open-xml-builder"
-                licenses {
-                    license {
-                        name = 'The Apache License, Version 2.0'
-                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                    }
-                }
-                developers {
-                    developer {
-                        id = 'sfali23'
-                        name = 'Farhan Syed Ali'
-                        email = 'f.syed.ali@gmail.com'
-                    }
-                }
-                scm {
-                    connection = 'scm:git:git://github.com/AlphaSystemSolution/open-xml-builder.git'
-                    developerConnection = 'scm:git:ssh//github.com:AlphaSystemSolution/open-xml-builder.git'
-                    url = 'https://github.com/AlphaSystemSolution/open-xml-builder'
-                }
-            }
-        }
-    }
-}
-
+apply from: "${rootDir}/scripts/publishing.gradle"
 
 tasks.withType(Test).configureEach {
     systemProperty 'docs.dir', "/Users/sfali/Library/Group Containers/UBF8T346G9.Office/SFA"
