@@ -29,5 +29,5 @@ release {
 }
 
 afterEvaluate {
-    afterReleaseBuild.dependsOn publishToSonatype
+    afterReleaseBuild.dependsOn(publishToSonatype, closeAndReleaseSonatypeStagingRepository)
 }
