@@ -5,6 +5,7 @@ import com.alphasystem.docx4j.builder.wml.WmlAdapter;
 import com.alphasystem.docx4j.builder.wml.WmlBuilderFactory;
 import com.alphasystem.docx4j.builder.wml.WmlPackageBuilder;
 import com.alphasystem.docx4j.builder.wml.table.ColumnData;
+import com.alphasystem.docx4j.builder.wml.table.ColumnInput;
 import com.alphasystem.docx4j.builder.wml.table.TableAdapter;
 import com.alphasystem.docx4j.builder.wml.table.TableType;
 import com.alphasystem.docx4j.builder.wml.table.VerticalMergeType;
@@ -142,6 +143,44 @@ public class TableAdapterTest extends CommonTest {
                         .withContent(WmlAdapter.getEmptyPara()))
                 .addColumn(new ColumnData(3).withVerticalMergeType(VerticalMergeType.CONTINUE)
                         .withContent(WmlAdapter.getEmptyPara()))
+                .endRow();
+
+        mainDocumentPart.addObject(tableAdapter.getTable());
+    }
+
+    @Test(dependsOnMethods = {"testRowSpan"})
+    public void testColumnWidthsWithDecimalValues() {
+        var mainDocumentPart = getMainDocumentPart();
+        mainDocumentPart.addObject(WmlAdapter.getEmptyPara());
+        mainDocumentPart.addStyledParagraphOfText("ExampleTitle", "Table with widths in decimal points");
+
+        var tableAdapter = new TableAdapter()
+                .withColumnInputs(
+                        new ColumnInput("col_1", 16.2499),
+                        new ColumnInput("col_2", 16.2499),
+                        new ColumnInput("col_3", 16.2499),
+                        new ColumnInput("col_4", 2.5006),
+                        new ColumnInput("col_5", 16.2499),
+                        new ColumnInput("col_6", 16.2499),
+                        new ColumnInput("col_7", 16.2499))
+                .startTable()
+                .startRow()
+                .addColumn(new ColumnData(0).withContent(WmlAdapter.getEmptyPara()))
+                .addColumn(new ColumnData(1).withContent(WmlAdapter.getEmptyPara()))
+                .addColumn(new ColumnData(2).withContent(WmlAdapter.getEmptyPara()))
+                .addColumn(new ColumnData(3).withVerticalMergeType(VerticalMergeType.RESTART).withContent(WmlAdapter.getEmptyPara()))
+                .addColumn(new ColumnData(4).withContent(WmlAdapter.getEmptyPara()))
+                .addColumn(new ColumnData(5).withContent(WmlAdapter.getEmptyPara()))
+                .addColumn(new ColumnData(6).withContent(WmlAdapter.getEmptyPara()))
+                .endRow()
+                .startRow()
+                .addColumn(new ColumnData(0).withContent(WmlAdapter.getEmptyPara()))
+                .addColumn(new ColumnData(1).withContent(WmlAdapter.getEmptyPara()))
+                .addColumn(new ColumnData(2).withContent(WmlAdapter.getEmptyPara()))
+                .addColumn(new ColumnData(3).withVerticalMergeType(VerticalMergeType.CONTINUE).withContent(WmlAdapter.getEmptyPara()))
+                .addColumn(new ColumnData(4).withContent(WmlAdapter.getEmptyPara()))
+                .addColumn(new ColumnData(5).withContent(WmlAdapter.getEmptyPara()))
+                .addColumn(new ColumnData(6).withContent(WmlAdapter.getEmptyPara()))
                 .endRow();
 
         mainDocumentPart.addObject(tableAdapter.getTable());
