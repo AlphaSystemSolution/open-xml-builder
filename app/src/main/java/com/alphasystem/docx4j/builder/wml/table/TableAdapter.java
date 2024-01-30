@@ -93,8 +93,9 @@ public final class TableAdapter {
         this.inputs = length == 0 ? new ColumnInput[]{new ColumnInput("col_1", PERCENT.doubleValue())} : inputs;
 
         // validate sum of all widths are equal to 0
-        var sum = Arrays.stream(this.inputs).map(ColumnInput::getColumnWidth).reduce(0.0, Double::sum);
-        var diff = PERCENT.subtract(BigDecimal.valueOf(sum)).doubleValue();
+        var sum = Arrays.stream(this.inputs).map(ColumnInput::getColumnWidth).map(BigDecimal::valueOf)
+                .reduce(BigDecimal.ZERO, (sumValue, current) -> sumValue.add(current, ROUNDING));
+        var diff = PERCENT.subtract(sum).doubleValue();
         require(diff == 0.0, String.format("Total column widths must be equal to 100 instead got %s", sum));
 
         return this;
