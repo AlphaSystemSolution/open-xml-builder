@@ -32,8 +32,6 @@ dependencies {
 }
 
 group = 'io.github.sfali23'
-sourceCompatibility = JavaVersion.VERSION_17
-targetCompatibility = JavaVersion.VERSION_17
 
 def generatedSrcDir = new File(buildDir, "generated/src/main/java")
 
@@ -58,6 +56,8 @@ tasks.withType(JavaCompile).configureEach {
 }
 
 java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
     withJavadocJar()
     withSourcesJar()
 }
