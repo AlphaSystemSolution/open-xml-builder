@@ -23,6 +23,10 @@ configure<net.researchgate.release.ReleaseExtension> {
 
 afterEvaluate {
     tasks.named("afterReleaseBuild") {
-        dependsOn("publishToSonatype", "closeAndReleaseSonatypeStagingRepository")
+        dependsOn(
+            tasks.named("initializeSonatypeStagingRepository"),
+            tasks.named("publishToSonatype"),
+            tasks.named("closeAndReleaseSonatypeStagingRepository")
+        )
     }
 }
