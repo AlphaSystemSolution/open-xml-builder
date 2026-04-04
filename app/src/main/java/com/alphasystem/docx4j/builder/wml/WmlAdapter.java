@@ -68,7 +68,7 @@ public class WmlAdapter {
         if (isBlank(name)) {
             return;
         }
-        final long id = bookmarkCount.longValue();
+        final long id = bookmarkCount.getAndIncrement();
         final CTBookmark bookmarkStart = getCTBookmarkBuilder().withId(id).withName(name).getObject();
         final JAXBElement<CTMarkupRange> bookmarkEnd = createCTMarkupRange(getCTBookmarkRangeBuilder().withId(id).getObject());
         pBuilder.getObject().getContent().add(0, bookmarkStart);
