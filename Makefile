@@ -13,3 +13,6 @@ all: clean build test
 
 publishLocal:
 	$(GRADLE) publishToMavenLocal
+
+release:
+	$(GRADLE) release -Prelease.useAutomaticVersion=true
