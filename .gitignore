@@ -1,8 +1,10 @@
 **/build/
+**/bin/**
 **/.gradle/*
 **/.DS_Store
 *.iml
 **/.idea/
+**/.metals/**
 app/src/main/resources/org/
 pom.xml.tag
 pom.xml.releaseBackup
