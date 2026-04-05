@@ -15,4 +15,4 @@ publishLocal:
 	$(GRADLE) publishToMavenLocal
 
 release:
-	$(GRADLE) release -Prelease.useAutomaticVersion=true
+	$(GRADLE) publishAndReleaseToMavenCentral
