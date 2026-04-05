@@ -119,3 +119,9 @@ tasks.named<Test>("test") {
         suites("testng/testng.xml")
     }
 }
+
+afterEvaluate {
+    tasks.named("generateMetadataFileForMavenPublication") {
+        dependsOn(tasks.named("plainJavadocJar"))
+    }
+}
