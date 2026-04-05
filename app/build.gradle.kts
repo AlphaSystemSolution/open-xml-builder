@@ -75,7 +75,6 @@ tasks.withType<JavaCompile>().configureEach {
 java {
     sourceCompatibility = JavaVersion.VERSION_21
     targetCompatibility = JavaVersion.VERSION_21
-    withJavadocJar()
     withSourcesJar()
 }
 
@@ -117,11 +116,5 @@ tasks.withType<Test>().configureEach {
 tasks.named<Test>("test") {
     useTestNG {
         suites("testng/testng.xml")
-    }
-}
-
-afterEvaluate {
-    tasks.named("generateMetadataFileForMavenPublication") {
-        dependsOn(tasks.named("plainJavadocJar"))
     }
 }
