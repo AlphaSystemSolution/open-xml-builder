@@ -3,6 +3,7 @@ import com.alphasystem.openxml.gradleplugin.CodeGenerator
 plugins {
     `java-library`
     `maven-publish`
+    signing
     id("com.vanniktech.maven.publish") version "0.36.0"
 }
 
@@ -116,5 +117,15 @@ tasks.withType<Test>().configureEach {
 tasks.named<Test>("test") {
     useTestNG {
         suites("testng/testng.xml")
+    }
+}
+
+signing {
+    val signingInMemoryKey: String? by project
+    val signingInMemoryKeyId: String? by project
+    val signingInMemoryKeyPassword: String? by project
+    
+    if (signingInMemoryKey != null && signingInMemoryKeyPassword != null) {
+        useInMemoryPgpKeys(signingInMemoryKeyId, signingInMemoryKey, signingInMemoryKeyPassword)
     }
 }
