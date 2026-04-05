@@ -3,7 +3,7 @@ import com.alphasystem.openxml.gradleplugin.CodeGenerator
 plugins {
     `java-library`
     `maven-publish`
-    signing
+    id("com.vanniktech.maven.publish") version "0.36.0"
 }
 
 repositories {
@@ -23,9 +23,6 @@ val reportngVersion: String by project
 val commonsCodecVersion: String by project
 val batikVersion: String by project
 val guavaVersion: String by project
-val signingKeyId: String by project
-val signingKey: String by project
-val signingPassword: String by project
 
 dependencies {
     api("io.github.sfali23:commons:$asCommonsVersion")
@@ -76,51 +73,45 @@ tasks.withType<JavaCompile>().configureEach {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
     withJavadocJar()
     withSourcesJar()
 }
 
-publishing {
-    publications {
-        create<MavenPublication>("maven") {
-            groupId = "io.github.sfali23"
-            from(components["java"])
-            pom {
-                name.set("AlphaSystemCommons")
-                description.set("Alpha system commons library")
-                url.set("https://github.com/AlphaSystemSolution/open-xml-builder")
-                licenses {
-                    license {
-                        name.set("The Apache License, Version 2.0")
-                        url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
-                    }
-                }
-                developers {
-                    developer {
-                        id.set("sfali23")
-                        name.set("Farhan Syed Ali")
-                        email.set("f.syed.ali@gmail.com")
-                    }
-                }
-                scm {
-                    connection.set("scm:git:git://github.com/AlphaSystemSolution/open-xml-builder.git")
-                    developerConnection.set("scm:git:ssh//github.com:AlphaSystemSolution/open-xml-builder.git")
-                    url.set("https://github.com/AlphaSystemSolution/open-xml-builder")
-                }
+mavenPublishing {
+    publishToMavenCentral(automaticRelease = true)
+    signAllPublications()
+
+    coordinates("io.github.sfali23", "open-xml-builder", "$version")
+
+    pom {
+        name.set("Open XML Builder")
+        description.set("Docx4J Open XML Fluent API")
+        url.set("https://github.com/AlphaSystemSolution/open-xml-builder")
+        licenses {
+            license {
+                name.set("Apache-2.0")
+                url.set("https://www.apache.org/licenses/LICENSE-2.0")
             }
+        }
+        developers {
+            developer {
+                id.set("sfali23")
+                name.set("Syed Farhan Ali")
+                email.set("f.syed.ali@gmail.com")
+            }
+        }
+        scm {
+            connection.set("scm:git:git://github.com/AlphaSystemSolution/open-xml-builder.git")
+            developerConnection.set("scm:git:ssh://github.com/AlphaSystemSolution/open-xml-builder.git")
+            url.set("https://github.com/AlphaSystemSolution/open-xml-builder")
         }
     }
 }
 
-signing {
-    useInMemoryPgpKeys(signingKeyId, signingKey, signingPassword)
-    sign(publishing.publications["maven"])
-}
-
 tasks.withType<Test>().configureEach {
-    systemProperty("docs.dir", "/Users/sfali/Library/Group Containers/UBF8T346G9.Office/SFA")
+    systemProperty("docs.dir", "build/docs")
 }
 
 tasks.named<Test>("test") {
