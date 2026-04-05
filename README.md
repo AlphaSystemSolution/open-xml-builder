@@ -86,26 +86,6 @@ make publishLocal
 ./gradlew publishToMavenLocal
 ```
 
-## Release Process
-
-This project uses [JReleaser](https://jreleaser.org/) for automated releases to Maven Central and GitHub.
-
-### For Maintainers
-
-1. Update version in `gradle.properties` (remove `-SNAPSHOT`)
-2. Commit the version change
-3. Set GitHub token: `export JRELEASER_GITHUB_TOKEN=your_token`
-4. Run release: `make release`
-
-For detailed release instructions, see [JRELEASER_SETUP.md](JRELEASER_SETUP.md).
-
-### Changelog
-
-Releases automatically generate changelogs from conventional commits:
-- `feat:` - New features
-- `fix:` - Bug fixes
-- `docs:` - Documentation updates
-
 ## Project Structure
 
 ```
@@ -113,7 +93,6 @@ open-xml-builder/
 ├── app/                    # Main library module (docx4j-builder)
 ├── buildSrc/              # Custom Gradle plugins
 ├── scripts/               # Build and publishing scripts
-├── JRELEASER_SETUP.md    # Release automation guide
 └── build.gradle.kts      # Root build configuration
 ```
 
@@ -149,7 +128,6 @@ This project is licensed under the Apache License 2.0 - see the [LICENSE.md](LIC
 ## Acknowledgments
 
 - Built with [Docx4J](https://www.docx4java.org/)
-- Released with [JReleaser](https://jreleaser.org/)
 
 ## Version History
 
