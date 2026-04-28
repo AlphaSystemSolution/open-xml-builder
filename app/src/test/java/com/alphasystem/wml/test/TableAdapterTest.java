@@ -186,6 +186,75 @@ public class TableAdapterTest extends CommonTest {
         mainDocumentPart.addObject(tableAdapter.getTable());
     }
 
+    /*@Test(dependsOnMethods = {"testColumnWidthsWithDecimalValues"})
+    public void testAutoTable() {
+        var mainDocumentPart = getMainDocumentPart();
+        mainDocumentPart.addObject(WmlAdapter.getEmptyPara());
+        mainDocumentPart.addStyledParagraphOfText("Auto Table", "Auto Table");
+
+        var tableAdapter = new TableAdapter()
+        .withTableStyle("SingleConjugation")
+                .withTableType(TableType.AUTO)
+                .withNumOfColumns(5)
+                .startTable()
+                .startRow()
+                .addColumn(new ColumnData(0).withContent(WmlAdapter.getParagraph("جمع")))
+                .addColumn(new ColumnData(1).withContent(WmlAdapter.getParagraph("مثنّى")))
+                .addColumn(new ColumnData(2).withContent(WmlAdapter.getParagraph("مفرد")))
+                .addColumn(new ColumnData(3).withGridSpanValue(2).withContent(WmlAdapter.getParagraph("")))
+                .endRow()
+                .startRow()
+                .addColumn(new ColumnData(0).withContent(WmlAdapter.getParagraph("هم فَتَحُوا")))
+                .addColumn(new ColumnData(1).withContent(WmlAdapter.getParagraph("هما فَتَحَا")))
+                .addColumn(new ColumnData(2).withContent(WmlAdapter.getParagraph("هو فَتَحَ")))
+                .addColumn(new ColumnData(3).withContent(WmlAdapter.getParagraph("مذكر")))
+                .addColumn(new ColumnData(4).withVerticalMergeType(VerticalMergeType.RESTART).withContent(WmlAdapter.getParagraph("غائب")))
+                .endRow()
+                .startRow()
+                .addColumn(new ColumnData(0).withContent(WmlAdapter.getParagraph("هُنَّ فَتَحْنَ")))
+                .addColumn(new ColumnData(1).withContent(WmlAdapter.getParagraph("هما فَتَحْتَا")))
+                .addColumn(new ColumnData(2).withContent(WmlAdapter.getParagraph("هي فَتَحَتْ")))
+                .addColumn(new ColumnData(3).withContent(WmlAdapter.getParagraph("مؤنّث")))
+                .addColumn(new ColumnData(4).withVerticalMergeType(VerticalMergeType.CONTINUE).withContent(WmlAdapter.getEmptyPara()))
+                .endRow();
+        mainDocumentPart.addObject(tableAdapter.getTable());
+    }*/
+
+    @Test(dependsOnMethods = {"testColumnWidthsWithDecimalValues"})
+    public void testTableWithWidth() {
+        var mainDocumentPart = getMainDocumentPart();
+        mainDocumentPart.addObject(WmlAdapter.getEmptyPara());
+        mainDocumentPart.addStyledParagraphOfText("TableWithWidth", "Table With Width");
+
+        var tableAdapter = new TableAdapter()
+                .withTableStyle("SingleConjugation")
+                .withTableType(TableType.PCT)
+                .withTableWidth(60)
+                .withWidths(18.0, 18.0, 18.0, 23.0, 23.0) 
+                .startTable()
+                .startRow()
+                .addColumn(new ColumnData(0).withContent(WmlAdapter.getParagraph("R1C1")))
+                .addColumn(new ColumnData(1).withContent(WmlAdapter.getParagraph("R1C2")))
+                .addColumn(new ColumnData(2).withContent(WmlAdapter.getParagraph("R1C3")))
+                .addColumn(new ColumnData(3).withGridSpanValue(2).withContent(WmlAdapter.getEmptyPara()))
+                .endRow()
+                .startRow()
+                .addColumn(new ColumnData(0).withContent(WmlAdapter.getParagraph("R2C1")))
+                .addColumn(new ColumnData(1).withContent(WmlAdapter.getParagraph("R2C2")))
+                .addColumn(new ColumnData(2).withContent(WmlAdapter.getParagraph("R2C3")))
+                .addColumn(new ColumnData(3).withContent(WmlAdapter.getParagraph("R2C4")))
+                .addColumn(new ColumnData(4).withVerticalMergeType(VerticalMergeType.RESTART).withContent(WmlAdapter.getParagraph("R2C5")))
+                .endRow()
+                .startRow()
+                .addColumn(new ColumnData(0).withContent(WmlAdapter.getParagraph("R3C1")))
+                .addColumn(new ColumnData(1).withContent(WmlAdapter.getParagraph("R3C2")))
+                .addColumn(new ColumnData(2).withContent(WmlAdapter.getParagraph("R3C3")))
+                .addColumn(new ColumnData(3).withContent(WmlAdapter.getParagraph("R3C4")))
+                .addColumn(new ColumnData(4).withVerticalMergeType(VerticalMergeType.CONTINUE).withContent(WmlAdapter.getEmptyPara()))
+                .endRow();
+        mainDocumentPart.addObject(tableAdapter.getTable());
+    }
+
     private P createNumberedParagraph(String text) {
         var ppr = WmlAdapter.getListParagraphProperties(1L, 0L, true);
         var run = WmlBuilderFactory.getRBuilder().addContent(getText(text)).getObject();

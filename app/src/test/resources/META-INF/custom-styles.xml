@@ -237,4 +237,24 @@
             </w:tcPr>
         </w:tblStylePr>
     </w:style>
+    <w:style w:type="table" w:styleId="SingleConjugation" w:customStyle="true">
+        <w:name w:val="SingleConjugation"/>
+        <w:basedOn w:val="TableNormal"/>
+        <w:uiPriority w:val="99"/>
+        <w:rsid w:val="001A596A"/>
+        <w:pPr>
+            <w:spacing w:after="0" w:line="240" w:lineRule="auto"/>
+        </w:pPr>
+        <w:tblPr>
+            <w:tblBorders>
+                <w:top w:val="single" w:color="auto" w:sz="4" w:space="0"/>
+                <w:left w:val="single" w:color="auto" w:sz="4" w:space="0"/>
+                <w:bottom w:val="single" w:color="auto" w:sz="4" w:space="0"/>
+                <w:right w:val="single" w:color="auto" w:sz="4" w:space="0"/>
+                <w:insideH w:val="single" w:color="auto" w:sz="4" w:space="0"/>
+                <w:insideV w:val="single" w:color="auto" w:sz="4" w:space="0"/>
+            </w:tblBorders>
+            <w:jc w:val="center"/>
+        </w:tblPr>
+    </w:style>
 </w:styles>
