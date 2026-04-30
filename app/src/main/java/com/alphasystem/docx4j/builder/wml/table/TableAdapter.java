@@ -33,6 +33,8 @@ public final class TableAdapter {
 
     private TableType tableType;
     private String tableStyle;
+    // table width as percenntage
+    private BigDecimal tableWidth;
     private int indentLevel;
     private ColumnInput[] inputs;
     private TblPr tableProperties;
@@ -43,6 +45,7 @@ public final class TableAdapter {
     public TableAdapter() {
         this.tableType = TableType.PCT;
         this.tableStyle = DEFAULT_TABLE_STYLE;
+        this.tableWidth = calculateTableWidth(100);
         this.indentLevel = -1;
         this.inputs = null;
     }
@@ -54,6 +57,11 @@ public final class TableAdapter {
 
     public TableAdapter withTableStyle(String tableStyle) {
         this.tableStyle = StringUtils.isBlank(tableStyle) ? DEFAULT_TABLE_STYLE : tableStyle;
+        return this;
+    }
+
+    public TableAdapter withTableWidth(int tableWidth) {
+        this.tableWidth = calculateTableWidth(tableWidth);
         return this;
     }
 
@@ -108,7 +116,7 @@ public final class TableAdapter {
 
     public TableAdapter startTable() {
         tblBuilder = getTblBuilder();
-        this.columnAdapter = new ColumnAdapter(tableType, indentLevel, inputs);
+        this.columnAdapter = new ColumnAdapter(tableType, tableWidth,indentLevel, inputs);
 
         TblGridBuilder tblGridBuilder = getTblGridBuilder();
         columnAdapter.getColumns().forEach(columnInfo -> {
@@ -206,6 +214,10 @@ public final class TableAdapter {
     }
 
     // private methods
+
+    private BigDecimal calculateTableWidth(int tableWidth) {
+        return tableWidth == 0 || tableWidth >= 100 ? TOTAL_TABLE_WIDTH : TOTAL_TABLE_WIDTH.multiply(BigDecimal.valueOf(tableWidth).divide(PERCENT, ROUNDING)) ;
+    }
 
     /**
      * Checks whether <code>columnIndex</code> is within range.

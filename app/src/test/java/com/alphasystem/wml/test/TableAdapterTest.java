@@ -186,6 +186,41 @@ public class TableAdapterTest extends CommonTest {
         mainDocumentPart.addObject(tableAdapter.getTable());
     }
 
+    @Test(dependsOnMethods = {"testColumnWidthsWithDecimalValues"})
+    public void testTableWithWidth() {
+        var mainDocumentPart = getMainDocumentPart();
+        mainDocumentPart.addObject(WmlAdapter.getEmptyPara());
+        mainDocumentPart.addStyledParagraphOfText("ExampleTitle", "Centered table with 60% width");
+
+        var tableAdapter = new TableAdapter()
+                .withTableStyle("CenteredTable")
+                .withTableType(TableType.PCT)
+                .withTableWidth(60)
+                .withWidths(18.0, 18.0, 18.0, 23.0, 23.0) 
+                .startTable()
+                .startRow()
+                .addColumn(new ColumnData(0).withContent(WmlAdapter.getParagraph("R1C1")))
+                .addColumn(new ColumnData(1).withContent(WmlAdapter.getParagraph("R1C2")))
+                .addColumn(new ColumnData(2).withContent(WmlAdapter.getParagraph("R1C3")))
+                .addColumn(new ColumnData(3).withGridSpanValue(2).withContent(WmlAdapter.getEmptyPara()))
+                .endRow()
+                .startRow()
+                .addColumn(new ColumnData(0).withContent(WmlAdapter.getParagraph("R2C1")))
+                .addColumn(new ColumnData(1).withContent(WmlAdapter.getParagraph("R2C2")))
+                .addColumn(new ColumnData(2).withContent(WmlAdapter.getParagraph("R2C3")))
+                .addColumn(new ColumnData(3).withContent(WmlAdapter.getParagraph("R2C4")))
+                .addColumn(new ColumnData(4).withVerticalMergeType(VerticalMergeType.RESTART).withContent(WmlAdapter.getParagraph("R2C5")))
+                .endRow()
+                .startRow()
+                .addColumn(new ColumnData(0).withContent(WmlAdapter.getParagraph("R3C1")))
+                .addColumn(new ColumnData(1).withContent(WmlAdapter.getParagraph("R3C2")))
+                .addColumn(new ColumnData(2).withContent(WmlAdapter.getParagraph("R3C3")))
+                .addColumn(new ColumnData(3).withContent(WmlAdapter.getParagraph("R3C4")))
+                .addColumn(new ColumnData(4).withVerticalMergeType(VerticalMergeType.CONTINUE).withContent(WmlAdapter.getEmptyPara()))
+                .endRow();
+        mainDocumentPart.addObject(tableAdapter.getTable());
+    }
+
     private P createNumberedParagraph(String text) {
         var ppr = WmlAdapter.getListParagraphProperties(1L, 0L, true);
         var run = WmlBuilderFactory.getRBuilder().addContent(getText(text)).getObject();

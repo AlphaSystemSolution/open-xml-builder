@@ -13,9 +13,11 @@ import static org.apache.commons.lang3.ArrayUtils.isEmpty;
 public final class ColumnAdapter {
 
     private final BigDecimal totalTableWidth;
+    private final int tableWidthPercentage;
     private final List<ColumnInfo> columns;
 
-    public ColumnAdapter(TableType tableType, int indentLevel, ColumnInput... columnWidthsInPercentage) {
+    public ColumnAdapter(TableType tableType, BigDecimal tableWidth, int indentLevel, ColumnInput... columnWidthsInPercentage) {
+        this.tableWidthPercentage = tableWidth.divide(TableAdapter.TOTAL_TABLE_WIDTH, TableAdapter.ROUNDING).multiply(TableAdapter.PERCENT).intValue();
         var columnInputs = isEmpty(columnWidthsInPercentage) ?
                 new ColumnInput[]{new ColumnInput("col_1", TableAdapter.PERCENT.doubleValue())}
                 : columnWidthsInPercentage;
@@ -27,12 +29,13 @@ public final class ColumnAdapter {
         // if there is indent then this would be subtracted from each column width
         final var indentPerColumn = BigDecimal.valueOf(totalIndent).divide(BigDecimal.valueOf(numOfColumns), TableAdapter.ROUNDING);
 
+        totalTableWidth = TableType.AUTO == tableType ? BigDecimal.ZERO : tableWidth;
+
         // populate actual columns info
         for (int index = 0; index < numOfColumns; index++) {
             columns.add(toColumnInfo(tableType, index, columnInputs[index], indentPerColumn.doubleValue()));
         }
 
-        totalTableWidth = TableType.AUTO == tableType ? BigDecimal.ZERO : TableAdapter.TOTAL_TABLE_WIDTH;
     }
 
     public List<ColumnInfo> getColumns() {
@@ -55,14 +58,17 @@ public final class ColumnAdapter {
                 '}';
     }
 
-    private static ColumnInfo toColumnInfo(TableType tableType, int index, ColumnInput input, double indentPerColumn) {
-        double width = input.getColumnWidth();
-        var totalWidth = TableType.AUTO == tableType ? TableAdapter.TOTAL_GRID_COL_WIDTH : TableAdapter.TOTAL_TABLE_WIDTH;
+    private ColumnInfo toColumnInfo(TableType tableType, int index, ColumnInput input, double indentPerColumn) {
+        final var width = input.getColumnWidth();
+        final var totalWidth = TableType.AUTO == tableType ? TableAdapter.TOTAL_GRID_COL_WIDTH : TableAdapter.TOTAL_TABLE_WIDTH;
         var columnWidth = totalWidth.multiply(BigDecimal.valueOf(width))
                 .divide(TableAdapter.PERCENT, TableAdapter.ROUNDING)
                 .setScale(0, RoundingMode.HALF_EVEN).doubleValue();
         columnWidth -= indentPerColumn;
-        var gridWidth = TableAdapter.TOTAL_GRID_COL_WIDTH.multiply(BigDecimal.valueOf(width))
+        final var totalGridWidth = TableAdapter.TOTAL_GRID_COL_WIDTH.multiply(BigDecimal.valueOf(tableWidthPercentage))
+                .divide(TableAdapter.PERCENT, TableAdapter.ROUNDING)
+                .setScale(2, RoundingMode.HALF_EVEN);
+        var gridWidth = totalGridWidth.multiply(BigDecimal.valueOf(width))
                 .divide(TableAdapter.PERCENT, TableAdapter.ROUNDING).setScale(0, RoundingMode.HALF_EVEN)
                 .doubleValue();
         gridWidth = TableType.AUTO == tableType ? columnWidth : gridWidth;
