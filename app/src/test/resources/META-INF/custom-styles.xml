@@ -237,8 +237,8 @@
             </w:tcPr>
         </w:tblStylePr>
     </w:style>
-    <w:style w:type="table" w:styleId="SingleConjugation" w:customStyle="true">
-        <w:name w:val="SingleConjugation"/>
+    <w:style w:type="table" w:styleId="CenteredTable" w:customStyle="true">
+        <w:name w:val="CenteredTable"/>
         <w:basedOn w:val="TableNormal"/>
         <w:uiPriority w:val="99"/>
         <w:rsid w:val="001A596A"/>

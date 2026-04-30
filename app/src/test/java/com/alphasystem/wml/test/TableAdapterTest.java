@@ -190,10 +190,10 @@ public class TableAdapterTest extends CommonTest {
     public void testTableWithWidth() {
         var mainDocumentPart = getMainDocumentPart();
         mainDocumentPart.addObject(WmlAdapter.getEmptyPara());
-        mainDocumentPart.addStyledParagraphOfText("TableWithWidth", "Table With Width");
+        mainDocumentPart.addStyledParagraphOfText("ExampleTitle", "Centered table with 60% width");
 
         var tableAdapter = new TableAdapter()
-                .withTableStyle("SingleConjugation")
+                .withTableStyle("CenteredTable")
                 .withTableType(TableType.PCT)
                 .withTableWidth(60)
                 .withWidths(18.0, 18.0, 18.0, 23.0, 23.0) 
