@@ -71,7 +71,7 @@ public class WmlAdapter {
         final long id = bookmarkCount.getAndIncrement();
         final CTBookmark bookmarkStart = getCTBookmarkBuilder().withId(id).withName(name).getObject();
         final JAXBElement<CTMarkupRange> bookmarkEnd = createCTMarkupRange(getCTBookmarkRangeBuilder().withId(id).getObject());
-        pBuilder.getObject().getContent().add(0, bookmarkStart);
+        pBuilder.getObject().getContent().addFirst(bookmarkStart);
         pBuilder.addContent(bookmarkEnd);
     }
 
@@ -148,6 +148,17 @@ public class WmlAdapter {
 
     public static CTBorder getBorder(STBorder borderType, Long size, Long space, String color) {
         return getCTBorderBuilder().withVal(borderType).withSz(size).withSpace(space).withColor(color).getObject();
+    }
+
+    public static TblBorders getNilTblBorders() {
+        return getTblBordersBuilder()
+                .withTop(getNilBorder())
+                .withBottom(getNilBorder())
+                .withLeft(getNilBorder())
+                .withRight(getNilBorder())
+                .withInsideH(getNilBorder())
+                .withInsideV(getNilBorder())
+                .getObject();
     }
 
     public static TcPrInner.TcBorders getNilBorders() {

@@ -1,19 +1,27 @@
 package com.alphasystem.wml.test;
 
 import com.alphasystem.commons.SystemException;
-import com.alphasystem.docx4j.builder.wml.WmlAdapter;
-import com.alphasystem.docx4j.builder.wml.WmlBuilderFactory;
 import com.alphasystem.docx4j.builder.wml.WmlPackageBuilder;
 import com.alphasystem.docx4j.builder.wml.table.ColumnData;
 import com.alphasystem.docx4j.builder.wml.table.ColumnInput;
 import com.alphasystem.docx4j.builder.wml.table.TableAdapter;
+import com.alphasystem.docx4j.builder.wml.table.TableFormat;
 import com.alphasystem.docx4j.builder.wml.table.TableType;
 import com.alphasystem.docx4j.builder.wml.table.VerticalMergeType;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
 import org.docx4j.wml.P;
+import org.docx4j.wml.Tbl;
 import org.testng.annotations.Test;
 
+import static com.alphasystem.docx4j.builder.wml.WmlAdapter.getEmptyPara;
+import static com.alphasystem.docx4j.builder.wml.WmlAdapter.getNilTblBorders;
+import static com.alphasystem.docx4j.builder.wml.WmlAdapter.getListParagraphProperties;
+import static com.alphasystem.docx4j.builder.wml.WmlAdapter.getPageBreak;
+import static com.alphasystem.docx4j.builder.wml.WmlAdapter.getParagraph;
 import static com.alphasystem.docx4j.builder.wml.WmlAdapter.getText;
+import static com.alphasystem.docx4j.builder.wml.WmlBuilderFactory.getPBuilder;
+import static com.alphasystem.docx4j.builder.wml.WmlBuilderFactory.getRBuilder;
+import static com.alphasystem.docx4j.builder.wml.WmlBuilderFactory.getTblPrBuilder;
 
 public class TableAdapterTest extends CommonTest {
 
@@ -35,38 +43,38 @@ public class TableAdapterTest extends CommonTest {
 
         tableAdapter.startRow()
                 .addColumn(new ColumnData(0).withGridSpanValue(6)
-                        .withContent(WmlAdapter.getParagraph("Column spans all grid spans.")))
+                        .withContent(getParagraph("Column spans all grid spans.")))
                 .endRow()
                 .startRow()
-                .addColumn(new ColumnData(0).withContent(WmlAdapter.getParagraph("1")))
-                .addColumn(new ColumnData(1).withGridSpanValue(2).withContent(WmlAdapter.getParagraph("2")))
-                .addColumn(new ColumnData(3).withGridSpanValue(2).withContent(WmlAdapter.getParagraph("3")))
-                .addColumn(new ColumnData(5).withContent(WmlAdapter.getParagraph("5")))
+                .addColumn(new ColumnData(0).withContent(getParagraph("1")))
+                .addColumn(new ColumnData(1).withGridSpanValue(2).withContent(getParagraph("2")))
+                .addColumn(new ColumnData(3).withGridSpanValue(2).withContent(getParagraph("3")))
+                .addColumn(new ColumnData(5).withContent(getParagraph("5")))
                 .endRow()
                 .startRow()
                 .addColumn(new ColumnData(0).withGridSpanValue(2)
-                        .withContent(WmlAdapter.getParagraph("Column 1 of row with 3 columns")))
+                        .withContent(getParagraph("Column 1 of row with 3 columns")))
                 .addColumn(new ColumnData(2).withGridSpanValue(2)
-                        .withContent(WmlAdapter.getParagraph("Column 2 of row with 3 columns")))
+                        .withContent(getParagraph("Column 2 of row with 3 columns")))
                 .addColumn(new ColumnData(4).withGridSpanValue(2)
-                        .withContent(WmlAdapter.getParagraph("Column 3 of row with 3 columns")))
+                        .withContent(getParagraph("Column 3 of row with 3 columns")))
                 .endRow();
 
         mainDocumentPart.addObject(tableAdapter.getTable());
-        mainDocumentPart.addObject(WmlAdapter.getEmptyPara());
+        mainDocumentPart.addObject(getEmptyPara());
 
         mainDocumentPart.addStyledParagraphOfText("ExampleTitle", "PCT table with five columns");
         tableAdapter = new TableAdapter().withNumOfColumns(5).startTable();
         addColumns(tableAdapter);
         mainDocumentPart.addObject(tableAdapter.getTable());
-        mainDocumentPart.addObject(WmlAdapter.getEmptyPara());
+        mainDocumentPart.addObject(getEmptyPara());
 
         mainDocumentPart.addStyledParagraphOfText("ExampleTitle", "Auto Table");
         tableAdapter = new TableAdapter().withTableType(TableType.AUTO).withNumOfColumns(5).startTable();
         addColumns(tableAdapter);
         mainDocumentPart.addObject(tableAdapter.getTable());
 
-        mainDocumentPart.addObject(WmlAdapter.getEmptyPara());
+        mainDocumentPart.addObject(getEmptyPara());
         mainDocumentPart.addStyledParagraphOfText("ExampleTitle", "Table within listing");
 
         mainDocumentPart.addObject(createNumberedParagraph("List 1"));
@@ -79,16 +87,8 @@ public class TableAdapterTest extends CommonTest {
         addColumns(tableAdapter);
         mainDocumentPart.addObject(tableAdapter.getTable());
         mainDocumentPart.addObject(createNumberedParagraph("List 2"));
-        var tblBorders = WmlBuilderFactory.getTblBordersBuilder()
-                .withTop(WmlAdapter.getNilBorder())
-                .withBottom(WmlAdapter.getNilBorder())
-                .withLeft(WmlAdapter.getNilBorder())
-                .withRight(WmlAdapter.getNilBorder())
-                .withInsideH(WmlAdapter.getNilBorder())
-                .withInsideV(WmlAdapter.getNilBorder())
-                .getObject();
-        var tblPr = WmlBuilderFactory
-                .getTblPrBuilder()
+        var tblBorders = getNilTblBorders();
+        var tblPr = getTblPrBuilder()
                 .withTblBorders(tblBorders)
                 .getObject();
         tableAdapter = new TableAdapter()
@@ -104,45 +104,45 @@ public class TableAdapterTest extends CommonTest {
     @Test(dependsOnMethods = {"testTableAdapter"})
     public void testRowSpan() {
         var mainDocumentPart = getMainDocumentPart();
-        mainDocumentPart.addObject(WmlAdapter.getEmptyPara());
+        mainDocumentPart.addObject(getEmptyPara());
         var tableAdapter = new TableAdapter().withNumOfColumns(4).startTable()
                 .startRow()
                 .addColumn(new ColumnData(0).withVerticalMergeType(VerticalMergeType.RESTART)
-                        .withContent(WmlAdapter.getParagraph("Row 1 and 2 Column1")))
+                        .withContent(getParagraph("Row 1 and 2 Column1")))
                 .addColumn(new ColumnData(1).withVerticalMergeType(VerticalMergeType.RESTART)
-                        .withContent(WmlAdapter.getParagraph("Row 1, 2, 3, and 4 Column 2")))
-                .addColumn(new ColumnData(2).withContent(WmlAdapter.getParagraph("Row 1 Column 3")))
-                .addColumn(new ColumnData(3).withContent(WmlAdapter.getParagraph("Row1 Column 4")))
+                        .withContent(getParagraph("Row 1, 2, 3, and 4 Column 2")))
+                .addColumn(new ColumnData(2).withContent(getParagraph("Row 1 Column 3")))
+                .addColumn(new ColumnData(3).withContent(getParagraph("Row1 Column 4")))
                 .endRow()
                 .startRow()
                 .addColumn(new ColumnData(0).withVerticalMergeType(VerticalMergeType.CONTINUE)
-                        .withContent(WmlAdapter.getEmptyPara()))
+                        .withContent(getEmptyPara()))
                 .addColumn(new ColumnData(1).withVerticalMergeType(VerticalMergeType.CONTINUE)
-                        .withContent(WmlAdapter.getEmptyPara()))
+                        .withContent(getEmptyPara()))
                 .addColumn(new ColumnData(2).withVerticalMergeType(VerticalMergeType.RESTART)
-                        .withContent(WmlAdapter.getParagraph("Row 2 and 3 Column 3")))
+                        .withContent(getParagraph("Row 2 and 3 Column 3")))
                 .addColumn(new ColumnData(3).withVerticalMergeType(VerticalMergeType.RESTART)
-                        .withContent(WmlAdapter.getParagraph("Row 2 Column 4")))
+                        .withContent(getParagraph("Row 2 Column 4")))
                 .endRow()
                 .startRow()
                 .addColumn(new ColumnData(0).withVerticalMergeType(VerticalMergeType.RESTART)
-                        .withContent(WmlAdapter.getParagraph("Row 3 and 4 Column 1")))
+                        .withContent(getParagraph("Row 3 and 4 Column 1")))
                 .addColumn(new ColumnData(1).withVerticalMergeType(VerticalMergeType.CONTINUE)
-                        .withContent(WmlAdapter.getEmptyPara()))
+                        .withContent(getEmptyPara()))
                 .addColumn(new ColumnData(2).withVerticalMergeType(VerticalMergeType.CONTINUE)
-                        .withContent(WmlAdapter.getEmptyPara()))
+                        .withContent(getEmptyPara()))
                 .addColumn(new ColumnData(3).withVerticalMergeType(VerticalMergeType.RESTART)
-                        .withContent(WmlAdapter.getParagraph("Row 3 and 4 Column 4")))
+                        .withContent(getParagraph("Row 3 and 4 Column 4")))
                 .endRow()
                 .startRow()
                 .addColumn(new ColumnData(0).withVerticalMergeType(VerticalMergeType.CONTINUE)
-                        .withContent(WmlAdapter.getEmptyPara()))
+                        .withContent(getEmptyPara()))
                 .addColumn(new ColumnData(1).withVerticalMergeType(VerticalMergeType.CONTINUE)
-                        .withContent(WmlAdapter.getEmptyPara()))
+                        .withContent(getEmptyPara()))
                 .addColumn(new ColumnData(2).withVerticalMergeType(VerticalMergeType.CONTINUE)
-                        .withContent(WmlAdapter.getEmptyPara()))
+                        .withContent(getEmptyPara()))
                 .addColumn(new ColumnData(3).withVerticalMergeType(VerticalMergeType.CONTINUE)
-                        .withContent(WmlAdapter.getEmptyPara()))
+                        .withContent(getEmptyPara()))
                 .endRow();
 
         mainDocumentPart.addObject(tableAdapter.getTable());
@@ -151,7 +151,7 @@ public class TableAdapterTest extends CommonTest {
     @Test(dependsOnMethods = {"testRowSpan"})
     public void testColumnWidthsWithDecimalValues() {
         var mainDocumentPart = getMainDocumentPart();
-        mainDocumentPart.addObject(WmlAdapter.getEmptyPara());
+        mainDocumentPart.addObject(getEmptyPara());
         mainDocumentPart.addStyledParagraphOfText("ExampleTitle", "Table with widths in decimal points");
 
         var tableAdapter = new TableAdapter()
@@ -165,22 +165,22 @@ public class TableAdapterTest extends CommonTest {
                         new ColumnInput("col_7", 16.2499))
                 .startTable()
                 .startRow()
-                .addColumn(new ColumnData(0).withContent(WmlAdapter.getEmptyPara()))
-                .addColumn(new ColumnData(1).withContent(WmlAdapter.getEmptyPara()))
-                .addColumn(new ColumnData(2).withContent(WmlAdapter.getEmptyPara()))
-                .addColumn(new ColumnData(3).withVerticalMergeType(VerticalMergeType.RESTART).withContent(WmlAdapter.getEmptyPara()))
-                .addColumn(new ColumnData(4).withContent(WmlAdapter.getEmptyPara()))
-                .addColumn(new ColumnData(5).withContent(WmlAdapter.getEmptyPara()))
-                .addColumn(new ColumnData(6).withContent(WmlAdapter.getEmptyPara()))
+                .addColumn(new ColumnData(0).withContent(getEmptyPara()))
+                .addColumn(new ColumnData(1).withContent(getEmptyPara()))
+                .addColumn(new ColumnData(2).withContent(getEmptyPara()))
+                .addColumn(new ColumnData(3).withVerticalMergeType(VerticalMergeType.RESTART).withContent(getEmptyPara()))
+                .addColumn(new ColumnData(4).withContent(getEmptyPara()))
+                .addColumn(new ColumnData(5).withContent(getEmptyPara()))
+                .addColumn(new ColumnData(6).withContent(getEmptyPara()))
                 .endRow()
                 .startRow()
-                .addColumn(new ColumnData(0).withContent(WmlAdapter.getEmptyPara()))
-                .addColumn(new ColumnData(1).withContent(WmlAdapter.getEmptyPara()))
-                .addColumn(new ColumnData(2).withContent(WmlAdapter.getEmptyPara()))
-                .addColumn(new ColumnData(3).withVerticalMergeType(VerticalMergeType.CONTINUE).withContent(WmlAdapter.getEmptyPara()))
-                .addColumn(new ColumnData(4).withContent(WmlAdapter.getEmptyPara()))
-                .addColumn(new ColumnData(5).withContent(WmlAdapter.getEmptyPara()))
-                .addColumn(new ColumnData(6).withContent(WmlAdapter.getEmptyPara()))
+                .addColumn(new ColumnData(0).withContent(getEmptyPara()))
+                .addColumn(new ColumnData(1).withContent(getEmptyPara()))
+                .addColumn(new ColumnData(2).withContent(getEmptyPara()))
+                .addColumn(new ColumnData(3).withVerticalMergeType(VerticalMergeType.CONTINUE).withContent(getEmptyPara()))
+                .addColumn(new ColumnData(4).withContent(getEmptyPara()))
+                .addColumn(new ColumnData(5).withContent(getEmptyPara()))
+                .addColumn(new ColumnData(6).withContent(getEmptyPara()))
                 .endRow();
 
         mainDocumentPart.addObject(tableAdapter.getTable());
@@ -189,51 +189,92 @@ public class TableAdapterTest extends CommonTest {
     @Test(dependsOnMethods = {"testColumnWidthsWithDecimalValues"})
     public void testTableWithWidth() {
         var mainDocumentPart = getMainDocumentPart();
-        mainDocumentPart.addObject(WmlAdapter.getEmptyPara());
+        mainDocumentPart.addObject(getEmptyPara());
         mainDocumentPart.addStyledParagraphOfText("ExampleTitle", "Centered table with 60% width");
 
         var tableAdapter = new TableAdapter()
                 .withTableStyle("CenteredTable")
                 .withTableType(TableType.PCT)
                 .withTableWidth(60)
-                .withWidths(18.0, 18.0, 18.0, 23.0, 23.0) 
+                .withWidths(18.0, 18.0, 18.0, 23.0, 23.0)
                 .startTable()
                 .startRow()
-                .addColumn(new ColumnData(0).withContent(WmlAdapter.getParagraph("R1C1")))
-                .addColumn(new ColumnData(1).withContent(WmlAdapter.getParagraph("R1C2")))
-                .addColumn(new ColumnData(2).withContent(WmlAdapter.getParagraph("R1C3")))
-                .addColumn(new ColumnData(3).withGridSpanValue(2).withContent(WmlAdapter.getEmptyPara()))
+                .addColumn(new ColumnData(0).withContent(getParagraph("R1C1")))
+                .addColumn(new ColumnData(1).withContent(getParagraph("R1C2")))
+                .addColumn(new ColumnData(2).withContent(getParagraph("R1C3")))
+                .addColumn(new ColumnData(3).withGridSpanValue(2).withContent(getEmptyPara()))
                 .endRow()
                 .startRow()
-                .addColumn(new ColumnData(0).withContent(WmlAdapter.getParagraph("R2C1")))
-                .addColumn(new ColumnData(1).withContent(WmlAdapter.getParagraph("R2C2")))
-                .addColumn(new ColumnData(2).withContent(WmlAdapter.getParagraph("R2C3")))
-                .addColumn(new ColumnData(3).withContent(WmlAdapter.getParagraph("R2C4")))
-                .addColumn(new ColumnData(4).withVerticalMergeType(VerticalMergeType.RESTART).withContent(WmlAdapter.getParagraph("R2C5")))
+                .addColumn(new ColumnData(0).withContent(getParagraph("R2C1")))
+                .addColumn(new ColumnData(1).withContent(getParagraph("R2C2")))
+                .addColumn(new ColumnData(2).withContent(getParagraph("R2C3")))
+                .addColumn(new ColumnData(3).withContent(getParagraph("R2C4")))
+                .addColumn(new ColumnData(4).withVerticalMergeType(VerticalMergeType.RESTART).withContent(getParagraph("R2C5")))
                 .endRow()
                 .startRow()
-                .addColumn(new ColumnData(0).withContent(WmlAdapter.getParagraph("R3C1")))
-                .addColumn(new ColumnData(1).withContent(WmlAdapter.getParagraph("R3C2")))
-                .addColumn(new ColumnData(2).withContent(WmlAdapter.getParagraph("R3C3")))
-                .addColumn(new ColumnData(3).withContent(WmlAdapter.getParagraph("R3C4")))
-                .addColumn(new ColumnData(4).withVerticalMergeType(VerticalMergeType.CONTINUE).withContent(WmlAdapter.getEmptyPara()))
+                .addColumn(new ColumnData(0).withContent(getParagraph("R3C1")))
+                .addColumn(new ColumnData(1).withContent(getParagraph("R3C2")))
+                .addColumn(new ColumnData(2).withContent(getParagraph("R3C3")))
+                .addColumn(new ColumnData(3).withContent(getParagraph("R3C4")))
+                .addColumn(new ColumnData(4).withVerticalMergeType(VerticalMergeType.CONTINUE).withContent(getEmptyPara()))
                 .endRow();
         mainDocumentPart.addObject(tableAdapter.getTable());
     }
 
+    @Test(dependsOnMethods = {"testTableWithWidth"})
+    public void nestedTableTest() {
+        final var mainDocumentPart = getMainDocumentPart();
+        mainDocumentPart.addObject(getPageBreak());
+        mainDocumentPart.addStyledParagraphOfText("ExampleTitle", "Nested tables");
+
+        final var tableAdapter = new TableAdapter()
+                .withTableType(TableType.PCT)
+                .withTableFormat(TableFormat.OUTER_NESTED)
+                .withWidths(50.0, 50.0)
+                .withTableProperties(getTblPrBuilder().withTblBorders(getNilTblBorders()).getObject())
+                .startTable()
+                .startRow()
+                .addColumn(new ColumnData(0).withContent(createNestedTable(1)))
+                .addColumn(new ColumnData(1).withContent(createNestedTable(2)))
+                .endRow()
+                .startRow()
+                .addColumn(new ColumnData(0).withGridSpanValue(2).withContent(getEmptyPara()))
+                .endRow()
+                .startRow()
+                .addColumn(new ColumnData(0).withContent(createNestedTable(3)))
+                .addColumn(new ColumnData(1).withContent(createNestedTable(4)))
+                .endRow();
+
+        mainDocumentPart.addObject(tableAdapter.getTable());
+    }
+
+    private Tbl createNestedTable(int tableNum) {
+        return new TableAdapter()
+                .withTableType(TableType.PCT)
+                .withTableFormat(TableFormat.INNER_NESTED)
+                .withWidths(33.3333, 33.3333, 33.3334)
+                .startTable()
+                .startRow()
+                .addColumn(new ColumnData(0).withContent(getParagraph(String.format("R1C1-%d", tableNum))))
+                .addColumn(new ColumnData(1).withContent(getParagraph(String.format("R1C2-%d", tableNum))))
+                .addColumn(new ColumnData(2).withContent(getParagraph(String.format("R1C3-%d", tableNum))))
+                .endRow()
+                .getTable();
+    }
+
     private P createNumberedParagraph(String text) {
-        var ppr = WmlAdapter.getListParagraphProperties(1L, 0L, true);
-        var run = WmlBuilderFactory.getRBuilder().addContent(getText(text)).getObject();
-        return WmlBuilderFactory.getPBuilder().withPPr(ppr).addContent(run).getObject();
+        var ppr = getListParagraphProperties(1L, 0L, true);
+        var run = getRBuilder().addContent(getText(text)).getObject();
+        return getPBuilder().withPPr(ppr).addContent(run).getObject();
     }
 
     private void addColumns(TableAdapter tableAdapter) {
         tableAdapter.startRow()
-                .addColumn(new ColumnData(0).withContent(WmlAdapter.getParagraph("Row 1 Column 1")))
-                .addColumn(new ColumnData(1).withContent(WmlAdapter.getParagraph("Row 1 Column 2")))
-                .addColumn(new ColumnData(2).withContent(WmlAdapter.getParagraph("Row 1 Column 3")))
-                .addColumn(new ColumnData(3).withContent(WmlAdapter.getParagraph("Row 1 Column 4")))
-                .addColumn(new ColumnData(4).withContent(WmlAdapter.getParagraph("Row 1 Column 5")))
+                .addColumn(new ColumnData(0).withContent(getParagraph("Row 1 Column 1")))
+                .addColumn(new ColumnData(1).withContent(getParagraph("Row 1 Column 2")))
+                .addColumn(new ColumnData(2).withContent(getParagraph("Row 1 Column 3")))
+                .addColumn(new ColumnData(3).withContent(getParagraph("Row 1 Column 4")))
+                .addColumn(new ColumnData(4).withContent(getParagraph("Row 1 Column 5")))
                 .endRow();
     }
 }
