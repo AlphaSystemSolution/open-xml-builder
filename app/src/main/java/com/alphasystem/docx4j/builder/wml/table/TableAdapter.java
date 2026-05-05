@@ -1,7 +1,9 @@
 package com.alphasystem.docx4j.builder.wml.table;
 
+import com.alphasystem.commons.util.AppUtil;
 import com.alphasystem.docx4j.builder.wml.*;
 import org.apache.commons.lang3.StringUtils;
+import org.docx4j.jaxb.Context;
 import org.docx4j.wml.*;
 
 import java.math.BigDecimal;
@@ -43,6 +45,7 @@ public final class TableAdapter {
     private String tableStyle;
     // table width as percentage
     private BigDecimal tableWidth;
+    private boolean keepTableTogether;
     private int indentLevel;
     private ColumnInput[] inputs;
     private TblPr tableProperties;
@@ -55,6 +58,7 @@ public final class TableAdapter {
         this.tableFormat = TableFormat.NORMAL;
         this.tableStyle = DEFAULT_TABLE_STYLE;
         this.tableWidth = calculateTableWidth(100);
+        this.keepTableTogether = false;
         this.indentLevel = -1;
         this.inputs = null;
     }
@@ -76,6 +80,11 @@ public final class TableAdapter {
 
     public TableAdapter withTableWidth(int tableWidth) {
         this.tableWidth = calculateTableWidth(tableWidth);
+        return this;
+    }
+
+    public TableAdapter withKeepTableTogether(boolean keepTableTogether) {
+        this.keepTableTogether = keepTableTogether;
         return this;
     }
 
@@ -164,6 +173,15 @@ public final class TableAdapter {
 
     public TableAdapter startRow(TrBuilder trBuilder) {
         this.trBuilder = trBuilder;
+        if (keepTableTogether) {
+            final var factory = Context.getWmlObjectFactory();
+            var trPr = this.trBuilder.getObject().getTrPr();
+            if (trPr == null) {
+                trPr = WmlBuilderFactory.getTrPrBuilder().getObject();
+            }
+            trPr.getCnfStyleOrDivIdOrGridBefore().add(factory.createCTTrPrBaseCantSplit(BOOLEAN_DEFAULT_TRUE_TRUE));
+            this.trBuilder.withTrPr(trPr);
+        }
         return this;
     }
 
@@ -174,7 +192,7 @@ public final class TableAdapter {
     }
 
     public TableAdapter addColumn(ColumnData columnData) {
-        trBuilder.addContent(createColumn(tableType, tableFormat, columnData, getColumns()));
+        trBuilder.addContent(createColumn(tableType, tableFormat, keepTableTogether, columnData, getColumns()));
         return this;
     }
 
@@ -186,17 +204,37 @@ public final class TableAdapter {
         return columnAdapter.getColumns();
     }
 
-    public static Tc createColumn(TableType tableType, TableFormat tableFormat, ColumnData columnData, List<ColumnInfo> columnInfos) {
+    public static Tc createColumn(
+            TableType tableType,
+            TableFormat tableFormat,
+            Boolean keepTableTogether,
+            ColumnData columnData,
+            List<ColumnInfo> columnInfos) {
         final var columnProperties = getColumnProperties(tableType, columnData.getColumnIndex(), columnData.getGridSpanValue(),
                 columnData.getVerticalMergeType(), columnData.getColumnProperties(), columnInfos);
 
         var columnContents = columnData.getContent();
+
+        if (keepTableTogether) {
+            for (var content : columnContents) {
+                if (AppUtil.isInstanceOf(P.class, content)) {
+                    final var p = (P) content;
+                    var pPr = p.getPPr();
+                    if (pPr == null) {
+                        pPr = WmlBuilderFactory.getPPrBuilder().getObject();
+                    }
+                    pPr.setKeepNext(BOOLEAN_DEFAULT_TRUE_TRUE);
+                    p.setPPr(pPr);
+                }
+            }
+        }
 
         // if this is outer table in nested table, then add empty para with tabs
         if (tableFormat == TableFormat.OUTER_NESTED) {
             columnContents = Arrays.copyOf(columnContents, columnContents.length + 1);
             columnContents[columnContents.length - 1] = createEmptyParaWithTabs();
         }
+
         return getTcBuilder().withTcPr(columnProperties).addContent(columnContents).getObject();
     }
 

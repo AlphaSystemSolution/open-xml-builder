@@ -16,7 +16,6 @@ import org.testng.annotations.Test;
 import static com.alphasystem.docx4j.builder.wml.WmlAdapter.getEmptyPara;
 import static com.alphasystem.docx4j.builder.wml.WmlAdapter.getNilTblBorders;
 import static com.alphasystem.docx4j.builder.wml.WmlAdapter.getListParagraphProperties;
-import static com.alphasystem.docx4j.builder.wml.WmlAdapter.getPageBreak;
 import static com.alphasystem.docx4j.builder.wml.WmlAdapter.getParagraph;
 import static com.alphasystem.docx4j.builder.wml.WmlAdapter.getText;
 import static com.alphasystem.docx4j.builder.wml.WmlBuilderFactory.getPBuilder;
@@ -222,9 +221,57 @@ public class TableAdapterTest extends CommonTest {
     }
 
     @Test(dependsOnMethods = {"testTableWithWidth"})
+    public void testTableWithKeepNext() {
+        var mainDocumentPart = getMainDocumentPart();
+        mainDocumentPart.addObject(getEmptyPara());
+        mainDocumentPart.addStyledParagraphOfText("ExampleTitle", "Prevent table to split into multiple pages");
+
+        var tableAdapter = new TableAdapter()
+                .withTableType(TableType.PCT)
+                .withKeepTableTogether(true)
+                .withWidths(18.0, 18.0, 18.0, 23.0, 23.0)
+                .startTable()
+                .startRow()
+                .addColumn(new ColumnData(0).withContent(getParagraph("R1C1")))
+                .addColumn(new ColumnData(1).withContent(getParagraph("R1C2")))
+                .addColumn(new ColumnData(2).withContent(getParagraph("R1C3")))
+                .addColumn(new ColumnData(3).withGridSpanValue(2).withContent(getEmptyPara()))
+                .endRow()
+                .startRow()
+                .addColumn(new ColumnData(0).withContent(getParagraph("R4C1")))
+                .addColumn(new ColumnData(1).withContent(getParagraph("R4C2")))
+                .addColumn(new ColumnData(2).withContent(getParagraph("R4C3")))
+                .addColumn(new ColumnData(2).withContent(getParagraph("R4C4")))
+                .addColumn(new ColumnData(2).withContent(getParagraph("R4C5")))
+                .endRow()
+                .startRow()
+                .addColumn(new ColumnData(0).withContent(getParagraph("R5C1")))
+                .addColumn(new ColumnData(1).withContent(getParagraph("R5C2")))
+                .addColumn(new ColumnData(2).withContent(getParagraph("R5C3")))
+                .addColumn(new ColumnData(2).withContent(getParagraph("R5C4")))
+                .addColumn(new ColumnData(2).withContent(getParagraph("R5C5")))
+                .endRow()
+                .startRow()
+                .addColumn(new ColumnData(0).withContent(getParagraph("R6C1")))
+                .addColumn(new ColumnData(1).withContent(getParagraph("R6C2")))
+                .addColumn(new ColumnData(2).withContent(getParagraph("R6C3")))
+                .addColumn(new ColumnData(2).withContent(getParagraph("R6C4")))
+                .addColumn(new ColumnData(2).withContent(getParagraph("R6C5")))
+                .endRow()
+                .startRow()
+                .addColumn(new ColumnData(0).withContent(getParagraph("R7C1")))
+                .addColumn(new ColumnData(1).withContent(getParagraph("R7C2")))
+                .addColumn(new ColumnData(2).withContent(getParagraph("R7C3")))
+                .addColumn(new ColumnData(2).withContent(getParagraph("R7C4")))
+                .addColumn(new ColumnData(2).withContent(getParagraph("R7C5")))
+                .endRow();
+        mainDocumentPart.addObject(tableAdapter.getTable());
+    }
+
+    @Test(dependsOnMethods = {"testTableWithKeepNext"})
     public void nestedTableTest() {
         final var mainDocumentPart = getMainDocumentPart();
-        mainDocumentPart.addObject(getPageBreak());
+        mainDocumentPart.addObject(getEmptyPara());
         mainDocumentPart.addStyledParagraphOfText("ExampleTitle", "Nested tables");
 
         final var tableAdapter = new TableAdapter()
