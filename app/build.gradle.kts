@@ -81,7 +81,7 @@ mavenPublishing {
     publishToMavenCentral(automaticRelease = true)
     signAllPublications()
 
-    coordinates("io.github.sfali23", "open-xml-builder", "$version")
+    coordinates("io.github.sfali23", "docx4j-builder", "$version")
 
     pom {
         name.set("Open XML Builder")
