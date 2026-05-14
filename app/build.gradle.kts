@@ -36,13 +36,6 @@ dependencies {
     testImplementation("org.testng:testng:$testngVersion")
     testImplementation("com.google.inject:guice:$guiceVersion")
     testImplementation("org.uncommons:reportng:$reportngVersion")
-
-    // remove vulnerabilities
-    api("commons-codec:commons-codec:$commonsCodecVersion")
-    api("org.apache.xmlgraphics:batik-bridge:$batikVersion")
-    api("org.apache.xmlgraphics:batik-script:$batikVersion")
-    api("org.apache.xmlgraphics:batik-transcoder:$batikVersion")
-    testImplementation("com.google.guava:guava:$guavaVersion")
 }
 
 group = "io.github.sfali23"

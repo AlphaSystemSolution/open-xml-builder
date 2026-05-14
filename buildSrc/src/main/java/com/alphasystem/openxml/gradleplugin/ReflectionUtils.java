@@ -128,7 +128,7 @@ public final class ReflectionUtils {
         try {
             collectionTypeClass = (Class<?>) genericType.getActualTypeArguments()[0];
         } catch (Exception e) {
-            err.println(String.format("Collection type not found {%s}", field.getName()));
+            err.printf("Collection type not found {%s}%n", field.getName());
             return null;
         }
         return collectionTypeClass;
@@ -136,12 +136,10 @@ public final class ReflectionUtils {
 
     private static void getProperties(Class<?> srcClass, Map<String, PropertyInfo> propertyInfoMap) {
         Field[] fields = srcClass.getDeclaredFields();
-        if (fields != null && fields.length > 0) {
-            for (Field field : fields) {
-                final PropertyInfo propertyInfo = getPropertyInfo(field);
-                if (propertyInfo != null) {
-                    propertyInfoMap.put(propertyInfo.getFieldName(), propertyInfo);
-                }
+        for (Field field : fields) {
+            final PropertyInfo propertyInfo = getPropertyInfo(field);
+            if (propertyInfo != null) {
+                propertyInfoMap.put(propertyInfo.getFieldName(), propertyInfo);
             }
         }
     }
