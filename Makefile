@@ -1,7 +1,7 @@
 GRADLE = ./gradlew
 
 build:
-	$(GRADLE) build
+	$(GRADLE) build --refresh-dependencies
 
 clean:
 	$(GRADLE) clean

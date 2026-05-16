@@ -1,5 +1,4 @@
 [versions]
-libVersion = "0.5.7"
 asCommons = "0.3.2"
 docx4j = "11.5.13"
 slf4jApi = "2.0.18"
@@ -9,6 +8,6 @@ guava = "33.6.0-jre"
 testng = "7.12.0"
 moxy = "6.0.0"
 eclipseMoxy = "5.0.0"
-reportng = "5.0.0"
+reportng = "1.1.4"
 commonsText = "1.15.0"
 codemodel = "2.6"
