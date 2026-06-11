@@ -49,4 +49,4 @@ jobs:
           git config --global user.name "$GIT_AUTHOR_NAME"
 
       - name: Run Release
-        run: ./gradlew release
+        run: make release

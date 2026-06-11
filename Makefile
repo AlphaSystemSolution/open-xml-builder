@@ -1,7 +1,7 @@
 GRADLE = ./gradlew
 
 build:
-	$(GRADLE) build --refresh-dependencies
+	$(GRADLE) build
 
 clean:
 	$(GRADLE) clean
@@ -15,4 +15,4 @@ publishLocal:
 	$(GRADLE) publishToMavenLocal
 
 release:
-	$(GRADLE) publishAndReleaseToMavenCentral
+	$(GRADLE) setReleaseVersion publishToMavenCentral createTag pushTag
