@@ -1,6 +1,6 @@
 [versions]
 asCommons = "0.3.2"
-docx4j = "11.5.13"
+docx4j = "11.5.14"
 slf4jApi = "2.0.18"
 logbackClassic = "1.5.32"
 guice = "7.0.0"
