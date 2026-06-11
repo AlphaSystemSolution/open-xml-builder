@@ -11,6 +11,7 @@ eclipseMoxy = "5.0.0"
 reportng = "1.1.4"
 commonsText = "1.15.0"
 codemodel = "2.6"
+publish = "0.36.0"
 
 [libraries]
 alphasystm-commons = { module = "io.github.sfali23:commons", version.ref = "asCommons" }
@@ -28,3 +29,6 @@ guice = { module = "com.google.inject:guice", version.ref = "guice"}
 guava = { module = "com.google.guava:guava", version.ref = "guava"}
 codemodel = { module = "com.sun.codemodel:codemodel", version.ref = "codemodel"}
 commons-text = { module = "org.apache.commons:commons-text", version.ref = "commonsText"}
+
+[plugins]
+publish = { id = "com.vanniktech.maven.publish", version.ref = "publish" }
