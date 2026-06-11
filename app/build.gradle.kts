@@ -14,19 +14,19 @@ repositories {
 }
 
 dependencies {
-    api("io.github.sfali23:commons:${libs.versions.asCommons.get()}")
-    api("org.docx4j:docx4j-core:${libs.versions.docx4j.get()}")
-    api("org.docx4j:docx4j-export-fo:${libs.versions.docx4j.get()}")
-    api("org.docx4j:docx4j-JAXB-MOXy:${libs.versions.docx4j.get()}")
-    api("org.docx4j:docx4j-JAXB-ReferenceImpl:${libs.versions.docx4j.get()}")
-    api("org.docx4j:docx4j-MOXy-JAXBContext:${libs.versions.moxy.get()}")
-    api("org.eclipse.persistence:org.eclipse.persistence.moxy:${libs.versions.eclipseMoxy.get()}")
-    api("org.slf4j:slf4j-api:${libs.versions.slf4jApi.get()}")
-    api("ch.qos.logback:logback-classic:${libs.versions.logbackClassic.get()}")
-    testImplementation("org.testng:testng:${libs.versions.testng.get()}")
-    testImplementation("com.google.inject:guice:${libs.versions.guice.get()}")
-    testImplementation("com.google.guava:guava:${libs.versions.guava.get()}")
-    testImplementation("org.uncommons:reportng:${libs.versions.reportng.get()}")
+    api(libs.alphasystm.commons)
+    api(libs.docx4j.core)
+    api(libs.docx4j.exportfo)
+    api(libs.docx4j.jaxbmoxy)
+    api(libs.docx4j.jaxbreferenceimpl)
+    api(libs.docx4j.moxyjaxbcontext)
+    api(libs.docx4j.eclipsemoxy)
+    api(libs.slf4j.api)
+    api(libs.logback.classic)
+    testImplementation(libs.testng)
+    testImplementation(libs.guice)
+    testImplementation(libs.guava)
+    testImplementation(libs.reportng)
 }
 
 group = "io.github.sfali23"
