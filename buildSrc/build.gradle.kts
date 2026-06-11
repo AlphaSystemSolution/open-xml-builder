@@ -7,7 +7,7 @@ repositories {
 }
 
 dependencies {
-    implementation("com.sun.codemodel:codemodel:2.6")
-    implementation("org.docx4j:docx4j-core:11.4.9")
-    implementation("org.apache.commons:commons-lang3:3.12.0")
+    implementation(libs.codemodel)
+    implementation(libs.docx4j.core)
+    implementation(libs.commons.text)
 }

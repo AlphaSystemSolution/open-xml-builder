@@ -1,0 +1,37 @@
+[versions]
+asCommons = "0.3.2"
+docx4j = "11.5.14"
+slf4jApi = "2.0.18"
+logbackClassic = "1.5.32"
+guice = "7.0.0"
+guava = "33.6.0-jre"
+testng = "7.12.0"
+moxy = "6.0.0"
+eclipseMoxy = "5.0.0"
+reportng = "1.1.4"
+commonsText = "1.15.0"
+codemodel = "2.6"
+publish = "0.36.0"
+semver-release-plugin = "0.3.0"
+
+[libraries]
+alphasystm-commons = { module = "io.github.sfali23:commons", version.ref = "asCommons" }
+docx4j-core = { module = "org.docx4j:docx4j-core", version.ref = "docx4j"}
+docx4j-exportfo = { module = "org.docx4j:docx4j-export-fo", version.ref = "docx4j"}
+docx4j-jaxbmoxy = { module = "org.docx4j:docx4j-JAXB-MOXy", version.ref = "docx4j"}
+docx4j-jaxbreferenceimpl = { module = "org.docx4j:docx4j-JAXB-ReferenceImpl", version.ref = "docx4j"}
+docx4j-moxyjaxbcontext = { module = "org.docx4j:docx4j-MOXy-JAXBContext", version.ref = "moxy"}
+docx4j-eclipsemoxy = { module = "org.eclipse.persistence:org.eclipse.persistence.moxy", version.ref = "eclipseMoxy"}
+slf4j-api = { module = "org.slf4j:slf4j-api", version.ref = "slf4jApi"}
+logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "logbackClassic"}
+testng = { module = "org.testng:testng", version.ref = "testng"}
+reportng = { module = "org.uncommons:reportng", version.ref = "reportng"}
+guice = { module = "com.google.inject:guice", version.ref = "guice"}
+guava = { module = "com.google.guava:guava", version.ref = "guava"}
+codemodel = { module = "com.sun.codemodel:codemodel", version.ref = "codemodel"}
+commons-text = { module = "org.apache.commons:commons-text", version.ref = "commonsText"}
+
+[plugins]
+publish = { id = "com.vanniktech.maven.publish", version.ref = "publish" }
+semver-release = { id = "io.github.sfali23.gradle-semantic-versioning-release", version.ref = "semver-release-plugin" }
+

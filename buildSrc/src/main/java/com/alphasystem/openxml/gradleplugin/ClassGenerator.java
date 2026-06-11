@@ -22,8 +22,8 @@ import static com.sun.codemodel.JExpr.*;
 import static com.sun.codemodel.JMod.*;
 import static java.lang.String.format;
 import static java.lang.System.err;
-import static org.apache.commons.lang3.text.WordUtils.capitalize;
-import static org.apache.commons.lang3.text.WordUtils.uncapitalize;
+import static org.apache.commons.text.WordUtils.capitalize;
+import static org.apache.commons.text.WordUtils.uncapitalize;
 
 /**
  * @author sali
