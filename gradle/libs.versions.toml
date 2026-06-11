@@ -12,6 +12,7 @@ reportng = "1.1.4"
 commonsText = "1.15.0"
 codemodel = "2.6"
 publish = "0.36.0"
+semver-release-plugin = "0.3.0"
 
 [libraries]
 alphasystm-commons = { module = "io.github.sfali23:commons", version.ref = "asCommons" }
@@ -32,3 +33,5 @@ commons-text = { module = "org.apache.commons:commons-text", version.ref = "comm
 
 [plugins]
 publish = { id = "com.vanniktech.maven.publish", version.ref = "publish" }
+semver-release = { id = "io.github.sfali23.gradle-semantic-versioning-release", version.ref = "semver-release-plugin" }
+

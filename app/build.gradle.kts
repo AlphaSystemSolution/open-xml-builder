@@ -3,6 +3,7 @@ import com.alphasystem.openxml.gradleplugin.CodeGenerator
 plugins {
     `java-library`
     alias(libs.plugins.publish)
+    alias(libs.plugins.semver.release)
 }
 
 repositories {
@@ -100,5 +101,9 @@ tasks.named<Test>("test") {
     useTestNG {
         suites("testng/testng.xml")
     }
+}
+
+semverrelease {
+    addUnReleasedCommitsToTagComment.set(true)
 }
 
