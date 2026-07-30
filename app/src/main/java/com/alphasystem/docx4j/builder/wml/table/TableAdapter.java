@@ -210,10 +210,16 @@ public final class TableAdapter {
             Boolean keepTableTogether,
             ColumnData columnData,
             List<ColumnInfo> columnInfos) {
+        final var verticalMergeType = columnData.getVerticalMergeType();
         final var columnProperties = getColumnProperties(tableType, columnData.getColumnIndex(), columnData.getGridSpanValue(),
-                columnData.getVerticalMergeType(), columnData.getColumnProperties(), columnInfos);
+                verticalMergeType, columnData.getColumnProperties(), columnInfos);
 
         var columnContents = columnData.getContent();
+
+        // if content is not set and VerticalMergeType type is CONTINUE then add empty para
+        if (columnContents.length == 0 && VerticalMergeType.CONTINUE == verticalMergeType)  {
+            columnContents = new Object[]{getEmptyPara()};
+        }
 
         if (keepTableTogether) {
             for (var content : columnContents) {

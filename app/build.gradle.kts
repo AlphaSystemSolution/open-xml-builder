@@ -59,9 +59,13 @@ java {
     withSourcesJar()
 }
 
+val isLocalPublish = gradle.startParameter.taskNames.any { it.contains("publishToMavenLocal") }
+
 mavenPublishing {
     publishToMavenCentral(automaticRelease = true)
-    signAllPublications()
+    if (!isLocalPublish) {
+        signAllPublications()
+    }
 
     coordinates("io.github.sfali23", "docx4j-builder")
 
