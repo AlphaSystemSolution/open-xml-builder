@@ -148,6 +148,31 @@ public class TableAdapterTest extends CommonTest {
     }
 
     @Test(dependsOnMethods = {"testRowSpan"})
+    public void testColumnAndRowSpan() {
+        var mainDocumentPart = getMainDocumentPart();
+        mainDocumentPart.addObject(getEmptyPara());
+        mainDocumentPart.addStyledParagraphOfText("ExampleTitle", "Test Column and Row spans");
+
+        var tableAdapter = new TableAdapter()
+                .withNumOfColumns(4)
+                .startTable()
+                .startRow()
+                .addColumn(new ColumnData(0).withContent(getParagraph("Row1 Column1")))
+                .addColumn(new ColumnData(1).withContent(getParagraph("Row1 Column2 & 3"))
+                        .withGridSpanValue(2).withVerticalMergeType(VerticalMergeType.RESTART))
+                .addColumn(new ColumnData(3).withContent(getParagraph("Row1 Column4"))
+                        .withVerticalMergeType(VerticalMergeType.RESTART))
+                .endRow()
+                .startRow()
+                .addColumn(new ColumnData(0).withContent(getParagraph("Row2 Column1")))
+                .addColumn(new ColumnData(1).withGridSpanValue(2).withVerticalMergeType(VerticalMergeType.CONTINUE))
+                .addColumn(new ColumnData(3).withVerticalMergeType(VerticalMergeType.CONTINUE))
+                .endRow();
+
+        mainDocumentPart.addObject(tableAdapter.getTable());
+    }
+
+    @Test(dependsOnMethods = {"testColumnAndRowSpan"})
     public void testColumnWidthsWithDecimalValues() {
         var mainDocumentPart = getMainDocumentPart();
         mainDocumentPart.addObject(getEmptyPara());
