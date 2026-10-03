@@ -1,5 +1,5 @@
-**/build/
-**/bin/**
+**/build
+**/bin
 **/.gradle/*
 **/.DS_Store
 *.iml
