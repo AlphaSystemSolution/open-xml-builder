@@ -3,7 +3,6 @@ import com.alphasystem.openxml.gradleplugin.CodeGenerator
 plugins {
     `java-library`
     alias(libs.plugins.publish)
-    alias(libs.plugins.semver.release)
 }
 
 repositories {
@@ -107,7 +106,4 @@ tasks.named<Test>("test") {
     }
 }
 
-semverrelease {
-    addUnReleasedCommitsToTagComment.set(true)
-}
 

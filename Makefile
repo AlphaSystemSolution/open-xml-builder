@@ -12,7 +12,7 @@ test:
 all: clean build test
 
 publishLocal:
-	$(GRADLE) setReleaseVersion publishToMavenLocal
+	$(GRADLE) publishToMavenLocal
 
 release:
-	$(GRADLE) setReleaseVersion publishToMavenCentral createTag pushTag
+	$(GRADLE) publishToMavenCentral createTag pushTag
