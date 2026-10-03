@@ -12,7 +12,6 @@ reportng = "1.1.4"
 commonsText = "1.15.0"
 codemodel = "2.6"
 publish = "0.36.0"
-semver-release-plugin = "0.4.0-SNAPSHOT"
 
 [libraries]
 alphasystm-commons = { module = "io.github.sfali23:commons", version.ref = "asCommons" }

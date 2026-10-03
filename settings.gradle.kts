@@ -8,20 +8,8 @@ pluginManagement {
         gradlePluginPortal()
         mavenCentral()
     }
-    val catalogFile = file("gradle/libs.versions.toml")
-    val pluginVersion =
-        catalogFile
-            .readText()
-            .lines()
-            .firstNotNullOfOrNull { line ->
-                Regex("""^semver-release-plugin\s*=\s*\"([^\"]+)\"""")
-                    .matchEntire(line.trim())
-                    ?.groupValues
-                    ?.get(1)
-            }
-            ?: error("semver-release-plugin version not found in ${catalogFile.absolutePath}")
     plugins {
-        id("io.github.sfali23.gradle-semantic-versioning-release") version pluginVersion
+        id("io.github.sfali23.gradle-semantic-versioning-release") version "0.4.1"
     }
 }
 
