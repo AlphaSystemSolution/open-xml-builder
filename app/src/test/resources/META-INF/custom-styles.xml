@@ -257,4 +257,18 @@
             <w:jc w:val="center"/>
         </w:tblPr>
     </w:style>
+    <w:style w:type="paragraph" w:styleId="CustomArabic" w:customStyle="true">
+        <w:name w:val="CustomArabic"/>
+        <w:basedOn w:val="Normal"/>
+        <w:qFormat/>
+        <w:rsid w:val="00FC1823"/>
+        <w:pPr>
+            <w:bidi/>
+        </w:pPr>
+        <w:rPr>
+            <w:rFonts w:ascii="KFGQPC Uthman Taha Naskh" w:hAnsi="KFGQPC Uthman Taha Naskh" w:cs="KFGQPC Uthman Taha Naskh"/>
+            <w:sz w:val="32"/>
+            <w:szCs w:val="32"/>
+        </w:rPr>
+    </w:style>
 </w:styles>

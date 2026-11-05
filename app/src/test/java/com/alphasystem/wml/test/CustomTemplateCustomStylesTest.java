@@ -30,6 +30,12 @@ public class CustomTemplateCustomStylesTest extends CustomStylesTest {
     }
 
     @Test
+    public void testCustomArabicStyle() {
+        var paragraph = getParagraphWithStyle("CustomArabic", "سلم");
+        getMainDocumentPart().addObject(paragraph);
+    }
+
+    @Test
     public void testCustomTableStyle() {
         var table = new TableAdapter()
                 .withTableStyle("AdmonitionTable")
