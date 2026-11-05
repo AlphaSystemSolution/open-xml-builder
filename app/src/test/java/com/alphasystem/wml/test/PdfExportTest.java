@@ -10,8 +10,6 @@ import org.testng.annotations.Test;
 
 import java.io.File;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import static com.alphasystem.docx4j.builder.wml.WmlAdapter.getParagraphWithStyle;
 import static com.alphasystem.docx4j.builder.wml.WmlAdapter.getText;
@@ -29,16 +27,21 @@ import static org.testng.Assert.fail;
 /**
  * @author sali
  */
-public class PdfExportTest {
+public class PdfExportTest extends CustomStylesTest {
 
-    private static final Path docsPath = Paths.get(System.getProperty("docs.dir", "build/docs"));
     private static final File SUBSTITUTE_FONT = new File("/Library/Fonts/Arial Unicode.ttf");
     private static final File ARABIC_FONT = new File(
             System.getProperty("user.home"), "Library/Fonts/KFGQPC Uthman Taha Naskh Regular.ttf");
 
-    private static WordprocessingMLPackage newPackage() throws SystemException {
-        final var inputs = new WmlPackageBuilder.WmlPackageInputs().useDefaultTemplate().useDefaultStyles();
-        return new WmlPackageBuilder(inputs).getPackage();
+    @Override
+    protected String getFileName() {
+        return "pdf-export-test.docx";
+    }
+
+    @Override
+    protected WordprocessingMLPackage loadWmlPackage() throws SystemException {
+        final var inputs = new WmlPackageBuilder.WmlPackageInputs().useDefaultTemplate();
+        return new WmlPackageBuilder(inputs).styles("META-INF/custom-styles.xml").getPackage();
     }
 
     private static void checkFontsAvailable() {
@@ -50,9 +53,8 @@ public class PdfExportTest {
     @Test
     public void testToPdf() throws Exception {
         checkFontsAvailable();
-        final var wmlPackage = newPackage();
-        wmlPackage.getMainDocumentPart().addObject(getParagraphWithStyle("Title", "Document Title"));
-        wmlPackage.getMainDocumentPart().addObject(getParagraphWithStyle(null, "نص عربي للاختبار"));
+        getMainDocumentPart().addObject(getParagraphWithStyle("Title", "Document Title"));
+        getMainDocumentPart().addObject(getParagraphWithStyle("CustomArabic", "سلم"));
 
         // the default styles reference MS fonts which may not be installed;
         // alias them to a local font file, and register the Arabic font file too
@@ -75,7 +77,7 @@ public class PdfExportTest {
 
     @Test
     public void testMissingFont() throws Exception {
-        final var wmlPackage = newPackage();
+        final var wmlPackage = loadWmlPackage();
         final var rFonts = getRFontsBuilder()
                 .withAscii("NonExistentFontXYZ")
                 .withHAnsi("NonExistentFontXYZ")
