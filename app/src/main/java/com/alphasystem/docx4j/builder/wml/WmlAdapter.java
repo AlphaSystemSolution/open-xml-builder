@@ -23,9 +23,13 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.alphasystem.commons.util.IdGenerator.nextId;
@@ -306,10 +310,8 @@ public class WmlAdapter {
      */
     public static void saveAsPdf(File file, WordprocessingMLPackage wmlPackage, File... fontFiles)
             throws Docx4JException {
-        registerFonts(fontFiles);
-        validateFonts(wmlPackage);
         try (final var os = new FileOutputStream(getFile(file, "pdf"))) {
-            Docx4J.toPDF(wmlPackage, os, Docx4J.FLAG_EXPORT_PREFER_XSL);
+            toPdf(wmlPackage, os, fontFiles);
         } catch (IOException e) {
             throw new Docx4JException(e.getMessage(), e);
         }
@@ -335,6 +337,13 @@ public class WmlAdapter {
      * used by the document cannot be resolved from either source, a
      * {@link Docx4JException} is thrown naming the missing fonts.
      *
+     * Conversion prefers LibreOffice ({@code soffice --convert-to pdf}) when
+     * it is installed, since the XSL-FO/Apache FOP pipeline does not apply
+     * Arabic (or other complex-script) glyph shaping. Set system property
+     * {@code docx4j.builder.pdf.engine} to {@code fop} or {@code libreoffice}
+     * to force a specific engine; set {@code docx4j.builder.soffice.path} to
+     * point at a non-standard soffice binary.
+     *
      * @param wmlPackage the package to convert
      * @param out        the stream to write the PDF to
      * @param fontFiles  optional custom font files to register before converting
@@ -344,7 +353,92 @@ public class WmlAdapter {
             throws Docx4JException {
         registerFonts(fontFiles);
         validateFonts(wmlPackage);
-        Docx4J.toPDF(wmlPackage, out, Docx4J.FLAG_EXPORT_PREFER_XSL);
+        final var engine = System.getProperty("docx4j.builder.pdf.engine", "");
+        final var soffice = findSoffice();
+        if ("libreoffice".equalsIgnoreCase(engine) || (soffice != null && !"fop".equalsIgnoreCase(engine))) {
+            if (soffice == null) {
+                throw new Docx4JException("PDF engine 'libreoffice' requested but soffice was not found");
+            }
+            convertWithLibreOffice(wmlPackage, out, soffice);
+        } else {
+            Docx4J.toPDF(wmlPackage, out, Docx4J.FLAG_EXPORT_PREFER_XSL);
+        }
+    }
+
+    private static volatile String sofficePath;
+
+    private static String findSoffice() {
+        if (sofficePath == null) {
+            synchronized (WmlAdapter.class) {
+                if (sofficePath == null) {
+                    sofficePath = locateSoffice();
+                }
+            }
+        }
+        return sofficePath.isEmpty() ? null : sofficePath;
+    }
+
+    private static String locateSoffice() {
+        final var explicit = System.getProperty("docx4j.builder.soffice.path");
+        if (explicit != null && new File(explicit).isFile()) {
+            return explicit;
+        }
+        final String[] candidates = {
+                "/Applications/LibreOffice.app/Contents/MacOS/soffice",
+                "/usr/bin/soffice", "/usr/bin/libreoffice", "/usr/local/bin/soffice",
+                "C:\\Program Files\\LibreOffice\\program\\soffice.exe",
+                "C:\\Program Files (x86)\\LibreOffice\\program\\soffice.exe"};
+        for (String candidate : candidates) {
+            if (new File(candidate).isFile()) {
+                return candidate;
+            }
+        }
+        final var pathEnv = System.getenv("PATH");
+        if (pathEnv != null) {
+            for (String dir : pathEnv.split(File.pathSeparator)) {
+                for (String name : new String[]{"soffice", "soffice.exe", "libreoffice"}) {
+                    final var file = new File(dir, name);
+                    if (file.isFile() && file.canExecute()) {
+                        return file.getAbsolutePath();
+                    }
+                }
+            }
+        }
+        return "";
+    }
+
+    private static void convertWithLibreOffice(WordprocessingMLPackage wmlPackage, OutputStream out,
+                                               String soffice) throws Docx4JException {
+        try {
+            final var tempDir = Files.createTempDirectory("docx4j-pdf");
+            try {
+                final var docxFile = tempDir.resolve("input.docx").toFile();
+                wmlPackage.save(docxFile);
+                final var process = new ProcessBuilder(soffice, "--headless", "--norestore",
+                        "--convert-to", "pdf", "--outdir", tempDir.toString(), docxFile.toString())
+                        .redirectErrorStream(true).start();
+                final var console = new String(process.getInputStream().readAllBytes());
+                if (!process.waitFor(2, TimeUnit.MINUTES) || process.exitValue() != 0) {
+                    throw new Docx4JException(format(
+                            "LibreOffice conversion failed (exit value %s): %s",
+                            process.isAlive() ? "timeout" : process.exitValue(), console));
+                }
+                final var pdfFile = tempDir.resolve("input.pdf");
+                if (!Files.isRegularFile(pdfFile)) {
+                    throw new Docx4JException(format("LibreOffice did not produce a PDF: %s", console));
+                }
+                Files.copy(pdfFile, out);
+            } finally {
+                try (var stream = Files.walk(tempDir)) {
+                    stream.sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
+                }
+            }
+        } catch (IOException | InterruptedException e) {
+            if (e instanceof InterruptedException) {
+                Thread.currentThread().interrupt();
+            }
+            throw new Docx4JException(format("LibreOffice conversion failed: %s", e.getMessage()), e);
+        }
     }
 
     private static void validateFonts(WordprocessingMLPackage wmlPackage) throws Docx4JException {

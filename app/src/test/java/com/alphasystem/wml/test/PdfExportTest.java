@@ -29,13 +29,14 @@ import static org.testng.Assert.fail;
  */
 public class PdfExportTest extends CustomStylesTest {
 
+    private static final String FILE_NAME_PREFIX = "pdf-export-test";
     private static final File SUBSTITUTE_FONT = new File("/Library/Fonts/Arial Unicode.ttf");
     private static final File ARABIC_FONT = new File(
             System.getProperty("user.home"), "Library/Fonts/KFGQPC Uthman Taha Naskh Regular.ttf");
 
     @Override
     protected String getFileName() {
-        return "pdf-export-test.docx";
+        return String.format("%s.docx", FILE_NAME_PREFIX);
     }
 
     @Override
@@ -61,7 +62,7 @@ public class PdfExportTest extends CustomStylesTest {
         registerFont("Calibri", SUBSTITUTE_FONT);
         registerFont("Calibri Light", SUBSTITUTE_FONT);
         registerFont("Times New Roman", SUBSTITUTE_FONT);
-        final var pdfFile = docsPath.resolve("pdf-export.pdf").toFile();
+        final var pdfFile = docsPath.resolve(String.format("%s.pdf", FILE_NAME_PREFIX)).toFile();
         pdfFile.getParentFile().mkdirs();
         try (final var os = Files.newOutputStream(pdfFile.toPath())) {
             toPdf(wmlPackage, os, ARABIC_FONT);
