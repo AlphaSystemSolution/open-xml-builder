@@ -56,6 +56,7 @@ public class PdfExportTest extends CustomStylesTest {
         checkFontsAvailable();
         getMainDocumentPart().addObject(getParagraphWithStyle("Title", "Document Title"));
         getMainDocumentPart().addObject(getParagraphWithStyle("CustomArabic", "سلم"));
+        getMainDocumentPart().addObject(getParagraphWithStyle("CustomArabic", "نَصَرَ يَنْصُرُ نَصْرًا نَاصِرٌ"));
 
         // the default styles reference MS fonts which may not be installed;
         // alias them to a local font file, and register the Arabic font file too
