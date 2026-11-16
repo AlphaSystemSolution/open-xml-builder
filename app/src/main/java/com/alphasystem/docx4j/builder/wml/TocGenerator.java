@@ -94,7 +94,7 @@ public final class TocGenerator {
             // ignore
             e.printStackTrace();
         }
-        mainDocumentPart.getContent().add(index + 1, WmlAdapter.getPageBreak());
+        mainDocumentPart.getContent().add(index + 1, WmlAdapter.getPageBreakPara());
     }
 
     private SdtPr createSdtPr() {
