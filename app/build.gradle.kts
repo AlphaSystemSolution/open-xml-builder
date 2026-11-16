@@ -3,6 +3,7 @@ import com.alphasystem.openxml.gradleplugin.CodeGenerator
 plugins {
     `java-library`
     alias(libs.plugins.publish)
+    alias(libs.plugins.benManesVersions)
 }
 
 repositories {
