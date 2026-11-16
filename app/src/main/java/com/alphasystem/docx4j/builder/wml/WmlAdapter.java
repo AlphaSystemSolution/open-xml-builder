@@ -306,10 +306,15 @@ public class WmlAdapter {
      */
     public static void saveAsPdf(File file, WordprocessingMLPackage wmlPackage, File... fontFiles)
             throws Docx4JException {
-        try (final var os = new FileOutputStream(getFile(file, "pdf"))) {
+        final var pdfFile = getFile(file, "pdf");
+        try (final var os = new FileOutputStream(pdfFile)) {
             toPdf(wmlPackage, os, fontFiles);
         } catch (IOException e) {
+            pdfFile.delete();
             throw new Docx4JException(e.getMessage(), e);
+        } catch (Docx4JException | RuntimeException e) {
+            pdfFile.delete();
+            throw e;
         }
     }
 
@@ -365,8 +370,11 @@ public class WmlAdapter {
             if (builtin.contains(fontName)) {
                 continue;
             }
-            // first get() triggers OS font discovery via PhysicalFonts.discoverPhysicalFonts()
-            if (fontMapper.get(fontName) == null) {
+            // fontMapper.get() triggers OS font discovery but resolves any
+            // name to a substitute, so it never returns null; PhysicalFonts.get()
+            // only returns fonts that actually exist
+            fontMapper.get(fontName);
+            if (PhysicalFonts.get(fontName) == null) {
                 missing.add(fontName);
             }
         }
