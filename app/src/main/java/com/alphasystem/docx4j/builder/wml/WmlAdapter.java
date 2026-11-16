@@ -353,16 +353,9 @@ public class WmlAdapter {
             throws Docx4JException {
         registerFonts(fontFiles);
         validateFonts(wmlPackage);
-        final var engine = System.getProperty("docx4j.builder.pdf.engine", "");
-        final var soffice = findSoffice();
-        if ("libreoffice".equalsIgnoreCase(engine) || (soffice != null && !"fop".equalsIgnoreCase(engine))) {
-            if (soffice == null) {
-                throw new Docx4JException("PDF engine 'libreoffice' requested but soffice was not found");
-            }
-            convertWithLibreOffice(wmlPackage, out, soffice);
-        } else {
-            Docx4J.toPDF(wmlPackage, out, Docx4J.FLAG_EXPORT_PREFER_XSL);
-        }
+        //final var engine = System.getProperty("docx4j.builder.pdf.engine", "");
+        //final var soffice = findSoffice();
+        Docx4J.toPDF(wmlPackage, out, Docx4J.FLAG_EXPORT_PREFER_XSL);
     }
 
     private static volatile String sofficePath;
