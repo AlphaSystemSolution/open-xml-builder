@@ -1,18 +1,18 @@
 [versions]
 asCommons = "0.3.2"
-docx4j = "11.5.14"
-slf4jApi = "2.0.18"
-logbackClassic = "1.5.32"
+docx4j = "17.3.6"
+slf4jApi = "2.0.20"
+logbackClassic = "1.6.7"
 guice = "7.0.0"
-guava = "33.6.0-jre"
+guava = "33.8.0-jre"
 testng = "7.12.0"
 moxy = "6.0.0"
-eclipseMoxy = "5.0.0"
+eclipseMoxy = "5.0.2"
 reportng = "1.1.4"
 commonsText = "1.15.0"
 codemodel = "2.6"
-publish = "0.36.0"
-benManesVersions = "0.66.0"
+publish = "0.37.0"
+benManesVersions = "0.67.0"
 
 [libraries]
 alphasystm-commons = { module = "io.github.sfali23:commons", version.ref = "asCommons" }
