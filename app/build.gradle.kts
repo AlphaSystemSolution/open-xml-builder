@@ -4,6 +4,7 @@ plugins {
     `java-library`
     alias(libs.plugins.publish)
     alias(libs.plugins.benManesVersions)
+    alias(libs.plugins.spotless)
 }
 
 repositories {

@@ -13,6 +13,7 @@ commonsText = "1.15.0"
 codemodel = "2.6"
 publish = "0.37.0"
 benManesVersions = "0.67.0"
+spotless = "8.11.0"
 
 [libraries]
 alphasystm-commons = { module = "io.github.sfali23:commons", version.ref = "asCommons" }
@@ -32,6 +33,7 @@ codemodel = { module = "com.sun.codemodel:codemodel", version.ref = "codemodel"}
 commons-text = { module = "org.apache.commons:commons-text", version.ref = "commonsText"}
 
 [plugins]
+spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
 publish = { id = "com.vanniktech.maven.publish", version.ref = "publish" }
 benManesVersions = { id = "io.github.ben-manes.versions", version.ref = "benManesVersions"}
 

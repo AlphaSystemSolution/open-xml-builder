@@ -1,5 +1,7 @@
 GRADLE = ./gradlew
 
+.PHONY: build clean, test all spotless publishLocal release
+
 build:
 	$(GRADLE) build
 
@@ -10,6 +12,9 @@ test:
 	$(GRADLE) test
 
 all: clean build test
+
+spotless:
+	$(GRADLE) spotlessApply
 
 publishLocal:
 	$(GRADLE) publishToMavenLocal
