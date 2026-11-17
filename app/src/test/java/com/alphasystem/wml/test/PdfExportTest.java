@@ -10,10 +10,12 @@ import org.testng.annotations.Test;
 
 import java.io.File;
 import java.nio.file.Files;
+import java.nio.file.Path;
 
 import static com.alphasystem.docx4j.builder.wml.WmlAdapter.getParagraphWithStyle;
 import static com.alphasystem.docx4j.builder.wml.WmlAdapter.getText;
 import static com.alphasystem.docx4j.builder.wml.WmlAdapter.registerFont;
+import static com.alphasystem.docx4j.builder.wml.WmlAdapter.registerFonts;
 import static com.alphasystem.docx4j.builder.wml.WmlAdapter.saveAsPdf;
 import static com.alphasystem.docx4j.builder.wml.WmlAdapter.toPdf;
 import static com.alphasystem.docx4j.builder.wml.WmlBuilderFactory.getPBuilder;
@@ -75,6 +77,52 @@ public class PdfExportTest extends CustomStylesTest {
             assertEquals(is.read(header), 4);
             assertEquals(new String(header), "%PDF");
         }
+    }
+
+    @Test
+    public void testSaveAsPdfWithFontsDirectory() throws Exception {
+        checkFontsAvailable();
+        getMainDocumentPart().addObject(getParagraphWithStyle("Title", "Document Title"));
+        getMainDocumentPart().addObject(getParagraphWithStyle("CustomArabic", "سلم"));
+
+        // the default styles reference MS fonts which may not be installed;
+        // alias them to a local font file
+        registerFont("Calibri", SUBSTITUTE_FONT);
+        registerFont("Calibri Light", SUBSTITUTE_FONT);
+        registerFont("Times New Roman", SUBSTITUTE_FONT);
+
+        // build a fonts directory containing a real font plus non-font and
+        // invalid-font files, which must be silently ignored
+        final var fontsDir = Files.createTempDirectory("pdf-export-fonts");
+        Files.copy(ARABIC_FONT.toPath(), fontsDir.resolve(ARABIC_FONT.getName()));
+        Files.writeString(fontsDir.resolve("not-a-font.txt"), "not a font");
+        Files.writeString(fontsDir.resolve("bogus.ttf"), "not a real ttf");
+        Files.createDirectory(fontsDir.resolve("nested.ttf"));
+
+        final var pdfFile = docsPath.resolve("pdf-export-fonts-dir.pdf").toFile();
+        pdfFile.getParentFile().mkdirs();
+        saveAsPdf(pdfFile, wmlPackage, fontsDir);
+        assertTrue(pdfFile.isFile());
+        assertTrue(pdfFile.length() > 0);
+        try (final var is = Files.newInputStream(pdfFile.toPath())) {
+            final var header = new byte[4];
+            assertEquals(is.read(header), 4);
+            assertEquals(new String(header), "%PDF");
+        }
+    }
+
+    @Test
+    public void testRegisterFontsDirectoryIgnoresNonFontFiles() throws Exception {
+        checkFontsAvailable();
+        final var fontsDir = Files.createTempDirectory("pdf-export-fonts");
+        Files.copy(ARABIC_FONT.toPath(), fontsDir.resolve(ARABIC_FONT.getName()));
+        Files.writeString(fontsDir.resolve("notes.txt"), "ignored");
+        Files.writeString(fontsDir.resolve("fake.otf"), "ignored");
+        // must not throw
+        registerFonts(fontsDir);
+        // null and non-directory arguments are ignored too
+        registerFonts((Path) null);
+        registerFonts(fontsDir.resolve("notes.txt"));
     }
 
     @Test

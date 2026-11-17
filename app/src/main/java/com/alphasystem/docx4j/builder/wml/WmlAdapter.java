@@ -23,7 +23,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -296,6 +299,39 @@ public class WmlAdapter {
     }
 
     /**
+     * Registers all font files ({@code .ttf}, {@code .otf}, {@code .ttc})
+     * found directly in the given directory. Files that are not font files,
+     * and files that cannot be loaded as fonts, are silently ignored.
+     *
+     * @param fontsDirectory directory containing font files; ignored if
+     *                       {@code null} or not a directory
+     * @throws Docx4JException if the directory cannot be listed
+     */
+    public static void registerFonts(Path fontsDirectory) throws Docx4JException {
+        if (fontsDirectory == null || !Files.isDirectory(fontsDirectory)) {
+            return;
+        }
+        try (final var stream = Files.list(fontsDirectory)) {
+            stream.filter(Files::isRegularFile)
+                    .filter(WmlAdapter::isFontFile)
+                    .forEach(path -> {
+                        try {
+                            registerFont(null, path.toFile());
+                        } catch (Docx4JException | RuntimeException ignored) {
+                            // not a loadable font file; silently ignore
+                        }
+                    });
+        } catch (IOException e) {
+            throw new Docx4JException(format("Failed to list fonts directory: %s", fontsDirectory), e);
+        }
+    }
+
+    private static boolean isFontFile(Path path) {
+        final var name = path.getFileName().toString().toLowerCase(Locale.ROOT);
+        return name.endsWith(".ttf") || name.endsWith(".otf") || name.endsWith(".ttc");
+    }
+
+    /**
      * Converts the given package to PDF and saves it next to the given file
      * with a {@code .pdf} extension.
      *
@@ -331,6 +367,45 @@ public class WmlAdapter {
     }
 
     /**
+     * Converts the given package to PDF and saves it next to the given file
+     * with a {@code .pdf} extension, registering all font files found in the
+     * given directory first. Non-font files in the directory are silently
+     * ignored.
+     *
+     * @param file           target file (extension is replaced with {@code .pdf})
+     * @param wmlPackage     the package to convert
+     * @param fontsDirectory directory containing .ttf/.otf/.ttc font files
+     * @throws Docx4JException if conversion fails or a used font cannot be resolved
+     */
+    public static void saveAsPdf(File file, WordprocessingMLPackage wmlPackage, Path fontsDirectory)
+            throws Docx4JException {
+        final var pdfFile = getFile(file, "pdf");
+        try (final var os = new FileOutputStream(pdfFile)) {
+            toPdf(wmlPackage, os, fontsDirectory);
+        } catch (IOException e) {
+            pdfFile.delete();
+            throw new Docx4JException(e.getMessage(), e);
+        } catch (Docx4JException | RuntimeException e) {
+            pdfFile.delete();
+            throw e;
+        }
+    }
+
+    /**
+     * Loads the given docx file and converts it to PDF, saving it next to
+     * the given file with a {@code .pdf} extension, registering all font
+     * files found in the given directory first. Non-font files in the
+     * directory are silently ignored.
+     *
+     * @param docxFile       the docx file to load
+     * @param fontsDirectory directory containing .ttf/.otf/.ttc font files
+     * @throws Docx4JException if loading/conversion fails or a used font cannot be resolved
+     */
+    public static void saveAsPdf(File docxFile, Path fontsDirectory) throws Docx4JException {
+        saveAsPdf(docxFile, WordprocessingMLPackage.load(docxFile), fontsDirectory);
+    }
+
+    /**
      * Converts the given package to PDF, writing to the given stream.
      * <p>
      * Fonts are resolved from the given font files first and from
@@ -353,6 +428,24 @@ public class WmlAdapter {
     public static void toPdf(WordprocessingMLPackage wmlPackage, OutputStream out, File... fontFiles)
             throws Docx4JException {
         registerFonts(fontFiles);
+        validateFonts(wmlPackage);
+        Docx4J.toPDF(wmlPackage, out, Docx4J.FLAG_EXPORT_PREFER_XSL);
+    }
+
+    /**
+     * Converts the given package to PDF, writing to the given stream, after
+     * registering all font files found in the given directory. Non-font
+     * files in the directory are silently ignored.
+     *
+     * @param wmlPackage     the package to convert
+     * @param out            the stream to write the PDF to
+     * @param fontsDirectory directory containing .ttf/.otf/.ttc font files
+     * @throws Docx4JException if conversion fails or a used font cannot be resolved
+     * @see #toPdf(WordprocessingMLPackage, OutputStream, File...)
+     */
+    public static void toPdf(WordprocessingMLPackage wmlPackage, OutputStream out, Path fontsDirectory)
+            throws Docx4JException {
+        registerFonts(fontsDirectory);
         validateFonts(wmlPackage);
         Docx4J.toPDF(wmlPackage, out, Docx4J.FLAG_EXPORT_PREFER_XSL);
     }
