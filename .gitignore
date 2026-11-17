@@ -2,6 +2,7 @@
 **/bin
 **/.gradle/*
 **/.DS_Store
+**/test-output/*
 *.iml
 **/.idea/
 **/.metals/**
