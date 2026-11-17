@@ -413,12 +413,8 @@ public class WmlAdapter {
      * used by the document cannot be resolved from either source, a
      * {@link Docx4JException} is thrown naming the missing fonts.
      *
-     * Conversion prefers LibreOffice ({@code soffice --convert-to pdf}) when
-     * it is installed, since the XSL-FO/Apache FOP pipeline does not apply
-     * Arabic (or other complex-script) glyph shaping. Set system property
-     * {@code docx4j.builder.pdf.engine} to {@code fop} or {@code libreoffice}
-     * to force a specific engine; set {@code docx4j.builder.soffice.path} to
-     * point at a non-standard soffice binary.
+     * Conversion uses the XSL-FO/Apache FOP pipeline via
+     * {@link Docx4J#toPDF}.
      *
      * @param wmlPackage the package to convert
      * @param out        the stream to write the PDF to
@@ -428,8 +424,7 @@ public class WmlAdapter {
     public static void toPdf(WordprocessingMLPackage wmlPackage, OutputStream out, File... fontFiles)
             throws Docx4JException {
         registerFonts(fontFiles);
-        validateFonts(wmlPackage);
-        Docx4J.toPDF(wmlPackage, out, Docx4J.FLAG_EXPORT_PREFER_XSL);
+        convertToPdf(wmlPackage, out);
     }
 
     /**
@@ -446,6 +441,11 @@ public class WmlAdapter {
     public static void toPdf(WordprocessingMLPackage wmlPackage, OutputStream out, Path fontsDirectory)
             throws Docx4JException {
         registerFonts(fontsDirectory);
+        convertToPdf(wmlPackage, out);
+    }
+
+    private static void convertToPdf(WordprocessingMLPackage wmlPackage, OutputStream out)
+            throws Docx4JException {
         validateFonts(wmlPackage);
         Docx4J.toPDF(wmlPackage, out, Docx4J.FLAG_EXPORT_PREFER_XSL);
     }
