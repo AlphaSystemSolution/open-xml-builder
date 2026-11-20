@@ -1,7 +1,6 @@
 package com.alphasystem.openxml.gradleplugin;
 
 import com.sun.codemodel.*;
-import org.apache.commons.io.FileUtils;
 import org.docx4j.jaxb.Context;
 import org.docx4j.wml.*;
 
@@ -64,22 +63,21 @@ public class FluentApiGenerator {
                 getBuilderClassFqn(srcClass, builderPackageName);
     }
 
-    private JCodeModel codeModel = new JCodeModel();
-    private Class<?>[] srcClasses;
+    private final JCodeModel codeModel = new JCodeModel();
     private JDefinedClass openXmlBuilderClass;
     private JDefinedClass builderFactoryClass;
-    private String builderPackageName;
-    private String superClassFqn;
-    private String builderFactoryClassFqn;
+    private final String builderPackageName;
+    private final String superClassFqn;
+    private final String builderFactoryClassFqn;
 
     public FluentApiGenerator(String basePackageName,
                               String builderType,
-                              String builderFactoryClassName,
-                              Class<?>... srcClasses) {
-        this.srcClasses = srcClasses;
+                              String builderFactoryClassName) {
         this.builderPackageName = format("%s.%s", basePackageName, builderType);
         this.superClassFqn = format("%s.OpenXmlBuilder", basePackageName);
         this.builderFactoryClassFqn = format("%s.%s", builderPackageName, builderFactoryClassName);
+        generateOpenXmlBuilderClass();
+        generateOpenXmlBuilderFactoryClass();
     }
 
     private JFieldVar addBuilderFactoryStaticField(Class<?> returnTypeClass,
@@ -104,9 +102,7 @@ public class FluentApiGenerator {
                 format("Constant for %s.%s", jcEnumerationClass.name(), name));
     }
 
-    public void generate(String sourcePackageName, File destDir) throws IOException {
-        generateOpenXmlBuilderClass();
-        generateOpenXmlBuilderFactoryClass();
+    public void generate(String sourcePackageName, File destDir, Class<?>... srcClasses) throws IOException {
         for (Class<?> srcClass : srcClasses) {
             generate(srcClass, sourcePackageName);
         }
@@ -114,10 +110,10 @@ public class FluentApiGenerator {
         codeModel.build(destDir);
     }
 
-    private JDefinedClass generate(Class<?> srcClass, String sourcePackageName) {
+    private void generate(Class<?> srcClass, String sourcePackageName) {
         ClassGenerator classGenerator = new ClassGenerator(codeModel, null, srcClass, openXmlBuilderClass.fullName(),
                 sourcePackageName, builderFactoryClass);
-        return classGenerator.generate(builderPackageName);
+        classGenerator.generate(builderPackageName);
     }
 
     private void generateOpenXmlBuilderClass() {
