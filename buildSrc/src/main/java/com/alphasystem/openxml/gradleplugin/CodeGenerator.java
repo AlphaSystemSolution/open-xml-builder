@@ -17,7 +17,7 @@ public final class CodeGenerator {
                     Tr.class, Tc.class, R.class, R.Tab.class, Text.class, CTTabStop.class, Br.class, FldChar.class,
                     SectPr.class, TblGridCol.class, CTBookmarkRange.class, CTBookmark.class, BooleanDefaultFalse.class,
                     Styles.class, Style.class, Numbering.class, SdtBlock.class, CTSdtRow.class, CTSdtDocPart.class,
-                    CTHeight.class);
+                    CTHeight.class, Drawing.class);
         } catch (IOException ex) {
             throw new RuntimeException("Unable to generate ", ex);
         }
