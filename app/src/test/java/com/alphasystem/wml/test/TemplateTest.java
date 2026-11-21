@@ -9,9 +9,7 @@ import org.docx4j.openpackaging.parts.WordprocessingML.BinaryPartAbstractImage;
 import org.docx4j.wml.P;
 import org.testng.annotations.Test;
 
-import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URL;
 
 import static com.alphasystem.docx4j.builder.wml.WmlAdapter.*;
 import static org.testng.Assert.assertTrue;
@@ -75,7 +73,7 @@ public abstract class TemplateTest extends CommonTest {
     @Test(dependsOnMethods = {"addTableOfContent"})
     public void insertImage() throws Exception {
         final var url = AppUtil.getResource("java_logo.png");
-        final var image = new ImageAdapter(wmlPackage, url).insertImage();
+        final var image = new ImageAdapter(wmlPackage).withUrl(url).insertImage();
         getMainDocumentPart().addObject(WmlAdapter.getParagraphWithStyle("Heading6",
                 "Insert image with default size and no hints"));
         getMainDocumentPart().addObject(image);
@@ -89,7 +87,7 @@ public abstract class TemplateTest extends CommonTest {
     @Test(dependsOnMethods = {"insertImage"})
     public void insertImageFromUrl() throws Exception {
         final var url = URI.create("https://upload.wikimedia.org/wikipedia/commons/3/35/Tux.svg").toURL();
-        final var image = new ImageAdapter(wmlPackage, url).withFilenameHint("Tux.svg").withAltText("tux").insertImage();
+        final var image = new ImageAdapter(wmlPackage).withUrl(url).withFilenameHint("Tux.svg").withAltText("tux").insertImage();
         getMainDocumentPart().addObject(WmlAdapter.getParagraphWithStyle("Heading6",
                 "Insert image from URL with default size"));
         getMainDocumentPart().addObject(image);
@@ -98,7 +96,7 @@ public abstract class TemplateTest extends CommonTest {
     @Test(dependsOnMethods = {"insertImageFromUrl"})
     public void insertImageWithWidth() throws Exception {
         final var url = AppUtil.getResource("java_logo.png");
-        final var image = new ImageAdapter(wmlPackage, url).withWidth(20.0).insertImage();
+        final var image = new ImageAdapter(wmlPackage).withUrl(url).withWidth(20.0).insertImage();
         getMainDocumentPart().addObject(WmlAdapter.getParagraphWithStyle("Heading6",
                 "Insert image with width only"));
         getMainDocumentPart().addObject(image);
@@ -107,7 +105,7 @@ public abstract class TemplateTest extends CommonTest {
     @Test(dependsOnMethods = {"insertImageWithWidth"})
     public void insertImageWithWidthAndHeight() throws Exception {
         final var url = AppUtil.getResource("java_logo.png");
-        final var image = new ImageAdapter(wmlPackage, url).withWidth(200.0).withHeight(100.0).insertImage();
+        final var image = new ImageAdapter(wmlPackage).withUrl(url).withWidth(200.0).withHeight(100.0).insertImage();
         getMainDocumentPart().addObject(WmlAdapter.getParagraphWithStyle("Heading6",
                 "Insert image with width and height"));
         getMainDocumentPart().addObject(image);

@@ -29,18 +29,25 @@ public class ImageAdapter {
     private static final AtomicInteger ID2 = new AtomicInteger();
 
     private final WordprocessingMLPackage wordMLPackage;
-    private final URL url;
+    private URL url;
     private String filenameHint;
     private String altText;
     private Double width;
     private Double height;
 
-    public ImageAdapter(final WordprocessingMLPackage wordMLPackage, final URL url) {
-        if (wordMLPackage == null || url == null) {
-            throw new IllegalArgumentException("wordMLPackage and/or url cannot be null");
+    public ImageAdapter(final WordprocessingMLPackage wordMLPackage) {
+        if (wordMLPackage == null) {
+            throw new IllegalArgumentException("wordMLPackage cannot be null");
         }
         this.wordMLPackage = wordMLPackage;
+    }
+
+    public ImageAdapter withUrl(URL url) {
+        if (url == null) {
+            throw new IllegalArgumentException("url cannot be null");
+        }
         this.url = url;
+        return this;
     }
 
     public ImageAdapter withFilenameHint(String filenameHint) {
@@ -64,6 +71,9 @@ public class ImageAdapter {
     }
 
     public P insertImage() throws Exception {
+        if (url == null) {
+            throw new IllegalArgumentException("URL cannot be null");
+        }
         if (filenameHint == null || filenameHint.trim().isBlank()) {
             filenameHint = FilenameUtils.getName(url.getPath());
         }
