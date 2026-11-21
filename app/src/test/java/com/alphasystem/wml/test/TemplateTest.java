@@ -1,11 +1,15 @@
 package com.alphasystem.wml.test;
 
+import com.alphasystem.commons.util.AppUtil;
 import com.alphasystem.docx4j.builder.wml.TocGenerator;
+import com.alphasystem.docx4j.builder.wml.WmlAdapter;
 import com.alphasystem.docx4j.builder.wml.WmlBuilderFactory;
+import org.docx4j.openpackaging.parts.WordprocessingML.BinaryPartAbstractImage;
 import org.docx4j.wml.P;
 import org.testng.annotations.Test;
 
 import static com.alphasystem.docx4j.builder.wml.WmlAdapter.*;
+import static org.testng.Assert.assertTrue;
 
 /**
  * @author sali
@@ -61,5 +65,17 @@ public abstract class TemplateTest extends CommonTest {
     @Test(dependsOnMethods = {"testHeading5"})
     public void addTableOfContent() {
         new TocGenerator().mainDocumentPart(getMainDocumentPart()).level(5).generateToc();
+    }
+
+    @Test(dependsOnMethods = {"addTableOfContent"})
+    public void insertImage() throws Exception {
+        final var url = AppUtil.getResource("java_logo.png");
+        final var image = WmlAdapter.insertImage(wmlPackage, "java_logo.png", "Java Logo", 1L, 1, url);
+        getMainDocumentPart().addObject(image);
+        assertTrue(wmlPackage.getParts().getParts().values().stream()
+                .anyMatch(part -> part instanceof BinaryPartAbstractImage), "Image must be embedded in the package");
+        assertTrue(getMainDocumentPart().getRelationshipsPart().getRelationships().getRelationship().stream()
+                .filter(rel -> rel.getType().endsWith("/image"))
+                .noneMatch(rel -> "External".equals(rel.getTargetMode())), "Image must not use an external link");
     }
 }

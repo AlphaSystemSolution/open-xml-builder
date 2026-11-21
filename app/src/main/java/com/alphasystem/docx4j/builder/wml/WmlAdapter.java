@@ -251,7 +251,10 @@ public class WmlAdapter {
 
     public static P insertImage(WordprocessingMLPackage wordMLPackage, String filenameHint, String altText,
                                 long id1, int id2, URL url) throws Exception {
-        final var imagePart = BinaryPartAbstractImage.createLinkedImagePart(wordMLPackage, url);
+        final BinaryPartAbstractImage imagePart;
+        try (final var input = url.openStream()) {
+            imagePart = BinaryPartAbstractImage.createImagePart(wordMLPackage, input.readAllBytes());
+        }
         final var imageInline = imagePart.createImageInline(filenameHint, altText, id1, id2, false);
         final var drawing = getDrawingBuilder().addAnchorOrInline(imageInline).getObject();
         return getPBuilder().addContent(getRBuilder().addContent(drawing).getObject()).getObject();
