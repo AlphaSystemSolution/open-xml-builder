@@ -1,8 +1,8 @@
 package com.alphasystem.wml.test;
 
 import com.alphasystem.commons.util.AppUtil;
+import com.alphasystem.docx4j.builder.wml.ImageAdapter;
 import com.alphasystem.docx4j.builder.wml.TocGenerator;
-import com.alphasystem.docx4j.builder.wml.WmlAdapter;
 import com.alphasystem.docx4j.builder.wml.WmlBuilderFactory;
 import org.docx4j.openpackaging.parts.WordprocessingML.BinaryPartAbstractImage;
 import org.docx4j.wml.P;
@@ -70,7 +70,7 @@ public abstract class TemplateTest extends CommonTest {
     @Test(dependsOnMethods = {"addTableOfContent"})
     public void insertImage() throws Exception {
         final var url = AppUtil.getResource("java_logo.png");
-        final var image = WmlAdapter.insertImage(wmlPackage, "java_logo.png", "Java Logo", 1L, 1, url);
+        final var image = new ImageAdapter(wmlPackage, url).insertImage();
         getMainDocumentPart().addObject(image);
         assertTrue(wmlPackage.getParts().getParts().values().stream()
                 .anyMatch(part -> part instanceof BinaryPartAbstractImage), "Image must be embedded in the package");
