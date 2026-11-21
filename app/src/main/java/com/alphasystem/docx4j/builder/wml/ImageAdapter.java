@@ -97,11 +97,12 @@ public class ImageAdapter {
     }
 
     private byte[] readImageBytes() throws Exception {
-        final var scheme = url.toURI().getScheme();
+        final var uri = url.toURI();
+        final var scheme = uri.getScheme();
         if ("http".equalsIgnoreCase(scheme) || "https".equalsIgnoreCase(scheme)) {
             try (var client = HttpClient.newBuilder().followRedirects(HttpClient.Redirect.NORMAL).build()) {
                 for (int attempt = 0; true; attempt++) {
-                    final var request = HttpRequest.newBuilder().uri(url.toURI())
+                    final var request = HttpRequest.newBuilder().uri(uri)
                             .header("User-Agent", "docx4j-builder/1.0").GET().build();
                     final var response = client.send(request, HttpResponse.BodyHandlers.ofByteArray());
                     if (response.statusCode() == 200) {
