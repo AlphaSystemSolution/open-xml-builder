@@ -233,6 +233,14 @@ public class WmlAdapter {
         return getPBuilder().withPPr(pPr).getObject();
     }
 
+    public static Br getLineBreak() {
+        return getBrBuilder().getObject();
+    }
+
+    public static R getLineBreakRun() {
+        return getRBuilder().addContent(getLineBreak()).getObject();
+    }
+
     public static Br getPageBreak() {
         return getBrBuilder().withType(PAGE).getObject();
     }
