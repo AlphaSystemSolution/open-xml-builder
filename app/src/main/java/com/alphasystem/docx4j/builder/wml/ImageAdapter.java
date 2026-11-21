@@ -102,6 +102,7 @@ public class ImageAdapter {
                     ID2.incrementAndGet(), false);
         }
 
+        reset();
         final var drawing = getDrawingBuilder().addAnchorOrInline(imageInline).getObject();
         return getPBuilder().addContent(getRBuilder().addContent(drawing).getObject()).getObject();
     }
@@ -156,5 +157,13 @@ public class ImageAdapter {
         final var out = new ByteArrayOutputStream();
         transcoder.transcode(input, new TranscoderOutput(out));
         return out.toByteArray();
+    }
+
+    private void reset() {
+        url = null;
+        width = null;
+        height = null;
+        filenameHint = null;
+        altText = null;
     }
 }
