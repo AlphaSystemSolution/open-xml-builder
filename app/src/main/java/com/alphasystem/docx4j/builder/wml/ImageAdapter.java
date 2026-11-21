@@ -8,7 +8,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.docx4j.dml.wordprocessingDrawing.Inline;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
 import org.docx4j.openpackaging.parts.WordprocessingML.BinaryPartAbstractImage;
-import org.docx4j.wml.P;
+import org.docx4j.wml.R;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -70,7 +70,7 @@ public class ImageAdapter {
         return this;
     }
 
-    public P insertImage() throws Exception {
+    public R insertImage() throws Exception {
         if (url == null) {
             throw new IllegalArgumentException("URL cannot be null");
         }
@@ -104,7 +104,7 @@ public class ImageAdapter {
 
         reset();
         final var drawing = getDrawingBuilder().addAnchorOrInline(imageInline).getObject();
-        return getPBuilder().addContent(getRBuilder().addContent(drawing).getObject()).getObject();
+        return getRBuilder().addContent(drawing).getObject();
     }
 
     private byte[] readImageBytes() throws Exception {
