@@ -5,7 +5,16 @@ import org.apache.batik.transcoder.TranscoderInput;
 import org.apache.batik.transcoder.TranscoderOutput;
 import org.apache.batik.transcoder.image.PNGTranscoder;
 import org.apache.commons.io.FilenameUtils;
+import org.docx4j.dml.CTPoint2D;
+import org.docx4j.dml.wordprocessingDrawing.Anchor;
+import org.docx4j.dml.wordprocessingDrawing.CTPosH;
+import org.docx4j.dml.wordprocessingDrawing.CTPosV;
+import org.docx4j.dml.wordprocessingDrawing.CTWrapNone;
 import org.docx4j.dml.wordprocessingDrawing.Inline;
+import org.docx4j.dml.wordprocessingDrawing.STAlignH;
+import org.docx4j.dml.wordprocessingDrawing.STAlignV;
+import org.docx4j.dml.wordprocessingDrawing.STRelFromH;
+import org.docx4j.dml.wordprocessingDrawing.STRelFromV;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
 import org.docx4j.openpackaging.parts.WordprocessingML.BinaryPartAbstractImage;
 import org.docx4j.wml.R;
@@ -34,6 +43,10 @@ public class ImageAdapter {
     private String altText;
     private Double width;
     private Double height;
+    private STRelFromH horizontalRelativeFrom;
+    private STAlignH horizontalAlign;
+    private STRelFromV verticalRelativeFrom;
+    private STAlignV verticalAlign;
 
     public ImageAdapter(final WordprocessingMLPackage wordMLPackage) {
         if (wordMLPackage == null) {
@@ -70,6 +83,27 @@ public class ImageAdapter {
         return this;
     }
 
+    /**
+     * Renders the image as a floating object aligned horizontally relative to the given reference.
+     * When set (or {@link #withVerticalAlignment} is used), the drawing is emitted as a
+     * {@code wp:anchor} instead of {@code wp:inline}.
+     */
+    public ImageAdapter withHorizontalAlignment(STRelFromH relativeFrom, STAlignH align) {
+        this.horizontalRelativeFrom = relativeFrom;
+        this.horizontalAlign = align;
+        return this;
+    }
+
+    /**
+     * Renders the image as a floating object aligned vertically relative to the given reference
+     * (e.g. {@link STRelFromV#LINE} to align with the surrounding text line).
+     */
+    public ImageAdapter withVerticalAlignment(STRelFromV relativeFrom, STAlignV align) {
+        this.verticalRelativeFrom = relativeFrom;
+        this.verticalAlign = align;
+        return this;
+    }
+
     public R insertImage() throws Exception {
         if (url == null) {
             throw new IllegalArgumentException("URL cannot be null");
@@ -102,9 +136,58 @@ public class ImageAdapter {
                     ID2.incrementAndGet(), false);
         }
 
+        final var anchorOrInline = isAnchored() ? toAnchor(imageInline) : imageInline;
         reset();
-        final var drawing = getDrawingBuilder().addAnchorOrInline(imageInline).getObject();
+        final var drawing = getDrawingBuilder().addAnchorOrInline(anchorOrInline).getObject();
         return getRBuilder().addContent(drawing).getObject();
+    }
+
+    private boolean isAnchored() {
+        return horizontalAlign != null || verticalAlign != null;
+    }
+
+    private Anchor toAnchor(Inline inline) {
+        final var positionH = new CTPosH();
+        positionH.setRelativeFrom(horizontalRelativeFrom == null ? STRelFromH.COLUMN : horizontalRelativeFrom);
+        if (horizontalAlign != null) {
+            positionH.setAlign(horizontalAlign);
+        } else {
+            positionH.setPosOffset(0);
+        }
+
+        final var positionV = new CTPosV();
+        positionV.setRelativeFrom(verticalRelativeFrom == null ? STRelFromV.LINE : verticalRelativeFrom);
+        if (verticalAlign != null) {
+            positionV.setAlign(verticalAlign);
+        } else {
+            positionV.setPosOffset(0);
+        }
+
+        final var simplePos = new CTPoint2D();
+        simplePos.setX(0);
+        simplePos.setY(0);
+
+        final var anchor = new Anchor();
+        anchor.setSimplePosAttr(false);
+        anchor.setSimplePos(simplePos);
+        anchor.setRelativeHeight(0);
+        anchor.setBehindDoc(false);
+        anchor.setLocked(false);
+        anchor.setLayoutInCell(true);
+        anchor.setAllowOverlap(true);
+        anchor.setDistT(0L);
+        anchor.setDistB(0L);
+        anchor.setDistL(0L);
+        anchor.setDistR(0L);
+        anchor.setPositionH(positionH);
+        anchor.setPositionV(positionV);
+        anchor.setExtent(inline.getExtent());
+        anchor.setEffectExtent(inline.getEffectExtent());
+        anchor.setWrapNone(new CTWrapNone());
+        anchor.setDocPr(inline.getDocPr());
+        anchor.setCNvGraphicFramePr(inline.getCNvGraphicFramePr());
+        anchor.setGraphic(inline.getGraphic());
+        return anchor;
     }
 
     private byte[] readImageBytes() throws Exception {
@@ -165,5 +248,9 @@ public class ImageAdapter {
         height = null;
         filenameHint = null;
         altText = null;
+        horizontalRelativeFrom = null;
+        horizontalAlign = null;
+        verticalRelativeFrom = null;
+        verticalAlign = null;
     }
 }

@@ -2,7 +2,13 @@ package com.alphasystem.wml.test;
 
 import com.alphasystem.commons.util.AppUtil;
 import com.alphasystem.docx4j.builder.wml.*;
+import org.docx4j.dml.wordprocessingDrawing.Anchor;
+import org.docx4j.dml.wordprocessingDrawing.STAlignH;
+import org.docx4j.dml.wordprocessingDrawing.STAlignV;
+import org.docx4j.dml.wordprocessingDrawing.STRelFromH;
+import org.docx4j.dml.wordprocessingDrawing.STRelFromV;
 import org.docx4j.openpackaging.parts.WordprocessingML.BinaryPartAbstractImage;
+import org.docx4j.wml.Drawing;
 import org.docx4j.wml.P;
 import org.docx4j.wml.R;
 import org.testng.annotations.Test;
@@ -12,6 +18,7 @@ import java.net.URI;
 import static com.alphasystem.docx4j.builder.wml.WmlAdapter.*;
 import static com.alphasystem.docx4j.builder.wml.WmlBuilderFactory.getPBuilder;
 import static com.alphasystem.docx4j.builder.wml.WmlBuilderFactory.getRBuilder;
+import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
 /**
@@ -102,6 +109,31 @@ public abstract class TemplateTest extends CommonTest {
         final var url = AppUtil.getResource("java_logo.png");
         final var imageRun = new ImageAdapter(wmlPackage).withUrl(url).withWidth(200.0).withHeight(100.0).insertImage();
         getMainDocumentPart().addObject(getImagePara("Insert image with width and height", imageRun));
+    }
+
+    @Test(dependsOnMethods = {"insertImageWithWidthAndHeight"})
+    public void insertAnchoredImage() throws Exception {
+        final var url = AppUtil.getResource("java_logo.png");
+        final var imageRun = new ImageAdapter(wmlPackage).withUrl(url)
+                .withHorizontalAlignment(STRelFromH.COLUMN, STAlignH.RIGHT)
+                .withVerticalAlignment(STRelFromV.LINE, STAlignV.CENTER)
+                .insertImage();
+        getMainDocumentPart().addObject(getImagePara("Insert image anchored right/center of line", imageRun));
+
+        final var drawing = imageRun.getContent().stream()
+                .filter(Drawing.class::isInstance)
+                .map(Drawing.class::cast)
+                .findFirst()
+                .orElseThrow(() -> new AssertionError("No drawing found in image run"));
+        final var anchor = drawing.getAnchorOrInline().stream()
+                .filter(Anchor.class::isInstance)
+                .map(Anchor.class::cast)
+                .findFirst()
+                .orElseThrow(() -> new AssertionError("Drawing must contain an anchor"));
+        assertEquals(anchor.getPositionH().getRelativeFrom(), STRelFromH.COLUMN);
+        assertEquals(anchor.getPositionH().getAlign(), STAlignH.RIGHT);
+        assertEquals(anchor.getPositionV().getRelativeFrom(), STRelFromV.LINE);
+        assertEquals(anchor.getPositionV().getAlign(), STAlignV.CENTER);
     }
 
     private P getImagePara(String captionText, R imageRun) {
