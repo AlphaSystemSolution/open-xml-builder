@@ -3,7 +3,6 @@
  */
 package com.alphasystem.docx4j.builder.wml;
 
-
 import jakarta.xml.bind.JAXBElement;
 import org.docx4j.Docx4J;
 import org.docx4j.fonts.PhysicalFonts;
@@ -234,6 +233,14 @@ public class WmlAdapter {
         return getPBuilder().withPPr(pPr).getObject();
     }
 
+    public static Br getLineBreak() {
+        return getBrBuilder().getObject();
+    }
+
+    public static R getLineBreakRun() {
+        return getRBuilder().addContent(getLineBreak()).getObject();
+    }
+
     public static Br getPageBreak() {
         return getBrBuilder().withType(PAGE).getObject();
     }
@@ -335,9 +342,9 @@ public class WmlAdapter {
      * Converts the given package to PDF and saves it next to the given file
      * with a {@code .pdf} extension.
      *
-     * @param file      target file (extension is replaced with {@code .pdf})
+     * @param file       target file (extension is replaced with {@code .pdf})
      * @param wmlPackage the package to convert
-     * @param fontFiles optional custom font files to register before converting
+     * @param fontFiles  optional custom font files to register before converting
      * @throws Docx4JException if conversion fails or a used font cannot be resolved
      */
     public static void saveAsPdf(File file, WordprocessingMLPackage wmlPackage, File... fontFiles)
@@ -412,7 +419,7 @@ public class WmlAdapter {
      * OS-installed fonts (OS font directories are always scanned). If a font
      * used by the document cannot be resolved from either source, a
      * {@link Docx4JException} is thrown naming the missing fonts.
-     *
+     * <p>
      * Conversion uses the XSL-FO/Apache FOP pipeline via
      * {@link Docx4J#toPDF}.
      *

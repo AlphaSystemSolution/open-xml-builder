@@ -16,10 +16,7 @@ dependencies {
     api(libs.alphasystm.commons)
     api(libs.docx4j.core)
     api(libs.docx4j.exportfo)
-    api(libs.docx4j.jaxbmoxy)
     api(libs.docx4j.jaxbreferenceimpl)
-    api(libs.docx4j.moxyjaxbcontext)
-    api(libs.docx4j.eclipsemoxy)
     api(libs.slf4j.api)
     api(libs.logback.classic)
     testImplementation(libs.testng)
@@ -55,8 +52,8 @@ tasks.withType<JavaCompile>().configureEach {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_21
-    targetCompatibility = JavaVersion.VERSION_21
+    sourceCompatibility = JavaVersion.VERSION_25
+    targetCompatibility = JavaVersion.VERSION_25
     withSourcesJar()
 }
 

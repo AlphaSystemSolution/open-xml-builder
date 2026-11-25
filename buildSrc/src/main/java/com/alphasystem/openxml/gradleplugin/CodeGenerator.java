@@ -8,15 +8,16 @@ import java.io.IOException;
 public final class CodeGenerator {
 
     public static void wmlGenerator(File destPath) {
-        FluentApiGenerator apiGenerator = new FluentApiGenerator(FluentApiGenerator.BASE_PACKAGE_NAME,
-                "wml", "WmlBuilderFactory", P.class, P.Hyperlink.class, Tbl.class,
-                Tr.class, Tc.class, R.class, R.Tab.class, Text.class, CTTabStop.class, Br.class, FldChar.class,
-                SectPr.class, TblGridCol.class, CTBookmarkRange.class, CTBookmark.class, BooleanDefaultFalse.class,
-                Styles.class, Style.class, Numbering.class, SdtBlock.class, CTSdtRow.class, CTSdtDocPart.class,
-                CTHeight.class);
+        final var apiGenerator = new FluentApiGenerator(FluentApiGenerator.BASE_PACKAGE_NAME,
+                "wml", "WmlBuilderFactory");
 
         try {
-            apiGenerator.generate("org.docx4j.wml", destPath);
+            apiGenerator.generate("org.docx4j.wml", destPath,
+                    P.class, P.Hyperlink.class, Tbl.class,
+                    Tr.class, Tc.class, R.class, R.Tab.class, Text.class, CTTabStop.class, Br.class, FldChar.class,
+                    SectPr.class, TblGridCol.class, CTBookmarkRange.class, CTBookmark.class, BooleanDefaultFalse.class,
+                    Styles.class, Style.class, Numbering.class, SdtBlock.class, CTSdtRow.class, CTSdtDocPart.class,
+                    CTHeight.class, Drawing.class);
         } catch (IOException ex) {
             throw new RuntimeException("Unable to generate ", ex);
         }
