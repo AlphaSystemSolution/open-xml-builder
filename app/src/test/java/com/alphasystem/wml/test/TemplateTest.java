@@ -91,8 +91,8 @@ public abstract class TemplateTest extends CommonTest {
 
     @Test(dependsOnMethods = {"insertImage"})
     public void insertImageFromUrl() throws Exception {
-        final var url = URI.create("https://upload.wikimedia.org/wikipedia/commons/3/35/Tux.svg").toURL();
-        final var imageRun = new ImageAdapter(wmlPackage).withUrl(url).withFilenameHint("Tux.svg").withAltText("tux")
+        final var url = URI.create("https://www.vectorlogo.zone/logos/java/java-icon.svg").toURL();
+        final var imageRun = new ImageAdapter(wmlPackage).withUrl(url).withFilenameHint("java-icon.svg").withAltText("java logo")
                 .insertImage();
         getMainDocumentPart().addObject(getImagePara("Insert image from URL with default size", imageRun));
     }
